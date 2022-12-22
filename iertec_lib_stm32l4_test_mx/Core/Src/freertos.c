@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "itf_io.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,7 +57,7 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void button_isr(void);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -117,14 +117,42 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
-    osDelay(1000);
+      // Test I/O input
+      if (itf_io_get_value(H_ITF_IO_BUTTON_1) == ITF_IO_LOW)
+      {
+          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+      }
+      else
+      {
+          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+      }
+      osDelay(10);
+
+      // Test I/O output
+//    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    osDelay(1000);
+//    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//    osDelay(1000);
+//    itf_io_toggle_value(H_ITF_IO_LED_GREEN);
+//    osDelay(1000);
+//    itf_io_toggle_value(H_ITF_IO_LED_GREEN);
+//    osDelay(1000);
+
+      // Test I/O interrupt
+//      osDelay(5000);
+//      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, button_isr);
+//      osDelay(5000);
+//      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, NULL);
   }
   /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void
+button_isr (void)
+{
+    itf_io_toggle_value(H_ITF_IO_LED_GREEN);
+}
 /* USER CODE END Application */
 

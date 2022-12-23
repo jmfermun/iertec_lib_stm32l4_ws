@@ -12,7 +12,6 @@
  */
 
 #include "itf_io.h"
-#include "gpio.h"
 
 #include <stddef.h>
 
@@ -45,8 +44,6 @@ void HAL_GPIO_EXTI_Callback (uint16_t pin_id);
 bool
 itf_io_init (void)
 {
-	MX_GPIO_Init();
-
     // Initialize interrupt handlers
     for (unsigned int i = 0; i < H_ITF_IO_INT_COUNT; i++)
     {

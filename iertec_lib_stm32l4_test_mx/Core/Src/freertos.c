@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "itf_io.h"
+#include "itf_uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,19 +115,22 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+  // Test UART
+  itf_uart_read_enable(H_ITF_UART_DEBUG);
+
   /* Infinite loop */
   for(;;)
   {
       // Test I/O input
-      if (itf_io_get_value(H_ITF_IO_BUTTON_1) == ITF_IO_LOW)
-      {
-          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-      }
-      else
-      {
-          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
-      }
-      osDelay(10);
+//      if (itf_io_get_value(H_ITF_IO_BUTTON_1) == ITF_IO_LOW)
+//      {
+//          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      }
+//      else
+//      {
+//          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//      }
+//      osDelay(10);
 
       // Test I/O output
 //    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
@@ -143,6 +147,26 @@ void StartDefaultTask(void *argument)
 //      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, button_isr);
 //      osDelay(5000);
 //      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, NULL);
+
+      // Test UART
+      char data[32];
+      bool ret;
+      size_t len;
+
+      ret = itf_uart_write(H_ITF_UART_DEBUG, "Hola\r\n");
+
+      if (!ret)
+      {
+          for(;;);
+      }
+
+      len = itf_uart_read(H_ITF_UART_DEBUG, data, 32);
+      ret = itf_uart_write_bin(H_ITF_UART_DEBUG, data, len);
+
+      if (!ret)
+      {
+          for(;;);
+      }
   }
   /* USER CODE END StartDefaultTask */
 }

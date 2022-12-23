@@ -16,7 +16,7 @@
 #define ITF_IO_H
 
 #include "itf_bsp.h"
-#include "stm32l452xx.h"
+#include "stm32l4xx_hal.h"
 
 #include <stdint.h>
 #include <stdbool.h>

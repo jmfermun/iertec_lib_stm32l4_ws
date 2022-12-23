@@ -26,6 +26,13 @@ typedef enum
     H_ITF_IO_INT_COUNT = 1,
 } h_itf_io_t;
 
+/** @brief UART interface handlers. */
+typedef enum
+{
+    H_ITF_UART_DEBUG = 0,
+    H_ITF_UART_COUNT,
+} h_itf_uart_t;
+
 /**
  * @brief Initialize the specific board interfaces.
  *

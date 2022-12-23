@@ -17,11 +17,16 @@
 
 #include <stdbool.h>
 
+/** @brief Function prototype for the low level initializers used by the
+ * different interfaces. */
+typedef void (* itf_bsp_init_ll_t)(void);
+
 /** @brief I/O interface handlers. */
 typedef enum
 {
     H_ITF_IO_BUTTON_1 = 0,
     H_ITF_IO_LED_GREEN,
+    H_ITF_IO_TDI,
     H_ITF_IO_COUNT,
     H_ITF_IO_INT_COUNT = 1,
 } h_itf_io_t;

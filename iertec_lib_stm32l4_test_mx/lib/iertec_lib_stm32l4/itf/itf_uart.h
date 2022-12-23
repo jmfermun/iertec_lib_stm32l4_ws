@@ -27,6 +27,7 @@ typedef struct
 {
     UART_HandleTypeDef * handle;
     uint32_t             timeout_msec;
+    itf_bsp_init_ll_t    init_ll;
 } itf_uart_config_t;
 
 /**

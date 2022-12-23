@@ -67,6 +67,12 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     const itf_uart_config_t * config   = &itf_uart_config[h_itf_uart];
     itf_uart_instance_t *     instance = &itf_uart_instance[h_itf_uart];
 
+    // Low level initialization
+    if (NULL != config->init_ll)
+    {
+        config->init_ll();
+    }
+
     // Save the UART instance to be used
     instance->handle = config->handle;
     instance->buffer_tx = NULL;
@@ -115,6 +121,7 @@ itf_uart_deinit (h_itf_uart_t h_itf_uart)
 
     if (NULL != instance->handle)
     {
+        itf_uart_read_disable(h_itf_uart);
         HAL_UART_DeInit(instance->handle);
         instance->handle = NULL;
     }

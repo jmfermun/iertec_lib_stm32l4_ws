@@ -21,6 +21,7 @@
 
 // Board configuration
 extern const itf_io_config_t itf_io_config[H_ITF_IO_COUNT];
+extern const itf_bsp_init_ll_t itf_io_init_ll;
 
 /** Registered interrupt callbacks. */
 static itf_io_int_cb_t itf_io_int_cb[H_ITF_IO_INT_COUNT];
@@ -44,6 +45,12 @@ void HAL_GPIO_EXTI_Callback (uint16_t pin_id);
 bool
 itf_io_init (void)
 {
+    // Low level initialization
+    if (NULL != itf_io_init_ll)
+    {
+        itf_io_init_ll();
+    }
+
     // Initialize interrupt handlers
     for (unsigned int i = 0; i < H_ITF_IO_INT_COUNT; i++)
     {

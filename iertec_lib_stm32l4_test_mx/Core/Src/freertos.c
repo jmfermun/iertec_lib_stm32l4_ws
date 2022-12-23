@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "itf_io.h"
 #include "itf_uart.h"
+#include "itf_debug.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -121,18 +122,18 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-      // Test I/O input
-//      if (itf_io_get_value(H_ITF_IO_BUTTON_1) == ITF_IO_LOW)
-//      {
-//          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-//      }
-//      else
-//      {
-//          itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
-//      }
-//      osDelay(10);
+    // Test I/O input
+//    if (itf_io_get_value(H_ITF_IO_BUTTON_1) == ITF_IO_LOW)
+//    {
+//        itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    }
+//    else
+//    {
+//        itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//    }
+//    osDelay(10);
 
-      // Test I/O output
+    // Test I/O output
 //    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
 //    osDelay(1000);
 //    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
@@ -142,31 +143,60 @@ void StartDefaultTask(void *argument)
 //    itf_io_toggle_value(H_ITF_IO_LED_GREEN);
 //    osDelay(1000);
 
-      // Test I/O interrupt
-//      osDelay(5000);
-//      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, button_isr);
-//      osDelay(5000);
-//      itf_io_set_int_cb(H_ITF_IO_BUTTON_1, NULL);
+    // Test I/O interrupt
+//    osDelay(5000);
+//    itf_io_set_int_cb(H_ITF_IO_BUTTON_1, button_isr);
+//    osDelay(5000);
+//    itf_io_set_int_cb(H_ITF_IO_BUTTON_1, NULL);
 
-      // Test UART
-      char data[32];
-      bool ret;
-      size_t len;
+    // Test UART
+//    char data[32];
+//    bool ret;
+//    size_t len;
+//
+//    ret = itf_uart_write(H_ITF_UART_DEBUG, "Hola\r\n");
+//
+//    if (!ret)
+//    {
+//      for(;;);
+//    }
+//
+//    len = itf_uart_read(H_ITF_UART_DEBUG, data, 32);
+//    ret = itf_uart_write_bin(H_ITF_UART_DEBUG, data, len);
+//
+//    if (!ret)
+//    {
+//      for(;;);
+//    }
 
-      ret = itf_uart_write(H_ITF_UART_DEBUG, "Hola\r\n");
+    // Test debug UART
+    if (itf_debug_uart_check())
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+    }
+    else
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+    }
 
-      if (!ret)
-      {
-          for(;;);
-      }
+    itf_debug_write("Hola\r\n", 6);
 
-      len = itf_uart_read(H_ITF_UART_DEBUG, data, 32);
-      ret = itf_uart_write_bin(H_ITF_UART_DEBUG, data, len);
+    int d_char = itf_debug_get_char();
 
-      if (!ret)
-      {
-          for(;;);
-      }
+    if (-2 == d_char)
+    {
+      itf_debug_write("-2\r\n", 4);
+    }
+    else if (-1 == d_char)
+    {
+      itf_debug_write("-1\r\n", 4);
+    }
+    else
+    {
+        itf_debug_put_char(d_char);
+    }
+
+    osDelay(5000);
   }
   /* USER CODE END StartDefaultTask */
 }

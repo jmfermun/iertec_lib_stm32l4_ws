@@ -82,12 +82,16 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  // Do not use the auto-generated peripherals initialization
+#if 0
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+#endif
+
   if (!itf_bsp_init())
   {
     Error_Handler();

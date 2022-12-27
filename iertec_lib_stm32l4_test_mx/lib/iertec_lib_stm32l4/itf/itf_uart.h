@@ -122,11 +122,8 @@ size_t itf_uart_read_count(h_itf_uart_t h_itf_uart);
  * @brief UART interrupt service routine handler for transmission and reception.
  *
  * @param h_itf_uart Handler of the UART interface to use.
- *
- * @return Indicates if the RTOS must run the scheduler before returning from
- * the ISR.
  */
-long itf_uart_isr(h_itf_uart_t h_itf_uart);
+void itf_uart_isr(h_itf_uart_t h_itf_uart);
 
 #endif // ITF_UART_H
 

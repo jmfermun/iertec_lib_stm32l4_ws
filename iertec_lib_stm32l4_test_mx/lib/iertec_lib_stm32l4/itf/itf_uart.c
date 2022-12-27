@@ -174,9 +174,14 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
     // Clean the FIFO buffer
     for (size_t i = 0; i < ITF_UART_BUFFER_RX_SIZE; i++)
     {
+        size_t len;
         uint8_t data;
 
-        (void)xStreamBufferReceive(instance->buffer_rx, &data, sizeof(data), 0);
+        len = xStreamBufferReceive(instance->buffer_rx, &data, sizeof(data), 0);
+
+        taskENTER_CRITICAL();
+        instance->len_rx -= len;
+        taskEXIT_CRITICAL();
     }
 
     taskENTER_CRITICAL();
@@ -327,7 +332,7 @@ itf_uart_read_count (h_itf_uart_t h_itf_uart)
     return count;
 }
 
-long
+void
 itf_uart_isr (h_itf_uart_t h_itf_uart)
 {
     BaseType_t            b_yield    = pdFALSE;
@@ -427,7 +432,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         xSemaphoreGiveFromISR(instance->sem_tx, &b_yield);
     }
 
-    return b_yield;
+    portYIELD_FROM_ISR(b_yield);
 }
 
 /** @} */

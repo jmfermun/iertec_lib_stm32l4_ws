@@ -28,6 +28,7 @@
 #include "itf_io.h"
 #include "itf_uart.h"
 #include "itf_debug.h"
+#include "itf_spi.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -170,31 +171,44 @@ void StartDefaultTask(void *argument)
 //    }
 
     // Test debug UART
-    if (itf_debug_uart_check())
+//    if (itf_debug_uart_check())
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    }
+//    else
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//    }
+//
+//    itf_debug_write("Hola\r\n", 6);
+//
+//    int d_char = itf_debug_get_char();
+//
+//    if (-2 == d_char)
+//    {
+//      itf_debug_write("-2\r\n", 4);
+//    }
+//    else if (-1 == d_char)
+//    {
+//      itf_debug_write("-1\r\n", 4);
+//    }
+//    else
+//    {
+//        itf_debug_put_char(d_char);
+//    }
+//
+//    osDelay(5000);
+
+    // Test SPI
+    uint8_t data_tx[100];
+    uint8_t data_rx[100] = {0};
+
+    for (size_t i = 0; i < 100; i++)
     {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-    }
-    else
-    {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+        data_tx[i] = i;
     }
 
-    itf_debug_write("Hola\r\n", 6);
-
-    int d_char = itf_debug_get_char();
-
-    if (-2 == d_char)
-    {
-      itf_debug_write("-2\r\n", 4);
-    }
-    else if (-1 == d_char)
-    {
-      itf_debug_write("-1\r\n", 4);
-    }
-    else
-    {
-        itf_debug_put_char(d_char);
-    }
+    bool ret = itf_spi_transaction(H_ITF_SPI_0, data_tx, data_rx, 100);
 
     osDelay(5000);
   }

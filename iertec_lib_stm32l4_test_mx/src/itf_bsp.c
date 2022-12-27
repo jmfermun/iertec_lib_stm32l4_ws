@@ -14,9 +14,12 @@
 #include "itf_bsp.h"
 #include "itf_debug.h"
 #include "itf_io.h"
+#include "itf_spi.h"
 #include "itf_uart.h"
 #include "main.h"
 #include "gpio.h"
+#include "dma.h"
+#include "spi.h"
 #include "usart.h"
 
 /****************************************************************************//*
@@ -55,6 +58,19 @@ const itf_io_config_t itf_io_config[H_ITF_IO_COUNT] =
 const itf_bsp_init_ll_t itf_io_init_ll = MX_GPIO_Init;
 
 /****************************************************************************//*
+ * itf_spi board configuration
+ ******************************************************************************/
+
+/** Board configuration of the available SPI interfaces. */
+const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
+{
+    {
+        .handle  = &hspi1,
+        .init_ll = MX_SPI1_Init,
+    },
+};
+
+/****************************************************************************//*
  * itf_uart board configuration
  ******************************************************************************/
 
@@ -79,7 +95,9 @@ itf_bsp_init (void)
     bool ret = true;
 
     ret = itf_io_init() && ret;
+    MX_DMA_Init();
     itf_debug_init();
+    ret = itf_spi_init(H_ITF_SPI_0) && ret;
 //    ret = itf_uart_init(H_ITF_UART_DEBUG) && ret;
 
     return ret;

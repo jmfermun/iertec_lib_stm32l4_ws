@@ -31,6 +31,13 @@ typedef enum
     H_ITF_IO_INT_COUNT = 1,
 } h_itf_io_t;
 
+/** @brief SPI interface handlers. */
+typedef enum
+{
+    H_ITF_SPI_0 = 0,
+    H_ITF_SPI_COUNT,
+} h_itf_spi_t;
+
 /** @brief UART interface handlers. */
 typedef enum
 {

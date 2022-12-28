@@ -13,6 +13,7 @@
 
 #include "itf_bsp.h"
 #include "itf_debug.h"
+#include "itf_clk.h"
 #include "itf_io.h"
 #include "itf_spi.h"
 #include "itf_uart.h"
@@ -21,6 +22,13 @@
 #include "dma.h"
 #include "spi.h"
 #include "usart.h"
+
+/****************************************************************************//*
+ * itf_clk board configuration
+ ******************************************************************************/
+
+/** CLK low level initializer function.*/
+const itf_bsp_init_ll_t itf_clk_init_ll = SystemClock_Config;
 
 /****************************************************************************//*
  * itf_debug board configuration
@@ -89,12 +97,26 @@ const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
  ******************************************************************************/
 
 bool
+itf_bsp_ll_init (void)
+{
+    bool ret = true;
+
+    // Reset of all peripherals, Initializes the Flash interface and the Systick
+    HAL_Init();
+
+    // Initialize the low level interfaces
+    ret = itf_clk_init() && ret;
+    ret = itf_io_init() && ret;
+
+    return ret;
+}
+
+bool
 itf_bsp_init (void)
 {
 #ifndef TEST
     bool ret = true;
 
-    ret = itf_io_init() && ret;
     MX_DMA_Init();
     itf_debug_init();
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
@@ -104,6 +126,11 @@ itf_bsp_init (void)
 #else // !TEST
     return false;
 #endif // TEST
+}
+
+bool itf_bsp_get_error(void)
+{
+    return Error_Get();
 }
 
 /** @} */

@@ -71,6 +71,11 @@ itf_spi_init (h_itf_spi_t h_itf_spi)
         config->init_ll();
     }
 
+    if (itf_bsp_get_error())
+    {
+        return false;
+    }
+
     // Save the SPI instance to be used
     instance->handle = config->handle;
 

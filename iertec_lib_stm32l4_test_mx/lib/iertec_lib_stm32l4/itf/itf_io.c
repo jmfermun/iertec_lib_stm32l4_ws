@@ -51,6 +51,11 @@ itf_io_init (void)
         itf_io_init_ll();
     }
 
+    if (itf_bsp_get_error())
+    {
+        return false;
+    }
+
     // Initialize interrupt handlers
     for (unsigned int i = 0; i < H_ITF_IO_INT_COUNT; i++)
     {

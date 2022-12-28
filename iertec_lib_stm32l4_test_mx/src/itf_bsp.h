@@ -46,12 +46,29 @@ typedef enum
 } h_itf_uart_t;
 
 /**
- * @brief Initialize the specific board interfaces.
+ * @brief Initialize the low level specific board interfaces.
+ *
+ * @return true If the interfaces are initialized correctly.
+ * @return false If an error occurs.
+ */
+bool itf_bsp_ll_init(void);
+
+/**
+ * @brief Initialize the rest of specific board interfaces.
  *
  * @return true If the interfaces are initialized correctly.
  * @return false If an error occurs.
  */
 bool itf_bsp_init(void);
+
+/**
+ * @brief Utility function to be used by the each peripheral initialization
+ * function to check if the low level initialization has executed correctly.
+ *
+ * @retval true If the execution was correct.
+ * @retval false If an error occurs.
+ */
+bool itf_bsp_get_error(void);
 
 #endif // ITF_BSP_H
 

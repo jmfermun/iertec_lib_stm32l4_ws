@@ -73,6 +73,11 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
         config->init_ll();
     }
 
+    if (itf_bsp_get_error())
+    {
+        return false;
+    }
+
     // Save the UART instance to be used
     instance->handle = config->handle;
     instance->buffer_tx = NULL;

@@ -108,6 +108,9 @@ itf_bsp_ll_init (void)
     ret = itf_clk_init() && ret;
     ret = itf_io_init() && ret;
 
+    // Initialize here the DMA because it is a shared resource
+    MX_DMA_Init();
+
     return ret;
 }
 
@@ -117,7 +120,6 @@ itf_bsp_init (void)
 #ifndef TEST
     bool ret = true;
 
-    MX_DMA_Init();
     itf_debug_init();
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
 //    ret = itf_uart_init(H_ITF_UART_DEBUG) && ret;

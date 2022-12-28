@@ -1,0 +1,143 @@
+---
+
+:project:
+  :build_root: ../script/output/test/integration_target_build
+  :use_exceptions: TRUE
+  :use_mocks: TRUE
+  :test_file_prefix: test_
+  :which_ceedling: gem
+  :release_build: FALSE
+  :default_tasks:
+    - test:all
+
+:extension:
+  :executable: .elf
+  :object: .o
+  :dependencies: .d
+
+:paths:
+  :test:
+    - +:test/integration/**
+    - -:test/integration/support
+  :support:
+    - test/integration/support
+  :source:
+    - lib/**
+    - src/**
+  :include:
+    - Core/**
+    - Drivers/**
+    - Middlewares/**
+
+:defines:
+  # in order to add common defines:
+  #  1) remove the trailing [] from the :common: section
+  #  2) add entries to the :common: section (e.g. :test: has TEST defined)
+  :common: &common_defines
+    - STM32L452xx
+    - USE_HAL_DRIVER
+    - UNITY_INCLUDE_CONFIG_H
+    - CMOCK_MEM_DYNAMIC
+    - CMOCK_MEM_SIZE=1024
+  :test:
+    - *common_defines
+    - TEST
+  :test_preprocess:
+    - *common_defines
+    - TEST
+
+:unity:
+  :main_name: 'unity_main'
+
+:cmock:
+  :mock_prefix: mock_
+  :enforce_strict_ordering: TRUE
+  :mock_path: test/integration/mocks
+  :when_no_prototypes: :warn
+  :plugins:
+    - :ignore
+    - :callback
+    - :expect_any_args
+  :treat_as:
+    uint8:    HEX8
+    uint16:   HEX16
+    uint32:   UINT32
+    int8:     INT8
+    bool:     UINT8
+  :treat_as_void:
+    - xdc_Void
+  :fail_on_unexpected_calls: FALSE
+  :callback_include_count: FALSE
+  :treat_externs: :include
+
+:plugins:
+  :load_paths:
+    - "#{Ceedling.load_path}"
+  :enabled:
+    - stdout_pretty_tests_report
+    #- stdout_gtestlike_tests_report
+    - xml_tests_report
+    - warnings_report
+  :display_raw_test_results: TRUE
+
+:tools:
+  :test_compiler:
+    :executable: arm-none-eabi-gcc
+    :name: 'GCC ARM Compiler'
+    :arguments:
+      - -c
+      - -std=gnu11
+      - -mcpu=cortex-m4
+      - -mfloat-abi=hard
+      - -mfpu=fpv4-sp-d16
+      - -mthumb
+      - -g3
+      - -O0
+      - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
+      - -D$: COLLECTION_DEFINES_TEST_AND_VENDOR
+      - -ffunction-sections
+      - -fdata-sections
+      - -Wall
+      - -fstack-usage
+      - -fprofile-arcs
+      - -ftest-coverage
+      - -MMD
+      - -MP
+      - -MF"${4}"
+      - -MT"${2}"
+      - --specs=nano.specs
+      - -o "${2}"
+      - "${1}"
+
+  :test_linker:
+    :executable: arm-none-eabi-gcc
+    :name: 'GCC ARM Linker'
+    :arguments:
+      - -o "${2}"
+      - "${1}"
+      - Debug/Core/Startup/startup_stm32l452retx.o
+      - -mcpu=cortex-m4
+      - -mfloat-abi=hard
+      - -mfpu=fpv4-sp-d16
+      - -mthumb
+      - -T"test/integration/support/STM32L452RETX_FLASH.ld"
+      - --specs=nosys.specs
+      - -Wl,-Map="${3}"
+      - -Wl,--gc-sections
+      - -static
+      - --specs=rdimon.specs
+      - --specs=nano.specs
+      - -Wl,--start-group
+      - -lc
+      - -lm
+      - -lrdimon
+      - -Wl,--end-group
+      - -fprofile-arcs
+
+  :test_fixture:
+    :executable: gdb_loader.bat
+    :name: 'GDB/OpenOCD Loader'
+    :arguments:
+      - "${1}"
+
+...

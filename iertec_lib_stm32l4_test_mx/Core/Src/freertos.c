@@ -118,7 +118,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   // Test UART
-  itf_uart_read_enable(H_ITF_UART_DEBUG);
+//  itf_uart_read_enable(H_ITF_UART_DEBUG);
 
   /* Infinite loop */
   for(;;)

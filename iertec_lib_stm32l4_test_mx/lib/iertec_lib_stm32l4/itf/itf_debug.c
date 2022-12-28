@@ -46,6 +46,7 @@ void
 itf_debug_init (void)
 {
     (void)itf_uart_init(itf_debug_config.handle);
+    itf_uart_read_enable(itf_debug_config.handle);
 }
 
 void

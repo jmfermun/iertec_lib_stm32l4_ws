@@ -105,7 +105,6 @@
       - -MP
       - -MF"${4}"
       - -MT"${2}"
-      - --specs=nano.specs
       - -o "${2}"
       - "${1}"
 
@@ -126,7 +125,6 @@
       - -Wl,--gc-sections
       - -static
       - --specs=rdimon.specs
-      - --specs=nano.specs
       - -Wl,--start-group
       - -lc
       - -lm

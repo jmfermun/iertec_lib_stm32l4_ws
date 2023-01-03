@@ -101,6 +101,8 @@
       - -fstack-usage
       - -fprofile-arcs
       - -ftest-coverage
+      - -fprofile-filter-files=lib/iertec_lib_stm32l4/.*;src/.*
+      - -fprofile-exclude-files=unity.c;cmock.c
       - -MMD
       - -MP
       - -MF"${4}"

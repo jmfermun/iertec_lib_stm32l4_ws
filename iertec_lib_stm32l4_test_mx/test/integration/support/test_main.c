@@ -35,7 +35,7 @@ static const osThreadAttr_t test_main_task_attributes =
 
 static void dump_coverage_data(void)
 {
-//    __gcov_dump();
+    __gcov_dump();
 }
 
 static void test_main_task_fn(void *parameters)

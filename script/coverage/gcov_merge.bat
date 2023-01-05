@@ -13,3 +13,5 @@ cd ..\..\%PROJECT_NAME%
 if not exist %PATH_OUT%\report_coverage mkdir %PATH_OUT%\report_coverage
 
 gcovr --add-tracefile %PATH_OUT%\*.json --html-details -o %PATH_OUT%\report_coverage\report_coverage.html --decisions
+
+pause

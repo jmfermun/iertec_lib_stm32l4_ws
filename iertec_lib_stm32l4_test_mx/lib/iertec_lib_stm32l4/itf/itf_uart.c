@@ -12,6 +12,7 @@
  */
 
 #include "itf_uart.h"
+#include "itf_io.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -26,9 +27,23 @@
 /** UART reception buffer size. */
 #define ITF_UART_BUFFER_RX_SIZE (32)
 
+/** UART reception buffer threshold to disable RTS */
+#define ITF_UART_RTS_OFF_THR    (8)
+
+/** UART reception buffer threshold to enable RTS */
+#define ITF_UART_RTS_ON_THR     (24)
+
 /****************************************************************************//*
  * Type definitions
  ******************************************************************************/
+
+/** RTS and CTS signals possible states */
+typedef enum
+{
+    ITF_UART_XTS_STATE_OFF = 0,
+    ITF_UART_XTS_STATE_ON,
+    ITF_UART_XTS_STATE_NOT_USED,
+} itf_uart_xts_state;
 
 /** @brief UART instance data needed during transactions. */
 typedef struct
@@ -40,6 +55,8 @@ typedef struct
     size_t               len_tx;
     StreamBufferHandle_t buffer_rx;
     size_t               len_rx;
+    h_itf_io_t           pin_rts;
+    itf_uart_xts_state   rts_state;
 } itf_uart_instance_t;
 
 /****************************************************************************//*
@@ -109,6 +126,21 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     else
     {
         instance->timeout_ticks = pdMS_TO_TICKS(config->timeout_msec);
+    }
+
+    // Configure hardware flow control. CTS is handled by the hardware
+    // peripheral and RTS by the code logic
+    instance->pin_rts = config->pin_rts;
+
+    if (config->pin_rts != H_ITF_IO_NONE)
+    {
+        // Set RTS. The UART reception is disabled at the start
+        instance->rts_state = ITF_UART_XTS_STATE_ON;
+        itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
+    }
+    else
+    {
+        instance->rts_state = ITF_UART_XTS_STATE_NOT_USED;
     }
 
     return true;
@@ -211,6 +243,10 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
         ATOMIC_SET_BIT(instance->handle->Instance->CR1, USART_CR1_RXNEIE);
     }
 
+    // Clear RTS
+    instance->rts_state = ITF_UART_XTS_STATE_OFF;
+    itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+
     taskEXIT_CRITICAL();
 }
 
@@ -227,6 +263,10 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
 
     // Disable the UART error interrupt: frame error, noise error, overrun error
     ATOMIC_CLEAR_BIT(instance->handle->Instance->CR3, USART_CR3_EIE);
+
+    // Set RTS
+    instance->rts_state = ITF_UART_XTS_STATE_ON;
+    itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
 
     taskEXIT_CRITICAL();
 }
@@ -250,6 +290,14 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
              taskENTER_CRITICAL();
 
              instance->len_rx--;
+
+             // Check to clear RTS
+             if ((instance->rts_state == ITF_UART_XTS_STATE_ON) &&
+                 (instance->len_rx < ITF_UART_RTS_OFF_THR))
+             {
+                 instance->rts_state = ITF_UART_XTS_STATE_OFF;
+                 itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+             }
 
              taskEXIT_CRITICAL();
 
@@ -308,6 +356,14 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
             taskENTER_CRITICAL();
 
             instance->len_rx--;
+
+            // Check to clear RTS
+            if ((instance->rts_state == ITF_UART_XTS_STATE_ON) &&
+                (instance->len_rx < ITF_UART_RTS_OFF_THR))
+            {
+                instance->rts_state = ITF_UART_XTS_STATE_OFF;
+                itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+            }
 
             taskEXIT_CRITICAL();
 
@@ -401,6 +457,14 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
             instance->len_rx += xStreamBufferSendFromISR(instance->buffer_rx,
                                                          &data, sizeof(data),
                                                          &b_yield);
+        }
+
+        // Check to set RTS
+        if ((instance->len_rx > ITF_UART_RTS_ON_THR) &&
+            (instance->rts_state == ITF_UART_XTS_STATE_OFF))
+        {
+            instance->rts_state = ITF_UART_XTS_STATE_ON;
+            itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
         }
 
         // Clear RXNE interrupt flag

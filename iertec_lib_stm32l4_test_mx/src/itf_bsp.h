@@ -27,8 +27,10 @@ typedef enum
     H_ITF_IO_BUTTON_1 = 0,
     H_ITF_IO_LED_GREEN,
     H_ITF_IO_TDI,
+    H_ITF_IO_UART_0_RTS,
     H_ITF_IO_COUNT,
     H_ITF_IO_INT_COUNT = 1,
+    H_ITF_IO_NONE = 0xFF,
 } h_itf_io_t;
 
 /** @brief SPI interface handlers. */
@@ -41,7 +43,8 @@ typedef enum
 /** @brief UART interface handlers. */
 typedef enum
 {
-    H_ITF_UART_DEBUG = 0,
+    H_ITF_UART_0 = 0,
+    H_ITF_UART_DEBUG,
     H_ITF_UART_COUNT,
 } h_itf_uart_t;
 

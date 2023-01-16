@@ -200,17 +200,17 @@ void StartDefaultTask(void *argument)
 //    osDelay(5000);
 
     // Test SPI
-    uint8_t data_tx[100];
-    uint8_t data_rx[100] = {0};
-
-    for (size_t i = 0; i < 100; i++)
-    {
-        data_tx[i] = i;
-    }
-
-    bool ret = itf_spi_transaction(H_ITF_SPI_0, data_tx, data_rx, 100);
-
-    osDelay(5000);
+//    uint8_t data_tx[100];
+//    uint8_t data_rx[100] = {0};
+//
+//    for (size_t i = 0; i < 100; i++)
+//    {
+//        data_tx[i] = i;
+//    }
+//
+//    bool ret = itf_spi_transaction(H_ITF_SPI_0, data_tx, data_rx, 100);
+//
+//    osDelay(5000);
   }
   /* USER CODE END StartDefaultTask */
 }

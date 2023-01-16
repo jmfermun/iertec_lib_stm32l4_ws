@@ -60,6 +60,10 @@ const itf_io_config_t itf_io_config[H_ITF_IO_COUNT] =
         .port = TDI_GPIO_Port,
         .pin  = TDI_Pin,
     },
+    {
+        .port = USART1_RTS_GPIO_Port,
+        .pin  = USART1_RTS_Pin,
+    },
 };
 
 /** I/O low level initializer function.*/
@@ -86,7 +90,14 @@ const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
 const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
 {
     {
+        .handle       = &huart1,
+        .pin_rts      = H_ITF_IO_UART_0_RTS,
+        .timeout_msec = 1000,
+        .init_ll      = MX_USART1_UART_Init,
+    },
+    {
         .handle       = &huart2,
+        .pin_rts      = H_ITF_IO_NONE,
         .timeout_msec = 5000,
         .init_ll      = MX_USART2_UART_Init,
     },
@@ -122,7 +133,7 @@ itf_bsp_init (void)
 
     itf_debug_init();
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
-//    ret = itf_uart_init(H_ITF_UART_DEBUG) && ret;
+    ret = itf_uart_init(H_ITF_UART_0) && ret;
 
     return ret;
 #else // !TEST

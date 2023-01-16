@@ -1,7 +1,7 @@
 ---
 
 :project:
-  :build_root: ../script/output/test/integration_target_build
+  :build_root: ../script/output/test/unit_target_build
   :use_exceptions: TRUE
   :use_mocks: TRUE
   :test_file_prefix: test_
@@ -17,10 +17,10 @@
 
 :paths:
   :test:
-    - +:test/integration/**
-    - -:test/integration/support
+    - +:test/unit/**
+    - -:test/unit/support
   :support:
-    - test/integration/support
+    - test/unit/support
   :source:
     - lib/**
     - src/**
@@ -39,6 +39,7 @@
     - UNITY_INCLUDE_CONFIG_H
     - CMOCK_MEM_DYNAMIC
     - CMOCK_MEM_SIZE=1024
+    - TEST_TARGET
   :test:
     - *common_defines
     - TEST
@@ -52,7 +53,7 @@
 :cmock:
   :mock_prefix: mock_
   :enforce_strict_ordering: TRUE
-  :mock_path: test/integration/mocks
+  :mock_path: test/unit/mocks
   :when_no_prototypes: :warn
   :plugins:
     - :ignore
@@ -139,6 +140,6 @@
     :name: 'GDB/OpenOCD Loader'
     :arguments:
       - "${1}"
-      - integration_target
+      - unit_target
 
 ...

@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "itf_io.h"
+#include "itf_wdgt.h"
 #include "itf_uart.h"
 #include "itf_debug.h"
 #include "itf_spi.h"
@@ -211,6 +212,20 @@ void StartDefaultTask(void *argument)
 //    bool ret = itf_spi_transaction(H_ITF_SPI_0, data_tx, data_rx, 100);
 //
 //    osDelay(5000);
+
+    // Test watchdog
+//    osDelay(1000);
+//    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//
+//    // Change timeout
+////    bool ret = itf_wdgt_set_timeout(10000);
+//
+//    // Infinite feed loop
+//    for (;;)
+//    {
+//      itf_wdgt_feed();
+//      osDelay(4000);
+    }
   }
   /* USER CODE END StartDefaultTask */
 }

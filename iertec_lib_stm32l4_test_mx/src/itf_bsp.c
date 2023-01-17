@@ -12,12 +12,14 @@
  */
 
 #include "itf_bsp.h"
-#include "itf_debug.h"
 #include "itf_clk.h"
+#include "itf_wdgt.h"
 #include "itf_io.h"
+#include "itf_debug.h"
 #include "itf_spi.h"
 #include "itf_uart.h"
 #include "main.h"
+#include "iwdg.h"
 #include "gpio.h"
 #include "dma.h"
 #include "spi.h"
@@ -39,6 +41,17 @@ const itf_debug_config_t itf_debug_config =
 {
     .handle  = H_ITF_UART_DEBUG,
     .pin_tdi = H_ITF_IO_TDI,
+};
+
+/****************************************************************************//*
+ * itf_wdgt board configuration
+ ******************************************************************************/
+
+/** Hardware configuration of the available watchdog interface. */
+const itf_wdgt_config_t itf_wdgt_config =
+{
+    .handle       = &hiwdg,
+    .timeout_msec = 5000,
 };
 
 /****************************************************************************//*
@@ -125,6 +138,9 @@ itf_bsp_ll_init (void)
 
     // Initialize the low level interfaces
     ret = itf_clk_init() && ret;
+#ifndef TEST
+    ret = itf_wdgt_init() && ret;
+#endif // TEST
     ret = itf_io_init() && ret;
 
     // Initialize here the DMA because it is a shared resource

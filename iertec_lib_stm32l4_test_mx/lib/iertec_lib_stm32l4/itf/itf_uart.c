@@ -244,8 +244,11 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
     }
 
     // Clear RTS
-    instance->rts_state = ITF_UART_XTS_STATE_OFF;
-    itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+    if (instance->rts_state != ITF_UART_XTS_STATE_NOT_USED)
+    {
+        instance->rts_state = ITF_UART_XTS_STATE_OFF;
+        itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+    }
 
     taskEXIT_CRITICAL();
 }
@@ -265,8 +268,11 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
     ATOMIC_CLEAR_BIT(instance->handle->Instance->CR3, USART_CR3_EIE);
 
     // Set RTS
-    instance->rts_state = ITF_UART_XTS_STATE_ON;
-    itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
+    if (instance->rts_state != ITF_UART_XTS_STATE_NOT_USED)
+    {
+        instance->rts_state = ITF_UART_XTS_STATE_ON;
+        itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
+    }
 
     taskEXIT_CRITICAL();
 }

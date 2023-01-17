@@ -25,11 +25,13 @@ typedef void (* itf_bsp_init_ll_t)(void);
 typedef enum
 {
     H_ITF_IO_BUTTON_1 = 0,
+    H_ITF_IO_IN_1,
     H_ITF_IO_LED_GREEN,
+    H_ITF_IO_OUT_1,
     H_ITF_IO_TDI,
     H_ITF_IO_UART_0_RTS,
     H_ITF_IO_COUNT,
-    H_ITF_IO_INT_COUNT = 1,
+    H_ITF_IO_INT_COUNT = 2,
     H_ITF_IO_NONE = 0xFF,
 } h_itf_io_t;
 

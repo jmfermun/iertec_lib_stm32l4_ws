@@ -53,8 +53,16 @@ const itf_io_config_t itf_io_config[H_ITF_IO_COUNT] =
         .pin  = B1_Pin,
     },
     {
+        .port = IO_IN_1_GPIO_Port,
+        .pin  = IO_IN_1_Pin,
+    },
+    {
         .port = LD4_GPIO_Port,
         .pin  = LD4_Pin,
+    },
+    {
+        .port = IO_OUT_1_GPIO_Port,
+        .pin  = IO_OUT_1_Pin,
     },
     {
         .port = TDI_GPIO_Port,

@@ -69,6 +69,11 @@ void SystemClock_Config(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD4_Pin GPIO_PIN_5
 #define LD4_GPIO_Port GPIOA
+#define IO_OUT_1_Pin GPIO_PIN_1
+#define IO_OUT_1_GPIO_Port GPIOB
+#define IO_IN_1_Pin GPIO_PIN_8
+#define IO_IN_1_GPIO_Port GPIOA
+#define IO_IN_1_EXTI_IRQn EXTI9_5_IRQn
 #define USART1_RTS_Pin GPIO_PIN_12
 #define USART1_RTS_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13

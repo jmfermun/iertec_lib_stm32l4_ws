@@ -39,8 +39,11 @@ bool itf_spi_init(h_itf_spi_t h_itf_spi);
  * @brief Close the SPI interface and release its resources.
  *
  * @param h_itf_spi Handler of the SPI interface to use.
+ *
+ * @retval true If the interface is deinitialized correctly.
+ * @retval false If an error occurs.
  */
-void itf_spi_deinit(h_itf_spi_t h_itf_spi);
+bool itf_spi_deinit(h_itf_spi_t h_itf_spi);
 
 /**
  * @brief Do a write/read transaction with the SPI interface.

@@ -16,6 +16,8 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+#include <string.h>
+
 /****************************************************************************//*
  * Type definitions
  ******************************************************************************/
@@ -91,21 +93,24 @@ itf_spi_init (h_itf_spi_t h_itf_spi)
     return true;
 }
 
-void
+bool
 itf_spi_deinit (h_itf_spi_t h_itf_spi)
 {
     if (h_itf_spi >= H_ITF_SPI_COUNT)
     {
-        return;
+        return false;
     }
 
     itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
-    if (NULL != instance->handle)
+    if (HAL_SPI_DeInit(instance->handle) != HAL_OK)
     {
-        HAL_SPI_DeInit(instance->handle);
-        instance->handle = NULL;
+        return false;
     }
+
+    instance->handle = NULL;
+
+    return true;
 }
 
 bool
@@ -127,6 +132,10 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
     }
     else if (NULL != rx_data)
     {
+        // HAL library uses the contents of rx_data buffer as tx_data, so clean
+        // the buffer
+        memset(rx_data, 0, count);
+
         status = HAL_SPI_Receive_DMA(instance->handle, rx_data, count);
     }
     else

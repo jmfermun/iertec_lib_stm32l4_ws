@@ -104,31 +104,68 @@ void setUp(void)
 
 void test_itf_spi_init(void)
 {
+    TEST_ASSERT_FALSE(itf_spi_init(H_ITF_SPI_COUNT));
     TEST_ASSERT_TRUE(itf_spi_init(H_ITF_SPI_0));
+    itf_spi_flush(H_ITF_SPI_0);
 }
 
-void test_itf_spi_1(void)
+void test_itf_spi_write(void)
 {
     for (int i = 0; i < DATA_SIZE; i++)
     {
         tx_data[i] = i;
     }
 
-    itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, DATA_SIZE);
+    itf_spi_lock(H_ITF_SPI_0);
+    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, NULL,
+                     DATA_SIZE));
+    itf_spi_unlock(H_ITF_SPI_0);
+}
+
+void test_itf_spi_read(void)
+{
+    for (int i = 0; i < DATA_SIZE; i++)
+    {
+        tx_data[i] = 0;
+        rx_data[i] = i;
+    }
+
+    itf_spi_lock(H_ITF_SPI_0);
+    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, NULL, rx_data,
+                                         DATA_SIZE));
+    itf_spi_unlock(H_ITF_SPI_0);
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
 }
 
-void test_itf_spi_2(void)
+void test_itf_spi_error(void)
+{
+    itf_spi_lock(H_ITF_SPI_0);
+    TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, NULL, NULL, DATA_SIZE));
+    TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, 0));
+    itf_spi_unlock(H_ITF_SPI_0);
+}
+
+void test_itf_spi_write_and_read(void)
 {
     for (int i = 0; i < DATA_SIZE; i++)
     {
         tx_data[i] = DATA_SIZE - 1 - i;
     }
 
-    itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, DATA_SIZE);
+    itf_spi_lock(H_ITF_SPI_0);
+    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data,
+                                         DATA_SIZE));
+    itf_spi_unlock(H_ITF_SPI_0);
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
+}
+
+void test_itf_spi_deinit(void)
+{
+    TEST_ASSERT_FALSE(itf_spi_deinit(H_ITF_SPI_COUNT));
+    TEST_ASSERT_TRUE(itf_spi_deinit(H_ITF_SPI_0));
+    TEST_ASSERT_FALSE(itf_spi_deinit(H_ITF_SPI_0));
 }
 
 /******************************** End of file *********************************/

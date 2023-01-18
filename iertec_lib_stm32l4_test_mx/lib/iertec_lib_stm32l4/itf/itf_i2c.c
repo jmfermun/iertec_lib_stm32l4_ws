@@ -91,21 +91,24 @@ itf_i2c_init (h_itf_i2c_t h_itf_i2c)
     return true;
 }
 
-void
+bool
 itf_i2c_deinit (h_itf_i2c_t h_itf_i2c)
 {
     if (h_itf_i2c >= H_ITF_I2C_COUNT)
     {
-        return;
+        return false;
     }
 
     itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
 
-    if (NULL != instance->handle)
+    if (HAL_I2C_DeInit(instance->handle) != HAL_OK)
     {
-        HAL_I2C_DeInit(instance->handle);
-        instance->handle = NULL;
+        return false;
     }
+
+    instance->handle = NULL;
+
+    return true;
 }
 
 bool

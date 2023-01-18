@@ -39,8 +39,11 @@ bool itf_i2c_init(h_itf_i2c_t h_itf_i2c);
  * @brief Close the I2C interface and release its resources.
  *
  * @param[in] h_itf_i2c Handler of the I2C interface to use.
+ *
+ * @retval true If the interface is deinitialized correctly.
+ * @retval false If an error occurs.
  */
-void itf_i2c_deinit(h_itf_i2c_t h_itf_i2c);
+bool itf_i2c_deinit(h_itf_i2c_t h_itf_i2c);
 
 /**
  * @brief Do a write/read transaction with the I2C interface.

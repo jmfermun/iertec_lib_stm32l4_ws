@@ -95,6 +95,7 @@ TEST_FILE("itf_bsp.c")
 
 void test_itf_i2c_init(void)
 {
+    TEST_ASSERT_FALSE(itf_i2c_init(H_ITF_I2C_COUNT));
     TEST_ASSERT_TRUE(itf_i2c_init(H_ITF_I2C_0));
 }
 
@@ -104,6 +105,18 @@ void test_itf_i2c_write(void)
 
     TEST_ASSERT_TRUE(itf_i2c_transaction(H_ITF_I2C_0, SLAVE_ADDRESS, tx_data,
                                          sizeof(tx_data), NULL, 0));
+}
+
+void test_itf_i2c_error(void)
+{
+    uint8_t tx_data[] = {0x04, DATA_BYTES};
+    uint8_t rx_data[DATA_SIZE] = {0};
+
+    // Use an incorrect slave address
+    TEST_ASSERT_FALSE(itf_i2c_transaction(H_ITF_I2C_0, 0, tx_data,
+                                          sizeof(tx_data), NULL, 0));
+    TEST_ASSERT_FALSE(itf_i2c_transaction(H_ITF_I2C_0, 0, NULL, 0, rx_data,
+                                          sizeof(rx_data)));
 }
 
 void test_itf_i2c_read(void)
@@ -123,6 +136,13 @@ void test_itf_i2c_read(void)
     }
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_data, rx_data, DATA_SIZE);
+}
+
+void test_itf_i2c_deinit(void)
+{
+    TEST_ASSERT_FALSE(itf_i2c_deinit(H_ITF_I2C_COUNT));
+    TEST_ASSERT_TRUE(itf_i2c_deinit(H_ITF_I2C_0));
+    TEST_ASSERT_FALSE(itf_i2c_deinit(H_ITF_I2C_0));
 }
 
 /******************************** End of file *********************************/

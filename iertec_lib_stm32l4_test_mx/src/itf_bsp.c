@@ -14,6 +14,7 @@
 #include "itf_bsp.h"
 #include "itf_clk.h"
 #include "itf_wdgt.h"
+#include "itf_rtc.h"
 #include "itf_io.h"
 #include "itf_debug.h"
 #include "itf_spi.h"
@@ -21,6 +22,7 @@
 #include "itf_uart.h"
 #include "main.h"
 #include "iwdg.h"
+#include "lptim.h"
 #include "gpio.h"
 #include "dma.h"
 #include "spi.h"
@@ -54,6 +56,17 @@ const itf_wdgt_config_t itf_wdgt_config =
 {
     .handle       = &hiwdg,
     .timeout_msec = 5000,
+};
+
+/****************************************************************************//*
+ * itf_rtc board configuration
+ ******************************************************************************/
+
+/** Hardware configuration of the available RTC interface. */
+const itf_rtc_config_t itf_rtc_config =
+{
+    .handle  = &hlptim1,
+    .init_ll = MX_LPTIM1_Init,
 };
 
 /****************************************************************************//*
@@ -171,6 +184,7 @@ itf_bsp_init (void)
     bool ret = true;
 
     itf_debug_init();
+    ret = itf_rtc_init() && ret;
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
     ret = itf_i2c_init(H_ITF_I2C_0) && ret;
     ret = itf_uart_init(H_ITF_UART_0) && ret;

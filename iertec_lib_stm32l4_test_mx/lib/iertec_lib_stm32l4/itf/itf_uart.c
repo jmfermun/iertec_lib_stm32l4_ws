@@ -146,12 +146,12 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     return true;
 }
 
-void
+bool
 itf_uart_deinit (h_itf_uart_t h_itf_uart)
 {
     if (h_itf_uart >= H_ITF_UART_COUNT)
     {
-        return;
+        return false;
     }
 
     itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
@@ -159,9 +159,16 @@ itf_uart_deinit (h_itf_uart_t h_itf_uart)
     if (NULL != instance->handle)
     {
         itf_uart_read_disable(h_itf_uart);
-        HAL_UART_DeInit(instance->handle);
-        instance->handle = NULL;
     }
+
+    if (HAL_UART_DeInit(instance->handle) != HAL_OK)
+    {
+        return false;
+    }
+
+    instance->handle = NULL;
+
+    return true;
 }
 
 bool

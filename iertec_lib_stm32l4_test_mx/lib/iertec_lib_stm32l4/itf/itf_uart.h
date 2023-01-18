@@ -45,8 +45,11 @@ bool itf_uart_init(h_itf_uart_t h_itf_uart);
  * @brief Deinitialize an UART interface.
  *
  * @param h_itf_uart Handler of the UART interface to use.
+ *
+ * @retval true If the interface is deinitialized correctly.
+ * @retval false If an error occurs.
  */
-void itf_uart_deinit(h_itf_uart_t h_itf_uart);
+bool itf_uart_deinit(h_itf_uart_t h_itf_uart);
 
 /**
  * @brief Send a NULL terminated string through the UART.

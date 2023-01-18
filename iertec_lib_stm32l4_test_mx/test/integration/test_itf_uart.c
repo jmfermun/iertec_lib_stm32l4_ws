@@ -186,6 +186,7 @@ void test_itf_uart_init(void)
 {
     strcpy((char*)tx_data, TX_DATA_VALUE);
 
+    TEST_ASSERT_FALSE(itf_uart_init(H_ITF_UART_COUNT));
     TEST_ASSERT_TRUE(itf_uart_init(H_ITF_UART_0));
     itf_uart_read_enable(H_ITF_UART_0);
 
@@ -271,6 +272,27 @@ void test_itf_uart_read_timeout(void)
         TEST_ASSERT_UINT32_WITHIN(1, 1000, time);
         TEST_ASSERT_EQUAL(0, rx_len);
     }
+}
+
+void test_itf_uart_read_count(void)
+{
+    char exp_data[] = "0123456789\r\n";
+    size_t exp_len = strlen(exp_data);
+
+    TEST_ASSERT_EQUAL(0, itf_uart_read_count(H_ITF_UART_0));
+    TEST_ASSERT_TRUE(itf_uart_write_bin(H_ITF_UART_0, exp_data, exp_len));
+    TEST_ASSERT_EQUAL(exp_len, itf_uart_read_count(H_ITF_UART_0));
+    TEST_ASSERT_TRUE(itf_uart_read_bin(H_ITF_UART_0, exp_data, exp_len / 2));
+    TEST_ASSERT_EQUAL(exp_len - exp_len / 2, itf_uart_read_count(H_ITF_UART_0));
+    TEST_ASSERT_TRUE(itf_uart_read_bin(H_ITF_UART_0, exp_data, exp_len - exp_len / 2));
+    TEST_ASSERT_EQUAL(0, itf_uart_read_count(H_ITF_UART_0));
+}
+
+void test_itf_uart_deinit(void)
+{
+    TEST_ASSERT_FALSE(itf_uart_deinit(H_ITF_UART_COUNT));
+    TEST_ASSERT_TRUE(itf_uart_deinit(H_ITF_UART_0));
+    TEST_ASSERT_FALSE(itf_uart_deinit(H_ITF_UART_0));
 }
 
 /******************************** End of file *********************************/

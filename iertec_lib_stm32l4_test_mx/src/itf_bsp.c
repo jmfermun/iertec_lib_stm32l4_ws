@@ -17,12 +17,14 @@
 #include "itf_io.h"
 #include "itf_debug.h"
 #include "itf_spi.h"
+#include "itf_i2c.h"
 #include "itf_uart.h"
 #include "main.h"
 #include "iwdg.h"
 #include "gpio.h"
 #include "dma.h"
 #include "spi.h"
+#include "i2c.h"
 #include "usart.h"
 
 /****************************************************************************//*
@@ -104,6 +106,19 @@ const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
 };
 
 /****************************************************************************//*
+ * itf_i2c board configuration
+ ******************************************************************************/
+
+/** Board configuration of the available I2C interfaces. */
+const itf_i2c_config_t itf_i2c_config[H_ITF_I2C_COUNT] =
+{
+    {
+        .handle  = &hi2c1,
+        .init_ll = MX_I2C1_Init,
+    },
+};
+
+/****************************************************************************//*
  * itf_uart board configuration
  ******************************************************************************/
 
@@ -157,6 +172,7 @@ itf_bsp_init (void)
 
     itf_debug_init();
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
+    ret = itf_i2c_init(H_ITF_I2C_0) && ret;
     ret = itf_uart_init(H_ITF_UART_0) && ret;
 
     return ret;

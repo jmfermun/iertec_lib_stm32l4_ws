@@ -30,6 +30,7 @@
 #include "itf_uart.h"
 #include "itf_debug.h"
 #include "itf_spi.h"
+#include "itf_i2c.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -225,7 +226,13 @@ void StartDefaultTask(void *argument)
 //    {
 //      itf_wdgt_feed();
 //      osDelay(4000);
-    }
+//    }
+    // Test I2C (PCF85063A)
+    uint8_t tx_data[7] = {0x04, 30, 30, 12, 15, 6, 25};
+    uint8_t rx_data[6] = {0};
+    bool ret_tx = itf_i2c_transaction(H_ITF_I2C_0, 0x51, tx_data, 7, NULL, 0);
+    bool ret_rx = itf_i2c_transaction(H_ITF_I2C_0, 0x51, tx_data, 1, rx_data, 6);
+    osDelay(5);
   }
   /* USER CODE END StartDefaultTask */
 }

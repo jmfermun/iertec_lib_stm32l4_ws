@@ -1,17 +1,18 @@
 /*******************************************************************************
- * @file test_itf_spi.c
+ * @file test_itf_i2c.c
  * @author juanmanuel.fernandez@iertec.com
- * @date 28 Dec 2022
- * @brief Test for the SPI interface driver.
+ * @date 18 Jan 2023
+ * @brief Test for the I2C interface driver.
  *
- * The test connects a SPI interface in a loop-back configuration, so the data
- * sent by the SPI interface is received by the same interface.
+ * The test connects the I2C interface to a PCF85063A device and interchanges
+ * information with it.
  *
  * Needed connections:
- * - PA7 -> PA6
+ * - PB8 ->  SCL
+ * - PB9 <-> SDA
  ******************************************************************************/
 
-#include "itf_spi.h"
+#include "itf_i2c.h"
 
 #include "unity.h"
 
@@ -84,51 +85,44 @@ TEST_FILE("itf_bsp.c")
  * Constants and macros
  ******************************************************************************/
 
-#define DATA_SIZE   (256)
-
-/****************************************************************************//*
- * Private data
- ******************************************************************************/
-
-static uint8_t tx_data[DATA_SIZE];
-static uint8_t rx_data[DATA_SIZE];
+#define SLAVE_ADDRESS (0x51)
+#define DATA_BYTES    30, 30, 12, 15, 6, 25
+#define DATA_SIZE     (6)
 
 /****************************************************************************//*
  * Tests
  ******************************************************************************/
 
-void setUp(void)
+void test_itf_i2c_init(void)
 {
-    memset(rx_data, 0, DATA_SIZE);
+    TEST_ASSERT_TRUE(itf_i2c_init(H_ITF_I2C_0));
 }
 
-void test_itf_spi_init(void)
+void test_itf_i2c_write(void)
 {
-    TEST_ASSERT_TRUE(itf_spi_init(H_ITF_SPI_0));
+    uint8_t tx_data[] = {0x04, DATA_BYTES};
+
+    TEST_ASSERT_TRUE(itf_i2c_transaction(H_ITF_I2C_0, SLAVE_ADDRESS, tx_data,
+                                         sizeof(tx_data), NULL, 0));
 }
 
-void test_itf_spi_1(void)
+void test_itf_i2c_read(void)
 {
-    for (int i = 0; i < DATA_SIZE; i++)
+    uint8_t tx_data[] = {0x04};
+    uint8_t rx_data[DATA_SIZE] = {0};
+    uint8_t exp_data[DATA_SIZE] = {DATA_BYTES};
+
+    TEST_ASSERT_TRUE(itf_i2c_transaction(H_ITF_I2C_0, SLAVE_ADDRESS, tx_data,
+                                         sizeof(tx_data), rx_data,
+                                         sizeof(rx_data)));
+
+    // Seconds could have incremented by one
+    if (exp_data[0] + 1 == rx_data[0])
     {
-        tx_data[i] = i;
+        exp_data[0] += 1;
     }
 
-    itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, DATA_SIZE);
-
-    TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
-}
-
-void test_itf_spi_2(void)
-{
-    for (int i = 0; i < DATA_SIZE; i++)
-    {
-        tx_data[i] = DATA_SIZE - 1 - i;
-    }
-
-    itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, DATA_SIZE);
-
-    TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_data, rx_data, DATA_SIZE);
 }
 
 /******************************** End of file *********************************/

@@ -61,6 +61,7 @@ TEST_FILE("dma.c")
 TEST_FILE("gpio.c")
 TEST_FILE("main.c")
 TEST_FILE("spi.c")
+TEST_FILE("i2c.c")
 TEST_FILE("usart.c")
 
 // Test support dependencies

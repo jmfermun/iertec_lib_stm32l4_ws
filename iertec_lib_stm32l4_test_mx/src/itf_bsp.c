@@ -173,6 +173,7 @@ itf_bsp_ll_init (void)
 
     // Initialize here the DMA because it is a shared resource
     MX_DMA_Init();
+    MX_LPTIM2_Init();
 
     return ret;
 }

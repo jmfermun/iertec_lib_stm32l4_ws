@@ -29,7 +29,6 @@ main (void)
 
     // Init scheduler
     // Call init function for freertos objects (in freertos.c)
-    osKernelInitialize();
     MX_FREERTOS_Init();
 
     // Start scheduler

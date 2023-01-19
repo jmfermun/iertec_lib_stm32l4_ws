@@ -125,7 +125,7 @@ void StartDefaultTask(void *argument)
 //  itf_uart_read_enable(H_ITF_UART_DEBUG);
 
   // Test RTC
-  itf_rtc_set_callback(rtc_cb);
+//  itf_rtc_set_callback(rtc_cb);
 
   /* Infinite loop */
   for(;;)
@@ -240,8 +240,14 @@ void StartDefaultTask(void *argument)
 //    bool ret_rx = itf_i2c_transaction(H_ITF_I2C_0, 0x51, tx_data, 1, rx_data, 6);
 //    osDelay(5);
 
+    // Test power consumption
+    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+    HAL_Delay(500);
+    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+    osDelay(2000);
+
     // Default action
-    osDelay(4000);
+//    osDelay(4000);
     itf_wdgt_feed();
   }
   /* USER CODE END StartDefaultTask */

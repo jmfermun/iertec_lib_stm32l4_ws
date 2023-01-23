@@ -65,8 +65,8 @@ const itf_wdgt_config_t itf_wdgt_config =
 /** Hardware configuration of the available RTC interface. */
 const itf_rtc_config_t itf_rtc_config =
 {
-    .handle  = &hlptim1,
-    .init_ll = MX_LPTIM1_Init,
+    .handle  = &hlptim2,
+    .init_ll = MX_LPTIM2_Init,
 };
 
 /****************************************************************************//*
@@ -173,7 +173,6 @@ itf_bsp_ll_init (void)
 
     // Initialize here the DMA because it is a shared resource
     MX_DMA_Init();
-    MX_LPTIM2_Init();
 
     return ret;
 }

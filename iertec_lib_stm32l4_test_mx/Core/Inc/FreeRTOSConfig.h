@@ -71,7 +71,7 @@
 #define configQUEUE_REGISTRY_SIZE                8
 #define configUSE_COUNTING_SEMAPHORES            1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
-#define configUSE_TICKLESS_IDLE                  1
+#define configUSE_TICKLESS_IDLE                  2
 /* USER CODE BEGIN MESSAGE_BUFFER_LENGTH_TYPE */
 /* Defaults to size_t for backward compatibility, but can be changed
    if lengths will always be less than the number of bytes in a size_t. */
@@ -145,25 +145,7 @@ standard names. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+#include "lptimTickConfig.h"
 /* USER CODE END Defines */
-
-#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
-void PreSleepProcessing(uint32_t * ulExpectedIdleTime);
-void PostSleepProcessing(uint32_t * ulExpectedIdleTime);
-#endif /* defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__) */
-
-/* The configPRE_SLEEP_PROCESSING() and configPOST_SLEEP_PROCESSING() macros
-allow the application writer to add additional code before and after the MCU is
-placed into the low power state respectively. */
-#if configUSE_TICKLESS_IDLE == 1
-#define configPRE_SLEEP_PROCESSING(__x__)                              \
-                                       do {                            \
-                                         PreSleepProcessing(&(__x__)); \
-                                      }while(0)
-#define configPOST_SLEEP_PROCESSING(__x__)                              \
-                                       do {                             \
-                                         PostSleepProcessing(&(__x__)); \
-                                      }while(0)
-#endif /* configUSE_TICKLESS_IDLE == 1 */
 
 #endif /* FREERTOS_CONFIG_H */

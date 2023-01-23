@@ -71,34 +71,14 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
 /* GetTimerTaskMemory prototype (linked to static allocation support) */
 void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize );
 
-/* USER CODE BEGIN PREPOSTSLEEP */
-__weak void PreSleepProcessing(uint32_t * ulExpectedIdleTime)
+/* USER CODE BEGIN VPORT_SUPPORT_TICKS_AND_SLEEP */
+__weak void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
 {
-  uint32_t time_ticks = *ulExpectedIdleTime * 32768u / 1000u;
-
-  HAL_SuspendTick();
-  HAL_LPTIM_TimeOut_Start_IT(&hlptim2, 0xFFFF, time_ticks);
-
-  /*
-    (*ulExpectedIdleTime) is set to 0 to indicate that PreSleepProcessing contains
-    its own wait for interrupt or wait for event instruction and so the kernel vPortSuppressTicksAndSleep
-    function does not need to execute the wfi instruction
-  */
-  *ulExpectedIdleTime = 0;
-
-  /*Enter to sleep Mode using the HAL function HAL_PWR_EnterSLEEPMode with WFI instruction*/
-  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-//  HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+  // Generated when configUSE_TICKLESS_IDLE == 2.
+  // Function called in tasks.c (in portTASK_FUNCTION).
+  // TO BE COMPLETED or TO BE REPLACED by a user one, overriding that weak one.
 }
-
-__weak void PostSleepProcessing(uint32_t * ulExpectedIdleTime)
-{
-  (void) ulExpectedIdleTime;
-
-  HAL_LPTIM_TimeOut_Stop_IT(&hlptim2);
-  HAL_ResumeTick();
-}
-/* USER CODE END PREPOSTSLEEP */
+/* USER CODE END VPORT_SUPPORT_TICKS_AND_SLEEP */
 
 /* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
 static StaticTask_t xIdleTaskTCBBuffer;

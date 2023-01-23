@@ -18,6 +18,10 @@
 #include "itf_bsp.h"
 #include "stm32l4xx_hal.h"
 
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+
 /** @brief I2C interface hardware configuration type. */
 typedef struct
 {

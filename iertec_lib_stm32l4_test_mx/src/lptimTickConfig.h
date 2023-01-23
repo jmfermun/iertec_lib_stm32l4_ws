@@ -23,8 +23,13 @@
 // Without pre- and post-sleep processing, lptimTick.c uses only basic sleep mode during tickless idle.
 // To utilize the stop modes and their dramatic reduction in power consumption, we employ an ultra-low-power
 // driver to handle the pre- and post-sleep hooks.
-#define configPRE_SLEEP_PROCESSING(X)  HAL_SuspendTick()
-#define configPOST_SLEEP_PROCESSING(X) HAL_ResumeTick()
+#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
+extern void itf_pwr_pre_sleep(void);
+extern void itf_pwr_post_sleep(void);
+#endif // defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
+
+#define configPRE_SLEEP_PROCESSING(X)  itf_pwr_pre_sleep()
+#define configPOST_SLEEP_PROCESSING(X) itf_pwr_post_sleep()
 
 // Make sure the self-tests in our demo application capture tick-timing information as quickly as
 // possible after each tick.  This interrupt priority ensures the OS tick ISR preempts other ISRs.  Without
@@ -39,7 +44,7 @@
 // short ISR that interrupts STOP mode but doesn't interact with FreeRTOS at all. See lptimTick.c.)
 #define configMIN_RUN_BETWEEN_DEEP_SLEEPS  ( ( 2U * configCPU_CLOCK_HZ ) / 1000000 )
 
-#endif /* configUSE_TICKLESS_IDLE == 2 */
+#endif // configUSE_TICKLESS_IDLE == 2
 
 #endif // LPTIMTICKCONFIG_H
 

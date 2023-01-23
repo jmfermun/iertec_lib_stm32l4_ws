@@ -12,6 +12,7 @@
  */
 
 #include "itf_rtc.h"
+#include "itf_pwr.h"
 
 /****************************************************************************//*
  * Constants and macros
@@ -50,6 +51,16 @@ itf_rtc_init (void)
     {
         return false;
     }
+
+    // LPTIM2 instance does not support Stop 2 mode
+    uint8_t h_itf_pwr = itf_pwr_register(ITF_PWR_LEVEL_1);
+
+    if (H_ITF_PWR_NONE == h_itf_pwr)
+    {
+        return false;
+    }
+
+    itf_pwr_set_active(h_itf_pwr);
 
     if (HAL_LPTIM_TimeOut_Start_IT(itf_rtc_config.handle, ITF_RTC_CLK_FREQ,
                                    ITF_RTC_CLK_FREQ - 1) != HAL_OK)

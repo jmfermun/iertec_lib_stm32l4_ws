@@ -12,6 +12,7 @@
  */
 
 #include "itf_uart.h"
+#include "itf_pwr.h"
 #include "itf_io.h"
 
 #include "FreeRTOS.h"
@@ -57,6 +58,8 @@ typedef struct
     size_t               len_rx;
     h_itf_io_t           pin_rts;
     itf_uart_xts_state   rts_state;
+    uint8_t              h_itf_pwr_tx;
+    uint8_t              h_itf_pwr_rx;
 } itf_uart_instance_t;
 
 /****************************************************************************//*
@@ -143,6 +146,23 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
         instance->rts_state = ITF_UART_XTS_STATE_NOT_USED;
     }
 
+    instance->h_itf_pwr_tx = itf_pwr_register(ITF_PWR_LEVEL_0);
+
+    if (UART_INSTANCE_LOWPOWER(instance->handle))
+    {
+        instance->h_itf_pwr_rx = itf_pwr_register(ITF_PWR_LEVEL_2);
+    }
+    else
+    {
+        instance->h_itf_pwr_rx = itf_pwr_register(ITF_PWR_LEVEL_1);
+    }
+
+    if ((H_ITF_PWR_NONE == instance->h_itf_pwr_tx)
+        || (H_ITF_PWR_NONE == instance->h_itf_pwr_rx))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -193,6 +213,8 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
     {
         itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
+        itf_pwr_set_active(instance->h_itf_pwr_tx);
+
         taskENTER_CRITICAL();
 
         instance->buffer_tx = (uint8_t*)data;
@@ -205,6 +227,8 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 
         // Block until transmission completes
         xSemaphoreTake(instance->sem_tx, portMAX_DELAY);
+
+        itf_pwr_set_inactive(instance->h_itf_pwr_tx);
     }
 
     return true;
@@ -257,7 +281,11 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
         itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
     }
 
+    HAL_UARTEx_EnableStopMode(instance->handle);
+
     taskEXIT_CRITICAL();
+
+    itf_pwr_set_active(instance->h_itf_pwr_rx);
 }
 
 void
@@ -281,7 +309,11 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
         itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
     }
 
+    HAL_UARTEx_DisableStopMode(instance->handle);
+
     taskEXIT_CRITICAL();
+
+    itf_pwr_set_inactive(instance->h_itf_pwr_rx);
 }
 
 size_t

@@ -51,7 +51,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-extern LPTIM_HandleTypeDef hlptim2;
+
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -184,10 +184,10 @@ void StartDefaultTask(void const * argument)
 //    osDelay(1000);
 
     // Test I/O interrupt
-//    osDelay(5000);
 //    itf_io_set_int_cb(H_ITF_IO_BUTTON_1, button_isr);
-//    osDelay(5000);
+//    osDelay(2000);
 //    itf_io_set_int_cb(H_ITF_IO_BUTTON_1, NULL);
+//    osDelay(2000);
 
     // Test UART
 //    char data[32];
@@ -198,6 +198,7 @@ void StartDefaultTask(void const * argument)
 //
 //    if (!ret)
 //    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
 //      for(;;);
 //    }
 //
@@ -206,6 +207,7 @@ void StartDefaultTask(void const * argument)
 //
 //    if (!ret)
 //    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
 //      for(;;);
 //    }
 
@@ -236,7 +238,7 @@ void StartDefaultTask(void const * argument)
 //        itf_debug_put_char(d_char);
 //    }
 //
-//    osDelay(5000);
+//    osDelay(4000);
 
     // Test SPI
 //    uint8_t data_tx[100];
@@ -244,25 +246,48 @@ void StartDefaultTask(void const * argument)
 //
 //    for (size_t i = 0; i < 100; i++)
 //    {
-//        data_tx[i] = i;
+//      data_tx[i] = i;
+//      data_rx[i] = 0;
 //    }
 //
 //    bool ret = itf_spi_transaction(H_ITF_SPI_0, data_tx, data_rx, 100);
 //
-//    osDelay(5000);
+//    for (size_t i = 0; i < 100; i++)
+//    {
+//      if (data_tx[i] != data_rx[i])
+//      {
+//        ret = false;
+//        break;
+//      }
+//    }
+//
+//    if (!ret)
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      for(;;);
+//    }
+//
+//    osDelay(4000);
 
     // Test watchdog
 //    osDelay(1000);
 //    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
 //
 //    // Change timeout
-////    bool ret = itf_wdgt_set_timeout(10000);
+//    bool ret = itf_wdgt_set_timeout(10000);
+//
+//    if (!ret)
+//    {
+//      for(;;);
+//    }
 //
 //    // Infinite feed loop
 //    for (;;)
 //    {
-//      itf_wdgt_feed();
 //      osDelay(4000);
+//      itf_wdgt_feed();
+//      osDelay(6000);
+//      itf_wdgt_feed();
 //    }
 
     // Test I2C (PCF85063A)

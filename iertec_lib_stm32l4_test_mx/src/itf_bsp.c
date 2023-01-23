@@ -14,16 +14,17 @@
 #include "itf_bsp.h"
 #include "itf_clk.h"
 #include "itf_wdgt.h"
-#include "itf_rtc.h"
 #include "itf_io.h"
+#include "itf_pwr.h"
 #include "itf_debug.h"
+#include "itf_rtc.h"
 #include "itf_spi.h"
 #include "itf_i2c.h"
 #include "itf_uart.h"
 #include "main.h"
 #include "iwdg.h"
-#include "lptim.h"
 #include "gpio.h"
+#include "lptim.h"
 #include "dma.h"
 #include "spi.h"
 #include "i2c.h"
@@ -147,7 +148,7 @@ const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
     {
         .handle       = &huart2,
         .pin_rts      = H_ITF_IO_NONE,
-        .timeout_msec = 5000,
+        .timeout_msec = 2000,
         .init_ll      = MX_USART2_UART_Init,
     },
 };
@@ -170,6 +171,7 @@ itf_bsp_ll_init (void)
     ret = itf_wdgt_init() && ret;
 #endif // TEST
     ret = itf_io_init() && ret;
+    ret = itf_pwr_init() && ret;
 
     // Initialize here the DMA because it is a shared resource
     MX_DMA_Init();

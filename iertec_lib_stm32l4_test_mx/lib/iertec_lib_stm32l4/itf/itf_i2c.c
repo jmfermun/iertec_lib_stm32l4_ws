@@ -12,6 +12,7 @@
  */
 
 #include "itf_i2c.h"
+#include "itf_pwr.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -26,6 +27,7 @@ typedef struct
     I2C_HandleTypeDef * handle;
     SemaphoreHandle_t   mutex;
     SemaphoreHandle_t   semaphore;
+    uint8_t             h_itf_pwr;
 } itf_i2c_instance_t;
 
 /****************************************************************************//*
@@ -88,6 +90,13 @@ itf_i2c_init (h_itf_i2c_t h_itf_i2c)
         return false;
     }
 
+    instance->h_itf_pwr = itf_pwr_register(ITF_PWR_LEVEL_0);
+
+    if (H_ITF_PWR_NONE == instance->h_itf_pwr)
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -125,6 +134,8 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
 
     (void)xSemaphoreTake(instance->mutex, portMAX_DELAY);
 
+    itf_pwr_set_active(instance->h_itf_pwr);
+
     if ((NULL != tx_data) && (HAL_OK == status))
     {
         status = HAL_I2C_Master_Transmit_DMA(instance->handle, slave_address,
@@ -158,6 +169,8 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
             }
         }
     }
+
+    itf_pwr_set_inactive(instance->h_itf_pwr);
 
     if (HAL_OK == status)
     {

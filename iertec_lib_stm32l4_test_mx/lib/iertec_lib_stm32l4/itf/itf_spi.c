@@ -12,6 +12,7 @@
  */
 
 #include "itf_spi.h"
+#include "itf_pwr.h"
 
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -28,6 +29,7 @@ typedef struct
     SPI_HandleTypeDef * handle;
     SemaphoreHandle_t   mutex;
     SemaphoreHandle_t   semaphore;
+    uint8_t             h_itf_pwr;
 } itf_spi_instance_t;
 
 /****************************************************************************//*
@@ -90,6 +92,13 @@ itf_spi_init (h_itf_spi_t h_itf_spi)
         return false;
     }
 
+    instance->h_itf_pwr = itf_pwr_register(ITF_PWR_LEVEL_0);
+
+    if (H_ITF_PWR_NONE == instance->h_itf_pwr)
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -120,6 +129,8 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
     itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
     HAL_StatusTypeDef status;
 
+    itf_pwr_set_active(instance->h_itf_pwr);
+
     if ((NULL != tx_data) && (NULL != rx_data))
     {
         status = HAL_SPI_TransmitReceive_DMA(instance->handle, (uint8_t *)tx_data,
@@ -145,11 +156,14 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
 
     if (status != HAL_OK)
     {
+        itf_pwr_set_inactive(instance->h_itf_pwr);
         return false;
     }
 
     // Block until transmission completes
     xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+
+    itf_pwr_set_inactive(instance->h_itf_pwr);
 
     if (instance->handle->ErrorCode != HAL_SPI_ERROR_NONE)
     {

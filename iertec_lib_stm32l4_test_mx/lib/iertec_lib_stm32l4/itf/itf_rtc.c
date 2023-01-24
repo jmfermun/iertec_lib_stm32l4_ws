@@ -15,13 +15,6 @@
 #include "itf_pwr.h"
 
 /****************************************************************************//*
- * Constants and macros
- ******************************************************************************/
-
-/** Frequency of the clock used by the RTC (Hz). */
-#define ITF_RTC_CLK_FREQ (32678u)
-
-/****************************************************************************//*
  * Private data
  ******************************************************************************/
 
@@ -85,32 +78,54 @@ void
 itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
 {
     uint32_t sec;
-    uint32_t counter_1;
-    uint32_t counter_2;
+    uint32_t counter;
 
     // To read reliably the content of the LPTIM_CNT register, two successive
     // read accesses must be performed and compared
     do
     {
-        counter_1 = itf_rtc_config.handle->Instance->CNT;
+        counter = itf_rtc_config.handle->Instance->CNT;
 
         // Performing the seconds read between the counter reads we can ensure
         // that the seconds value is reliable and no critical section is needed
         sec = itf_rtc_seconds;
-
-        counter_2 = itf_rtc_config.handle->Instance->CNT;
-    } while (counter_1 != counter_2);
+    } while (counter != itf_rtc_config.handle->Instance->CNT);
 
     *seconds = sec;
 
-    if (counter_1 >= ITF_RTC_CLK_FREQ)
+    if (counter >= ITF_RTC_CLK_FREQ)
     {
         *cseconds = 0;
     }
     else
     {
-        *cseconds = counter_1 * 100u / ITF_RTC_CLK_FREQ;
+        *cseconds = counter * 100u / ITF_RTC_CLK_FREQ;
     }
+}
+
+uint32_t
+itf_rtc_get_ticks (void)
+{
+    uint32_t sec;
+    uint32_t counter;
+
+    // To read reliably the content of the LPTIM_CNT register, two successive
+    // read accesses must be performed and compared
+    do
+    {
+        counter = itf_rtc_config.handle->Instance->CNT;
+
+        // Performing the seconds read between the counter reads we can ensure
+        // that the seconds value is reliable and no critical section is needed
+        sec = itf_rtc_seconds;
+    } while (counter != itf_rtc_config.handle->Instance->CNT);
+
+    if (counter >= ITF_RTC_CLK_FREQ)
+    {
+        counter = 0;
+    }
+
+    return sec * ITF_RTC_CLK_FREQ + counter;
 }
 
 void

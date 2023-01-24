@@ -32,6 +32,7 @@
 #include "itf_spi.h"
 #include "itf_i2c.h"
 #include "itf_rtc.h"
+#include "sys_util.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,6 +124,12 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN StartDefaultTask */
   // Test UART
 //  itf_uart_read_enable(H_ITF_UART_DEBUG);
+
+  // Test reset
+//  uint32_t     reset_code;
+//  const char * reset_str;
+//
+//  sys_get_reset_source(&reset_code, &reset_str);
 
   // Test RTC
 //  itf_rtc_set_callback(rtc_cb);
@@ -289,10 +296,33 @@ void StartDefaultTask(void const * argument)
 //    osDelay(4000);
 
     // Test power consumption
-    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    HAL_Delay(500);
+//    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//    osDelay(2000);
+
+    // Test time
+    uint32_t time_1 = sys_get_timestamp();
+    osDelay(500);
+    uint32_t time_2 = sys_get_timestamp();
+    uint32_t time_diff = time_2 - time_1;
+
+    if ((time_diff > 505000) || (time_diff < 495000))
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+      for(;;);
+    }
+
+    time_1 = sys_get_timestamp();
     HAL_Delay(500);
-    itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
-    osDelay(2000);
+    time_2 = sys_get_timestamp();
+    time_diff = time_2 - time_1;
+
+    if ((time_diff > 505000) || (time_diff < 495000))
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+      for(;;);
+    }
 
     // Default action
 //    osDelay(4000);

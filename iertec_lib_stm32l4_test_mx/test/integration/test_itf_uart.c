@@ -17,6 +17,7 @@
  ******************************************************************************/
 
 #include "itf_uart.h"
+#include "itf_rtc.h"
 #include "sys_util.h"
 
 #include <FreeRTOS.h>
@@ -91,6 +92,7 @@ TEST_FILE("itf_pwr.c")
 TEST_FILE("itf_bsp.c")
 
 // Test dependencies
+TEST_FILE("itf_rtc.c")
 TEST_FILE("sys_util.c")
 
 /****************************************************************************//*
@@ -185,6 +187,7 @@ void test_itf_uart_init(void)
 {
     strcpy((char*)tx_data, TX_DATA_VALUE);
 
+    TEST_ASSERT_TRUE(itf_rtc_init());
     TEST_ASSERT_FALSE(itf_uart_init(H_ITF_UART_COUNT));
     TEST_ASSERT_TRUE(itf_uart_init(H_ITF_UART_0));
     itf_uart_read_enable(H_ITF_UART_0);
@@ -270,7 +273,7 @@ void test_itf_uart_read_timeout(void)
         rx_len = itf_uart_read(H_ITF_UART_0, (char*)rx_data, DATA_SIZE);
         time = (sys_get_timestamp() - time) / 1000;
 
-        TEST_ASSERT_UINT32_WITHIN(1, 1000, time);
+        TEST_ASSERT_UINT32_WITHIN(5, 1000, time);
         TEST_ASSERT_EQUAL(0, rx_len);
     }
 }

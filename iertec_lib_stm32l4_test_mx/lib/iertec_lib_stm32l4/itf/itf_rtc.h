@@ -21,6 +21,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/** Frequency of the clock used by the RTC (Hz). */
+#define ITF_RTC_CLK_FREQ (32678u)
+
 /** @brief I2C interface hardware configuration type. */
 typedef struct
 {
@@ -54,6 +57,13 @@ void itf_rtc_set_time(uint32_t seconds, uint8_t cseconds);
  * @param[out] cseconds Centiseconds count.
  */
 void itf_rtc_get_time(uint32_t * seconds, uint8_t * cseconds);
+
+/**
+ * @brief Get the total number of ticks elapsed since the timer start.
+ *
+ * @return Number of ticks elapsed.
+ */
+uint32_t itf_rtc_get_ticks(void);
 
 /**
  * @brief Set the callback to call each second.

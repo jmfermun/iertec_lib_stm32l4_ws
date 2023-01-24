@@ -19,7 +19,8 @@
 #include "itf_uart.h"
 #include "sys_util.h"
 
-#include "cmsis_os.h"
+#include <FreeRTOS.h>
+#include <task.h>
 
 #include "unity.h"
 
@@ -46,7 +47,8 @@ TEST_FILE("tasks.c")
 TEST_FILE("timers.c")
 TEST_FILE("port.c")
 TEST_FILE("heap_4.c")
-TEST_FILE("cmsis_os2.c")
+TEST_FILE("cmsis_os.c")
+TEST_FILE("lptimTick.c")
 
 // HAL dependencies
 TEST_FILE("stm32l4xx_hal.c")
@@ -85,6 +87,7 @@ TEST_FILE("usart.c")
 TEST_FILE("test_main.c")
 TEST_FILE("itf_clk.c")
 TEST_FILE("itf_io.c")
+TEST_FILE("itf_pwr.c")
 TEST_FILE("itf_bsp.c")
 
 // Test dependencies
@@ -94,25 +97,19 @@ TEST_FILE("sys_util.c")
  * Constants and macros
  ******************************************************************************/
 
-#define TX_DATA_VALUE           "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\r\n"
-#define DATA_SIZE               (256)
+#define TASK_SENDER_PRIORITY   (1)
+#define TASK_SENDER_STACK_SIZE (256)
 
-#define PERIOD_STOP_MS          (0)
-#define PERIOD_FAST_MS          (25)
-#define PERIOD_SLOW_MS          (250)
+#define TX_DATA_VALUE          "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\r\n"
+#define DATA_SIZE              (256)
+
+#define PERIOD_STOP_MS         (0)
+#define PERIOD_FAST_MS         (25)
+#define PERIOD_SLOW_MS         (250)
 
 /****************************************************************************//*
  * Private data
  ******************************************************************************/
-
-static osThreadId_t h_task_sender;
-
-static const osThreadAttr_t task_sender_attributes =
-{
-    .name = "Sender",
-    .stack_size = 1024,
-    .priority = osPriorityBelowNormal,
-};
 
 static uint8_t tx_data[DATA_SIZE];
 static uint8_t rx_data[DATA_SIZE];
@@ -192,9 +189,11 @@ void test_itf_uart_init(void)
     TEST_ASSERT_TRUE(itf_uart_init(H_ITF_UART_0));
     itf_uart_read_enable(H_ITF_UART_0);
 
-    // Initialize the test main task
-    h_task_sender = osThreadNew(task_sender_fn, NULL, &task_sender_attributes);
-    TEST_ASSERT_TRUE(NULL != h_task_sender);
+    // Initialize the sender task
+    BaseType_t h_task = xTaskCreate(task_sender_fn, "Sender",
+                                    TASK_SENDER_STACK_SIZE, NULL,
+                                    TASK_SENDER_PRIORITY, NULL);
+    TEST_ASSERT_TRUE(NULL != h_task);
 }
 
 void test_itf_uart_flow_control_none(void)

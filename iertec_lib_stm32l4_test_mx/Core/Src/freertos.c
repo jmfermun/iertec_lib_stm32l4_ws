@@ -65,12 +65,6 @@ void StartDefaultTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
-/* GetIdleTaskMemory prototype (linked to static allocation support) */
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
-
-/* GetTimerTaskMemory prototype (linked to static allocation support) */
-void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize );
-
 /* USER CODE BEGIN VPORT_SUPPORT_TICKS_AND_SLEEP */
 __weak void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
 {
@@ -79,32 +73,6 @@ __weak void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
   // TO BE COMPLETED or TO BE REPLACED by a user one, overriding that weak one.
 }
 /* USER CODE END VPORT_SUPPORT_TICKS_AND_SLEEP */
-
-/* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
-static StaticTask_t xIdleTaskTCBBuffer;
-static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
-
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
-{
-  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
-  *ppxIdleTaskStackBuffer = &xIdleStack[0];
-  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
-  /* place for user code */
-}
-/* USER CODE END GET_IDLE_TASK_MEMORY */
-
-/* USER CODE BEGIN GET_TIMER_TASK_MEMORY */
-static StaticTask_t xTimerTaskTCBBuffer;
-static StackType_t xTimerStack[configTIMER_TASK_STACK_DEPTH];
-
-void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize )
-{
-  *ppxTimerTaskTCBBuffer = &xTimerTaskTCBBuffer;
-  *ppxTimerTaskStackBuffer = &xTimerStack[0];
-  *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
-  /* place for user code */
-}
-/* USER CODE END GET_TIMER_TASK_MEMORY */
 
 /**
   * @brief  FreeRTOS initialization
@@ -291,11 +259,34 @@ void StartDefaultTask(void const * argument)
 //    }
 
     // Test I2C (PCF85063A)
-//    uint8_t tx_data[7] = {0x04, 30, 30, 12, 15, 6, 25};
-//    uint8_t rx_data[6] = {0};
-//    bool ret_tx = itf_i2c_transaction(H_ITF_I2C_0, 0x51, tx_data, 7, NULL, 0);
-//    bool ret_rx = itf_i2c_transaction(H_ITF_I2C_0, 0x51, tx_data, 1, rx_data, 6);
-//    osDelay(5);
+//    uint8_t data_tx[7] = {0x04, 30, 30, 12, 15, 6, 25};
+//    uint8_t data_rx[6] = {0};
+//    bool ret = itf_i2c_transaction(H_ITF_I2C_0, 0x51, data_tx, 7, NULL, 0);
+//
+//    if (!ret)
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      for(;;);
+//    }
+//
+//    ret = itf_i2c_transaction(H_ITF_I2C_0, 0x51, data_tx, 1, data_rx, 6);
+//
+//    for (size_t i = 1; i < 7; i++)
+//    {
+//      if (data_tx[i] != data_rx[i - 1])
+//      {
+//        ret = false;
+//        break;
+//      }
+//    }
+//
+//    if (!ret)
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      for(;;);
+//    }
+//
+//    osDelay(4000);
 
     // Test power consumption
     itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);

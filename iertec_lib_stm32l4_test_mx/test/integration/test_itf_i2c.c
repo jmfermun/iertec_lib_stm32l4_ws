@@ -39,7 +39,8 @@ TEST_FILE("tasks.c")
 TEST_FILE("timers.c")
 TEST_FILE("port.c")
 TEST_FILE("heap_4.c")
-TEST_FILE("cmsis_os2.c")
+TEST_FILE("cmsis_os.c")
+TEST_FILE("lptimTick.c")
 
 // HAL dependencies
 TEST_FILE("stm32l4xx_hal.c")
@@ -78,6 +79,7 @@ TEST_FILE("usart.c")
 TEST_FILE("test_main.c")
 TEST_FILE("itf_clk.c")
 TEST_FILE("itf_io.c")
+TEST_FILE("itf_pwr.c")
 TEST_FILE("itf_bsp.c")
 
 // Test dependencies

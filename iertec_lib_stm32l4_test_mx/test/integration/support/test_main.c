@@ -7,7 +7,8 @@
 
 #include "itf_bsp.h"
 
-#include "cmsis_os.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #include <stdlib.h>
 
@@ -17,17 +18,14 @@ extern void __gcov_dump(void);
 extern const char test_file_name[];
 
 /*******************************************************************************
- * Private data
+ * Constants and macros
  ******************************************************************************/
 
-static osThreadId_t h_test_main_task;
+/** Test task priority. */
+#define TEST_MAIN_TASK_PRIORITY         (1)
 
-static const osThreadAttr_t test_main_task_attributes =
-{
-    .name = "Test main",
-    .stack_size = 1024,
-    .priority = (osPriority_t) osPriorityNormal,
-};
+/** Test task stack size in words (4 bytes). */
+#define TEST_MAIN_TASK_STACK_SIZE       (256)
 
 /*******************************************************************************
  * Private code
@@ -64,14 +62,12 @@ int main(void)
     // Call driver init functions
     itf_bsp_ll_init();
 
-    osKernelInitialize();
-
     // Initialize the test main task
-    h_test_main_task = osThreadNew(test_main_task_fn, NULL,
-                                   &test_main_task_attributes);
+    xTaskCreate(test_main_task_fn, "Test main", TEST_MAIN_TASK_STACK_SIZE, NULL,
+                TEST_MAIN_TASK_PRIORITY, NULL);
 
     // Start the RTOS scheduler
-    osKernelStart();
+    vTaskStartScheduler();
 
     return 0;
 }

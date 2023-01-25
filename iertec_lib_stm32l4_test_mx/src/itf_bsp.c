@@ -185,7 +185,6 @@ itf_bsp_init (void)
 #ifndef TEST
     bool ret = true;
 
-    itf_debug_init();
     ret = itf_rtc_init() && ret;
     ret = itf_spi_init(H_ITF_SPI_0) && ret;
     ret = itf_i2c_init(H_ITF_I2C_0) && ret;

@@ -33,6 +33,7 @@
 #include "itf_i2c.h"
 #include "itf_rtc.h"
 #include "sys_util.h"
+#include "debug_util.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -187,33 +188,32 @@ void StartDefaultTask(void const * argument)
 //    }
 
     // Test debug UART
-//    if (itf_debug_uart_check())
-//    {
-//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-//    }
-//    else
-//    {
-//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
-//    }
-//
-//    itf_debug_write("Hola\r\n", 6);
-//
-//    int d_char = itf_debug_get_char();
-//
-//    if (-2 == d_char)
-//    {
-//      itf_debug_write("-2\r\n", 4);
-//    }
-//    else if (-1 == d_char)
-//    {
-//      itf_debug_write("-1\r\n", 4);
-//    }
-//    else
-//    {
-//        itf_debug_put_char(d_char);
-//    }
-//
-//    osDelay(4000);
+//    DEBUG_ASSERT(false);
+    static int i = 0;
+
+    if (itf_debug_is_connected())
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+    }
+    else
+    {
+      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+    }
+
+    debug_printf("Hola %d\r\n", i++);
+
+    int d_char = debug_get_char();
+
+    if (d_char < 0)
+    {
+      debug_printf("%d\r\n", d_char);
+    }
+    else
+    {
+        debug_printf("%c\r\n", d_char);
+    }
+
+    osDelay(4000);
 
     // Test SPI
 //    uint8_t data_tx[100];
@@ -302,27 +302,27 @@ void StartDefaultTask(void const * argument)
 //    osDelay(2000);
 
     // Test time
-    uint32_t time_1 = sys_get_timestamp();
-    osDelay(500);
-    uint32_t time_2 = sys_get_timestamp();
-    uint32_t time_diff = time_2 - time_1;
-
-    if ((time_diff > 505000) || (time_diff < 495000))
-    {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-      for(;;);
-    }
-
-    time_1 = sys_get_timestamp();
-    HAL_Delay(500);
-    time_2 = sys_get_timestamp();
-    time_diff = time_2 - time_1;
-
-    if ((time_diff > 505000) || (time_diff < 495000))
-    {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-      for(;;);
-    }
+//    uint32_t time_1 = sys_get_timestamp();
+//    osDelay(500);
+//    uint32_t time_2 = sys_get_timestamp();
+//    uint32_t time_diff = time_2 - time_1;
+//
+//    if ((time_diff > 505000) || (time_diff < 495000))
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      for(;;);
+//    }
+//
+//    time_1 = sys_get_timestamp();
+//    HAL_Delay(500);
+//    time_2 = sys_get_timestamp();
+//    time_diff = time_2 - time_1;
+//
+//    if ((time_diff > 505000) || (time_diff < 495000))
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//      for(;;);
+//    }
 
     // Default action
 //    osDelay(4000);

@@ -2,13 +2,13 @@
  * @file itf_debug.h
  * @author juanmanuel.fernandez@iertec.com
  * @date 23 Dec 2022
- * @brief Debug UART interface driver.
+ * @brief Debug interface driver.
  * @ingroup itf_debug
  ******************************************************************************/
 
 /**
  * @defgroup itf_debug itf_debug
- * @brief Debug UART interface driver.
+ * @brief Debug interface driver.
  * @{
  */
 
@@ -30,31 +30,37 @@ typedef struct
 } itf_debug_config_t;
 
 /**
- * @brief Check if the UART Rx pin is 1 (UART connected).
+ * @brief Check if the interface is connected.
  *
- * @return true if UART is connected, false otherwise.
+ * @return true if it is connected, false otherwise.
  */
-bool itf_debug_uart_check(void);
+bool itf_debug_is_connected(void);
 
 /**
- * @brief Initialize the debug UART.
+ * @brief Initialize the debug interface.
+ *
+ * @retval true If the interface is initialized correctly.
+ * @retval false If an error occurs.
  */
-void itf_debug_init(void);
+bool itf_debug_init(void);
 
 /**
- * @brief Deinitialize the debug UART.
+ * @brief Deinitialize the debug interface.
+ *
+ * @retval true If the interface is deinitialized correctly.
+ * @retval false If an error occurs.
  */
-void itf_debug_deinit(void);
+bool itf_debug_deinit(void);
 
 /**
- * @brief Send a char through the debug UART.
+ * @brief Send a char through the debug interface.
  *
  * @param ch Character to be sent.
  */
 void itf_debug_put_char(char ch);
 
 /**
- * @brief Read a character from the debug UART.
+ * @brief Read a character from the debug interface.
  *
  * @return Character read.
  * @retval -1 An error occurs.
@@ -63,7 +69,7 @@ void itf_debug_put_char(char ch);
 int itf_debug_get_char(void);
 
 /**
- * @brief Send binary data through the debug UART.
+ * @brief Send binary data through the debug interface.
  *
  * @param data Binary data to be sent.
  * @param len Number of bytes to send.

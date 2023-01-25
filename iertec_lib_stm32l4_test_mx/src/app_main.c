@@ -6,6 +6,7 @@
  ******************************************************************************/
 
 #include "itf_bsp.h"
+#include "debug_util.h"
 #include "cmsis_os.h"
 
 extern void MX_FREERTOS_Init(void);
@@ -24,8 +25,13 @@ main (void)
     bool ret;
 
     ret = itf_bsp_ll_init();
+    DEBUG_ASSERT(ret);
+
+    ret = debug_init();
+    DEBUG_ASSERT(ret);
 
     ret = itf_bsp_init();
+    DEBUG_ASSERT(ret);
 
     // Init scheduler
     // Call init function for freertos objects (in freertos.c)

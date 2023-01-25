@@ -7,7 +7,9 @@
 
 #include "itf_bsp.h"
 #include "debug_util.h"
-#include "cmsis_os.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
 
 extern void MX_FREERTOS_Init(void);
 
@@ -33,12 +35,11 @@ main (void)
     ret = itf_bsp_init();
     DEBUG_ASSERT(ret);
 
-    // Init scheduler
     // Call init function for freertos objects (in freertos.c)
     MX_FREERTOS_Init();
 
     // Start scheduler
-    osKernelStart();
+    vTaskStartScheduler();
 
     // Avoid compiler warning in release build
     (void)ret;

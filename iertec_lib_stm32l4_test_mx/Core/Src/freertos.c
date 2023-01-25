@@ -189,31 +189,31 @@ void StartDefaultTask(void const * argument)
 
     // Test debug UART
 //    DEBUG_ASSERT(false);
-    static int i = 0;
-
-    if (itf_debug_is_connected())
-    {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-    }
-    else
-    {
-      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
-    }
-
-    debug_printf("Hola %d\r\n", i++);
-
-    int d_char = debug_get_char();
-
-    if (d_char < 0)
-    {
-      debug_printf("%d\r\n", d_char);
-    }
-    else
-    {
-        debug_printf("%c\r\n", d_char);
-    }
-
-    osDelay(4000);
+//    static int i = 0;
+//
+//    if (itf_debug_is_connected())
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
+//    }
+//    else
+//    {
+//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_LOW);
+//    }
+//
+//    debug_printf("Hola %d\r\n", i++);
+//
+//    int d_char = debug_get_char();
+//
+//    if (d_char < 0)
+//    {
+//      debug_printf("%d\r\n", d_char);
+//    }
+//    else
+//    {
+//        debug_printf("%c\r\n", d_char);
+//    }
+//
+//    osDelay(4000);
 
     // Test SPI
 //    uint8_t data_tx[100];
@@ -302,27 +302,26 @@ void StartDefaultTask(void const * argument)
 //    osDelay(2000);
 
     // Test time
-//    uint32_t time_1 = sys_get_timestamp();
-//    osDelay(500);
-//    uint32_t time_2 = sys_get_timestamp();
-//    uint32_t time_diff = time_2 - time_1;
-//
-//    if ((time_diff > 505000) || (time_diff < 495000))
-//    {
-//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-//      for(;;);
-//    }
-//
-//    time_1 = sys_get_timestamp();
-//    HAL_Delay(500);
-//    time_2 = sys_get_timestamp();
-//    time_diff = time_2 - time_1;
-//
-//    if ((time_diff > 505000) || (time_diff < 495000))
-//    {
-//      itf_io_set_value(H_ITF_IO_LED_GREEN, ITF_IO_HIGH);
-//      for(;;);
-//    }
+    uint32_t time_1 = sys_get_timestamp();
+    sys_sleep_msec(1000);
+    uint32_t time_2 = sys_get_timestamp();
+    uint32_t time_diff = time_2 - time_1;
+
+    debug_printf("TSL %u\r\n", time_diff);
+
+    time_1 = sys_get_timestamp();
+    HAL_Delay(1000);
+    time_2 = sys_get_timestamp();
+    time_diff = time_2 - time_1;
+
+    debug_printf("TDH %u\r\n", time_diff);
+
+    time_1 = sys_get_timestamp();
+    sys_delay_usec(1000000);
+    time_2 = sys_get_timestamp();
+    time_diff = time_2 - time_1;
+
+    debug_printf("TDR %u\r\n\r\n", time_diff);
 
     // Default action
 //    osDelay(4000);

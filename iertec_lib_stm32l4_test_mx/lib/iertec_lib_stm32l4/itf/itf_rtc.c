@@ -55,8 +55,8 @@ itf_rtc_init (void)
 
     itf_pwr_set_active(h_itf_pwr);
 
-    if (HAL_LPTIM_TimeOut_Start_IT(itf_rtc_config.handle, ITF_RTC_CLK_FREQ,
-                                   ITF_RTC_CLK_FREQ - 1) != HAL_OK)
+    if (HAL_LPTIM_TimeOut_Start_IT(itf_rtc_config.handle, ITF_RTC_CLK_FREQ - 1,
+                                   ITF_RTC_CLK_FREQ - 2) != HAL_OK)
     {
         return false;
     }
@@ -77,6 +77,7 @@ itf_rtc_set_time (uint32_t seconds, uint8_t cseconds)
 void
 itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
 {
+    LPTIM_TypeDef * lptim = itf_rtc_config.handle->Instance;
     uint32_t sec;
     uint32_t counter;
 
@@ -84,12 +85,12 @@ itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
     // read accesses must be performed and compared
     do
     {
-        counter = itf_rtc_config.handle->Instance->CNT;
+        counter = lptim->CNT;
 
         // Performing the seconds read between the counter reads we can ensure
         // that the seconds value is reliable and no critical section is needed
         sec = itf_rtc_seconds;
-    } while (counter != itf_rtc_config.handle->Instance->CNT);
+    } while (counter != lptim->CNT);
 
     *seconds = sec;
 
@@ -106,6 +107,7 @@ itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
 uint32_t
 itf_rtc_get_ticks (void)
 {
+    LPTIM_TypeDef * lptim = itf_rtc_config.handle->Instance;
     uint32_t sec;
     uint32_t counter;
 
@@ -113,12 +115,15 @@ itf_rtc_get_ticks (void)
     // read accesses must be performed and compared
     do
     {
-        counter = itf_rtc_config.handle->Instance->CNT;
+        counter = lptim->CNT;
 
         // Performing the seconds read between the counter reads we can ensure
         // that the seconds value is reliable and no critical section is needed
         sec = itf_rtc_seconds;
-    } while (counter != itf_rtc_config.handle->Instance->CNT);
+    } while (counter != lptim->CNT);
+
+    // The timeout interrupt is generated one tick before the reload operation
+    counter += 1;
 
     if (counter >= ITF_RTC_CLK_FREQ)
     {

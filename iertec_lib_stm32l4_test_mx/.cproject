@@ -52,6 +52,7 @@
 									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtos"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1869774083" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
@@ -137,6 +138,7 @@
 									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtos"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1771393433" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>

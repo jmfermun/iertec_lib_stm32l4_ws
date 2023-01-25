@@ -113,11 +113,8 @@ sys_delay_usec (uint32_t usec)
     uint32_t start = itf_rtc_get_ticks();
     uint32_t wait = SYS_USEC_TO_TICKS(usec);
 
-    // Wait at least for 1 tick
-    if (wait == 0)
-    {
-        wait = 1;
-    }
+    // Wait one additional tick to ensure at least the indicated time
+    wait += 1;
 
     while ((itf_rtc_get_ticks() - start) < wait)
     {

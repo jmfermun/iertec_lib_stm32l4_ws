@@ -3,3 +3,4 @@
 /.metadata
 /script/output
 /iertec_lib_stm32l4_test_mx/test/integration/mocks
+/iertec_lib_stm32l4_test_mx/test/unit/mocks

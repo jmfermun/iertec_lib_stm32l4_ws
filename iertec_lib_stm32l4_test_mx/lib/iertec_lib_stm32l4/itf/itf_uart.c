@@ -52,7 +52,7 @@ typedef struct
     UART_HandleTypeDef * handle;
     uint32_t             timeout_ticks;
     SemaphoreHandle_t    sem_tx;
-    uint8_t            * buffer_tx;
+    uint8_t *            buffer_tx;
     size_t               len_tx;
     StreamBufferHandle_t buffer_rx;
     size_t               len_rx;
@@ -110,10 +110,10 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     }
 
     // Save the UART instance to be used
-    instance->handle = config->handle;
+    instance->handle    = config->handle;
     instance->buffer_tx = NULL;
-    instance->len_tx = 0;
-    instance->len_rx = 0;
+    instance->len_tx    = 0;
+    instance->len_rx    = 0;
 
     // Create the transmission semaphore
     instance->sem_tx = xSemaphoreCreateBinary();
@@ -231,8 +231,8 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 
         taskENTER_CRITICAL();
 
-        instance->buffer_tx = (uint8_t*)data;
-        instance->len_tx = len;
+        instance->buffer_tx = (uint8_t *)data;
+        instance->len_tx    = len;
 
         // Enable the transmit data register empty interrupt
         ATOMIC_SET_BIT(instance->handle->Instance->CR1, USART_CR1_TXEIE);
@@ -251,7 +251,7 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 void
 itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t *instance = &itf_uart_instance[h_itf_uart];
+    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     itf_uart_clean_rx(instance);
 
@@ -292,7 +292,7 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 void
 itf_uart_read_disable (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t *instance = &itf_uart_instance[h_itf_uart];
+    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     taskENTER_CRITICAL();
 
@@ -318,11 +318,11 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
 }
 
 size_t
-itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
+itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 {
-    itf_uart_instance_t *instance = &itf_uart_instance[h_itf_uart];
-    char read_byte = 0;
-    size_t i = 0;
+    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
+    char                  read_byte = 0;
+    size_t                i         = 0;
 
     // Read characters until '\n' is received
     do
@@ -340,27 +340,27 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
         }
         else if (s_len == sizeof(read_byte))
         {
-             taskENTER_CRITICAL();
+            taskENTER_CRITICAL();
 
-             instance->len_rx--;
+            instance->len_rx--;
 
-             // Check to clear RTS
-             if ((instance->rts_state == ITF_UART_XTS_STATE_ON) &&
-                 (instance->len_rx < ITF_UART_RTS_OFF_THR))
-             {
-                 instance->rts_state = ITF_UART_XTS_STATE_OFF;
-                 itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
-             }
+            // Check to clear RTS
+            if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
+                && (instance->len_rx < ITF_UART_RTS_OFF_THR))
+            {
+                instance->rts_state = ITF_UART_XTS_STATE_OFF;
+                itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+            }
 
-             taskEXIT_CRITICAL();
+            taskEXIT_CRITICAL();
 
-             data[i++] = read_byte;
+            data[i++] = read_byte;
 
-             // Special case for the start of
-             if (i == 2 && data[0] == '>' && data[1] == ' ')
-             {
-                 break;
-             }
+            // Special case for the start of
+            if (i == 2 && data[0] == '>' && data[1] == ' ')
+            {
+                break;
+            }
         }
         else
         {
@@ -393,11 +393,11 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
 }
 
 size_t
-itf_uart_read_bin (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
+itf_uart_read_bin (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 {
-    itf_uart_instance_t *instance = &itf_uart_instance[h_itf_uart];
-    char read_byte = 0;
-    size_t i = 0;
+    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
+    char                  read_byte = 0;
+    size_t                i         = 0;
 
     // Read bytes until the indicated number of bytes is reached or until a
     // timeout occurs
@@ -421,8 +421,8 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
             instance->len_rx--;
 
             // Check to clear RTS
-            if ((instance->rts_state == ITF_UART_XTS_STATE_ON) &&
-                (instance->len_rx < ITF_UART_RTS_OFF_THR))
+            if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
+                && (instance->len_rx < ITF_UART_RTS_OFF_THR))
             {
                 instance->rts_state = ITF_UART_XTS_STATE_OFF;
                 itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
@@ -445,7 +445,7 @@ size_t
 itf_uart_read_count (h_itf_uart_t h_itf_uart)
 {
     itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
-    size_t count;
+    size_t                count;
 
     taskENTER_CRITICAL();
 
@@ -473,7 +473,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     {
         __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_PEF);
         instance->handle->ErrorCode |= HAL_UART_ERROR_PE;
-        b_rx_error = true;
+        b_rx_error                   = true;
     }
 
     // Frame error
@@ -481,7 +481,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     {
         __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_FEF);
         instance->handle->ErrorCode |= HAL_UART_ERROR_FE;
-        b_rx_error = true;
+        b_rx_error                   = true;
     }
 
     // Noise error
@@ -489,7 +489,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     {
         __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_NEF);
         instance->handle->ErrorCode |= HAL_UART_ERROR_NE;
-        b_rx_error = true;
+        b_rx_error                   = true;
     }
 
     // Over-Run error
@@ -498,7 +498,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     {
         __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_OREF);
         instance->handle->ErrorCode |= HAL_UART_ERROR_ORE;
-        b_rx_error = true;
+        b_rx_error                   = true;
     }
 
     // Receiver timeout
@@ -506,7 +506,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     {
         __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_RTOF);
         instance->handle->ErrorCode |= HAL_UART_ERROR_RTO;
-        b_rx_error = true;
+        b_rx_error                   = true;
     }
 
     // Read data register not empty
@@ -523,8 +523,8 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         }
 
         // Check to set RTS
-        if ((instance->len_rx > ITF_UART_RTS_ON_THR) &&
-            (instance->rts_state == ITF_UART_XTS_STATE_OFF))
+        if ((instance->len_rx > ITF_UART_RTS_ON_THR)
+            && (instance->rts_state == ITF_UART_XTS_STATE_OFF))
         {
             instance->rts_state = ITF_UART_XTS_STATE_ON;
             itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
@@ -539,9 +539,8 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         uint8_t data = 0xFF;
 
         // Send one byte to notify the reception error
-        instance->len_rx += xStreamBufferSendFromISR(instance->buffer_rx,
-                                                     &data, sizeof(data),
-                                                     &b_yield);
+        instance->len_rx += xStreamBufferSendFromISR(instance->buffer_rx, &data,
+                                                     sizeof(data), &b_yield);
     }
 
     // Transmit data register empty
@@ -588,7 +587,7 @@ itf_uart_clean_rx (itf_uart_instance_t * instance)
 
     if (xStreamBufferReset(instance->buffer_rx))
     {
-        instance->len_rx = 0;
+        instance->len_rx            = 0;
         instance->handle->ErrorCode = HAL_UART_ERROR_NONE;
     }
 

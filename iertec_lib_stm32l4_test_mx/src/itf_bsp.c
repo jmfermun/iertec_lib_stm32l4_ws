@@ -196,7 +196,8 @@ itf_bsp_init (void)
 #endif // TEST
 }
 
-bool itf_bsp_get_error(void)
+bool
+itf_bsp_get_error (void)
 {
     return Error_Get();
 }

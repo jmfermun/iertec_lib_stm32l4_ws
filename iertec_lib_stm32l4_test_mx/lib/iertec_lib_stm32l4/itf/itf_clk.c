@@ -24,7 +24,8 @@ extern const itf_bsp_init_ll_t itf_clk_init_ll;
  * Public code
  ******************************************************************************/
 
-bool itf_clk_init(void)
+bool
+itf_clk_init (void)
 {
     // Low level initialization
     if (NULL != itf_clk_init_ll)

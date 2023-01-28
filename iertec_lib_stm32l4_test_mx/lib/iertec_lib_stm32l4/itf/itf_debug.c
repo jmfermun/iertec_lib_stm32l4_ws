@@ -70,7 +70,8 @@ itf_debug_put_char (char ch)
 int
 itf_debug_get_char (void)
 {
-    char   ch;
+    char ch;
+
     // Return -2 if no character is available
     if (itf_uart_read_count(itf_debug_config.handle) == 0)
     {

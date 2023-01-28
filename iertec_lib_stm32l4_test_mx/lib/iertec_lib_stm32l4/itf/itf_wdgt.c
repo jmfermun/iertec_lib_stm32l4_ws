@@ -72,10 +72,10 @@ itf_wdgt_set_timeout (uint32_t timeout_msec)
     }
 
     // Use our initialization function instead of the provided one by CubeMX
-    itf_wdgt_config.handle->Instance = IWDG;
+    itf_wdgt_config.handle->Instance       = IWDG;
     itf_wdgt_config.handle->Init.Prescaler = prescaler;
-    itf_wdgt_config.handle->Init.Window = IWDG_WINDOW_DISABLE;
-    itf_wdgt_config.handle->Init.Reload = reload;
+    itf_wdgt_config.handle->Init.Window    = IWDG_WINDOW_DISABLE;
+    itf_wdgt_config.handle->Init.Reload    = reload;
 
     if (HAL_IWDG_Init(itf_wdgt_config.handle) != HAL_OK)
     {
@@ -96,48 +96,48 @@ itf_wdgt_feed (void)
  ******************************************************************************/
 
 static void
-compute_load_value(uint32_t * prescaler, uint32_t * reload,
-                   uint32_t timeout_msec)
+compute_load_value (uint32_t * prescaler, uint32_t * reload,
+                    uint32_t timeout_msec)
 {
     if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(4))
     {
         *prescaler = IWDG_PRESCALER_4;
-        *reload = ITF_WDGT_RELOAD_VAL(4, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(4, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(8))
     {
         *prescaler = IWDG_PRESCALER_8;
-        *reload = ITF_WDGT_RELOAD_VAL(8, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(8, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(16))
     {
         *prescaler = IWDG_PRESCALER_16;
-        *reload = ITF_WDGT_RELOAD_VAL(16, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(16, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(32))
     {
         *prescaler = IWDG_PRESCALER_32;
-        *reload = ITF_WDGT_RELOAD_VAL(32, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(32, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(64))
     {
         *prescaler = IWDG_PRESCALER_64;
-        *reload = ITF_WDGT_RELOAD_VAL(64, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(64, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(128))
     {
         *prescaler = IWDG_PRESCALER_128;
-        *reload = ITF_WDGT_RELOAD_VAL(128, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(128, timeout_msec);
     }
     else if (timeout_msec < ITF_WDGT_TIMEOUT_MAX(256))
     {
         *prescaler = IWDG_PRESCALER_256;
-        *reload = ITF_WDGT_RELOAD_VAL(256, timeout_msec);
+        *reload    = ITF_WDGT_RELOAD_VAL(256, timeout_msec);
     }
     else
     {
         *prescaler = 0;
-        *reload = 0;
+        *reload    = 0;
     }
 }
 

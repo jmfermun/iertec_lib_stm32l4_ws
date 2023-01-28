@@ -59,7 +59,7 @@ debug_init (void)
     if (b_debug_is_attached)
     {
         // Construct debug mutex
-        h_debug_mutex  = xSemaphoreCreateMutex();
+        h_debug_mutex = xSemaphoreCreateMutex();
 
         if (NULL == h_debug_mutex)
         {

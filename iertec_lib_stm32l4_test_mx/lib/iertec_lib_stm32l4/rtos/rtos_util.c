@@ -27,7 +27,8 @@
  *
  * This hook function is called if a stack overflow is detected.
  */
-void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
+void
+vApplicationStackOverflowHook (TaskHandle_t pxTask, char * pcTaskName)
 {
     (void)pxTask;
     (void)pcTaskName;
@@ -42,7 +43,8 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
  * pvPortMalloc() is called internally by FreeRTOS API functions that create
  * tasks, queues or semaphores.
  */
-void vApplicationMallocFailedHook(void)
+void
+vApplicationMallocFailedHook (void)
 {
     DEBUG_ERROR_TRAP();
 }

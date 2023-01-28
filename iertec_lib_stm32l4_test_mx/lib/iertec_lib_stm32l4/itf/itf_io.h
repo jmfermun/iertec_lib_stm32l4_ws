@@ -39,8 +39,8 @@ typedef void (* itf_io_int_cb_t)(void);
 /** @brief I/O interface hardware configuration type. */
 typedef struct
 {
-	GPIO_TypeDef * port;
-	uint16_t       pin;
+    GPIO_TypeDef * port;
+    uint16_t       pin;
 } itf_io_config_t;
 
 /**

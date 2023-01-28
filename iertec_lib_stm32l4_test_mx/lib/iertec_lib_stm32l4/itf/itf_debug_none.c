@@ -27,14 +27,14 @@ bool
 itf_debug_init (void)
 {
     // Do none
-	return true;
+    return true;
 }
 
 bool
 itf_debug_deinit (void)
 {
     // Do none
-	return true;
+    return true;
 }
 
 void

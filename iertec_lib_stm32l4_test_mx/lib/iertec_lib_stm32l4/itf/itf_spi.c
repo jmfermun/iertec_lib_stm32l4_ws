@@ -84,7 +84,7 @@ itf_spi_init (h_itf_spi_t h_itf_spi)
     instance->handle = config->handle;
 
     // Create the mutex and semaphore
-    instance->mutex = xSemaphoreCreateMutex();
+    instance->mutex     = xSemaphoreCreateMutex();
     instance->semaphore = xSemaphoreCreateBinary();
 
     if ((NULL == instance->mutex) || (NULL == instance->semaphore))
@@ -127,14 +127,15 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
                      uint8_t * rx_data, size_t count)
 {
     itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
-    HAL_StatusTypeDef status;
+    HAL_StatusTypeDef    status;
 
     itf_pwr_set_active(instance->h_itf_pwr);
 
     if ((NULL != tx_data) && (NULL != rx_data))
     {
-        status = HAL_SPI_TransmitReceive_DMA(instance->handle, (uint8_t *)tx_data,
-                                             rx_data, count);
+        status = HAL_SPI_TransmitReceive_DMA(instance->handle,
+                                             (uint8_t *)tx_data, rx_data,
+                                             count);
     }
     else if (NULL != tx_data)
     {
@@ -157,6 +158,7 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
     if (status != HAL_OK)
     {
         itf_pwr_set_inactive(instance->h_itf_pwr);
+
         return false;
     }
 
@@ -229,7 +231,7 @@ HAL_SPI_ErrorCallback (SPI_HandleTypeDef * h_spi)
 }
 
 static inline void
-itf_spi_give_semaphore(SPI_HandleTypeDef * h_spi)
+itf_spi_give_semaphore (SPI_HandleTypeDef * h_spi)
 {
     BaseType_t           b_yield  = pdFALSE;
     itf_spi_instance_t * instance = NULL;

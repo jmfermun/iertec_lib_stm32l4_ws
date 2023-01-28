@@ -82,7 +82,7 @@ itf_i2c_init (h_itf_i2c_t h_itf_i2c)
     instance->handle = config->handle;
 
     // Create the mutex and semaphore
-    instance->mutex = xSemaphoreCreateMutex();
+    instance->mutex     = xSemaphoreCreateMutex();
     instance->semaphore = xSemaphoreCreateBinary();
 
     if ((NULL == instance->mutex) || (NULL == instance->semaphore))
@@ -126,8 +126,8 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
                      uint8_t * rx_data, size_t rx_count)
 {
     itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
-    HAL_StatusTypeDef status = HAL_OK;
-    bool ret;
+    HAL_StatusTypeDef    status   = HAL_OK;
+    bool                 ret;
 
     // Slave address must be shifted to left
     slave_address <<= 1;
@@ -209,7 +209,7 @@ HAL_I2C_ErrorCallback (I2C_HandleTypeDef * h_i2c)
 }
 
 static inline void
-itf_i2c_give_semaphore(I2C_HandleTypeDef * h_i2c)
+itf_i2c_give_semaphore (I2C_HandleTypeDef * h_i2c)
 {
     BaseType_t           b_yield  = pdFALSE;
     itf_i2c_instance_t * instance = NULL;

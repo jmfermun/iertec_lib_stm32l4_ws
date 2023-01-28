@@ -78,8 +78,8 @@ void
 itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
 {
     LPTIM_TypeDef * lptim = itf_rtc_config.handle->Instance;
-    uint32_t sec;
-    uint32_t counter;
+    uint32_t        sec;
+    uint32_t        counter;
 
     // To read reliably the content of the LPTIM_CNT register, two successive
     // read accesses must be performed and compared
@@ -108,8 +108,8 @@ uint32_t
 itf_rtc_get_ticks (void)
 {
     LPTIM_TypeDef * lptim = itf_rtc_config.handle->Instance;
-    uint32_t sec;
-    uint32_t counter;
+    uint32_t        sec;
+    uint32_t        counter;
 
     // To read reliably the content of the LPTIM_CNT register, two successive
     // read accesses must be performed and compared

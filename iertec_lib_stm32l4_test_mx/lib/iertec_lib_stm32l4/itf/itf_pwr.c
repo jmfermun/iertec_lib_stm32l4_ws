@@ -77,8 +77,8 @@ itf_pwr_init (void)
     // The SysTick timer uses a 24-bit counting register. The longest minimum
     // run time is 15us according to the errata sheet. A 24-bit value (up to
     // 16.7M) is more than sufficient for 15us, no matter the core clock rate.
-    configASSERT( configMIN_RUN_BETWEEN_DEEP_SLEEPS <= 0x00FFFFFFU &&
-                 configMIN_RUN_BETWEEN_DEEP_SLEEPS != 0 );
+    configASSERT(configMIN_RUN_BETWEEN_DEEP_SLEEPS <= 0x00FFFFFFU
+                 && configMIN_RUN_BETWEEN_DEEP_SLEEPS != 0);
     SysTick->LOAD = configMIN_RUN_BETWEEN_DEEP_SLEEPS;
 
     // Be sure SysTick uses the lowest interrupt priority.
@@ -88,11 +88,11 @@ itf_pwr_init (void)
     // Be sure the MCU wakes up from stop mode on the same clock we normally use
     // as the core clock, if possible. Might as well give the MCU a head start
     // getting the clock going while waking from STOP.
-    if ( (RCC->CFGR & RCC_CFGR_SWS_Msk) == RCC_CFGR_SWS_HSI )
+    if ((RCC->CFGR & RCC_CFGR_SWS_Msk) == RCC_CFGR_SWS_HSI)
     {
         SET_BIT(RCC->CFGR, RCC_CFGR_STOPWUCK);
     }
-    else if ( (RCC->CFGR & RCC_CFGR_SWS_Msk) == RCC_CFGR_SWS_MSI )
+    else if ((RCC->CFGR & RCC_CFGR_SWS_Msk) == RCC_CFGR_SWS_MSI)
     {
         CLEAR_BIT(RCC->CFGR, RCC_CFGR_STOPWUCK);
     }
@@ -111,7 +111,7 @@ itf_pwr_register (itf_pwr_level_t level)
     }
     else
     {
-        handle = h_itf_pwr_index++;
+        handle                     = h_itf_pwr_index++;
         itf_pwr_level_mask[level] &= ~(1u << handle);
     }
 
@@ -161,7 +161,7 @@ itf_pwr_pre_sleep (void)
         itf_pwr_rcc_cr_save   = RCC->CR;
         itf_pwr_rcc_cfgr_save = RCC->CFGR;
 
-        SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+        SCB->SCR             |= SCB_SCR_SLEEPDEEP_Msk;
     }
     else
     {
@@ -179,7 +179,7 @@ itf_pwr_post_sleep (void)
         // until the timer period ends. Note that we do start a new period here
         // unnecessarily if the CPU didn't actually enter stop mode (due to a
         // pending interrupt). That's OK.
-        SysTick->VAL = 0;
+        SysTick->VAL  = 0;
         SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk
                         | SysTick_CTRL_TICKINT_Msk;
 
@@ -195,7 +195,7 @@ itf_pwr_post_sleep (void)
         // CPU clock here, the CPU will not wait for it. Instead, the CPU
         // continues executing from the wake-up clock (MSI in our case) until
         // the PLL is stable and then the CPU starts using the PLL.
-        RCC->CR = itf_pwr_rcc_cr_save;
+        RCC->CR   = itf_pwr_rcc_cr_save;
         RCC->CFGR = itf_pwr_rcc_cfgr_save;
 
         SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
@@ -213,7 +213,7 @@ itf_pwr_post_sleep (void)
 
 // When the SysTick timer expires, we allow STOP mode again.
 void
-SysTick_Handler(void)
+SysTick_Handler (void)
 {
     // Stop the SysTick timer. We use it in "one-shot" mode to know when it's
     // safe to use STOP mode again. Then mark our "min-run" peripheral as no
@@ -221,6 +221,7 @@ SysTick_Handler(void)
     SysTick->CTRL = 0;
 
     UBaseType_t uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+
     itf_pwr_active_flag &= ~(1u << h_itf_pwr_min_run);
     taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
 }

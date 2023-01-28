@@ -15,8 +15,8 @@
 #ifndef ITF_DEBUG_H
 #define ITF_DEBUG_H
 
-#include "itf_uart.h"
-#include "itf_io.h"
+#include "itf_bsp.h"
+#include "stm32l4xx_hal.h"
 
 #include <stdint.h>
 #include <stdbool.h>

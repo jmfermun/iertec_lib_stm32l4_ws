@@ -12,6 +12,8 @@
  */
 
 #include "itf_debug.h"
+#include "itf_uart.h"
+#include "itf_io.h"
 
 /****************************************************************************//*
  * Private data

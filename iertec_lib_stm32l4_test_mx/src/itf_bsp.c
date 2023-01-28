@@ -38,17 +38,6 @@
 const itf_bsp_init_ll_t itf_clk_init_ll = SystemClock_Config;
 
 /****************************************************************************//*
- * itf_debug board configuration
- ******************************************************************************/
-
-/** Hardware configuration of the available UART interfaces. */
-const itf_debug_config_t itf_debug_config =
-{
-    .handle  = H_ITF_UART_DEBUG,
-    .pin_tdi = H_ITF_IO_TDI,
-};
-
-/****************************************************************************//*
  * itf_wdgt board configuration
  ******************************************************************************/
 
@@ -57,6 +46,53 @@ const itf_wdgt_config_t itf_wdgt_config =
 {
     .handle       = &hiwdg,
     .timeout_msec = 5000,
+};
+
+/****************************************************************************//*
+ * itf_io board configuration
+ ******************************************************************************/
+
+/** Board configuration of the available I/O lines. */
+const itf_io_config_t itf_io_config[H_ITF_IO_COUNT] =
+{
+    {   // H_ITF_IO_BUTTON_1
+        .port = B1_GPIO_Port,
+        .pin  = B1_Pin,
+    },
+    {   // H_ITF_IO_IN_1
+        .port = IO_IN_1_GPIO_Port,
+        .pin  = IO_IN_1_Pin,
+    },
+    {   // H_ITF_IO_LED_GREEN
+        .port = LD4_GPIO_Port,
+        .pin  = LD4_Pin,
+    },
+    {   // H_ITF_IO_OUT_1
+        .port = IO_OUT_1_GPIO_Port,
+        .pin  = IO_OUT_1_Pin,
+    },
+    {   // H_ITF_IO_TDI
+        .port = TDI_GPIO_Port,
+        .pin  = TDI_Pin,
+    },
+    {   // H_ITF_IO_UART_0_RTS
+        .port = USART1_RTS_GPIO_Port,
+        .pin  = USART1_RTS_Pin,
+    },
+};
+
+/** I/O low level initializer function.*/
+const itf_bsp_init_ll_t itf_io_init_ll = MX_GPIO_Init;
+
+/****************************************************************************//*
+ * itf_debug board configuration
+ ******************************************************************************/
+
+/** Hardware configuration of the available UART interfaces. */
+const itf_debug_config_t itf_debug_config =
+{
+    .handle  = H_ITF_UART_DEBUG,
+    .pin_tdi = H_ITF_IO_TDI,
 };
 
 /****************************************************************************//*
@@ -71,49 +107,13 @@ const itf_rtc_config_t itf_rtc_config =
 };
 
 /****************************************************************************//*
- * itf_io board configuration
- ******************************************************************************/
-
-/** Board configuration of the available I/O lines. */
-const itf_io_config_t itf_io_config[H_ITF_IO_COUNT] =
-{
-    {
-        .port = B1_GPIO_Port,
-        .pin  = B1_Pin,
-    },
-    {
-        .port = IO_IN_1_GPIO_Port,
-        .pin  = IO_IN_1_Pin,
-    },
-    {
-        .port = LD4_GPIO_Port,
-        .pin  = LD4_Pin,
-    },
-    {
-        .port = IO_OUT_1_GPIO_Port,
-        .pin  = IO_OUT_1_Pin,
-    },
-    {
-        .port = TDI_GPIO_Port,
-        .pin  = TDI_Pin,
-    },
-    {
-        .port = USART1_RTS_GPIO_Port,
-        .pin  = USART1_RTS_Pin,
-    },
-};
-
-/** I/O low level initializer function.*/
-const itf_bsp_init_ll_t itf_io_init_ll = MX_GPIO_Init;
-
-/****************************************************************************//*
  * itf_spi board configuration
  ******************************************************************************/
 
 /** Board configuration of the available SPI interfaces. */
 const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
 {
-    {
+    {   // H_ITF_SPI_0
         .handle  = &hspi1,
         .init_ll = MX_SPI1_Init,
     },
@@ -126,7 +126,7 @@ const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
 /** Board configuration of the available I2C interfaces. */
 const itf_i2c_config_t itf_i2c_config[H_ITF_I2C_COUNT] =
 {
-    {
+    {   // H_ITF_I2C_0
         .handle  = &hi2c1,
         .init_ll = MX_I2C1_Init,
     },
@@ -139,17 +139,17 @@ const itf_i2c_config_t itf_i2c_config[H_ITF_I2C_COUNT] =
 /** Hardware configuration of the available UART interfaces. */
 const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
 {
-    {
-        .handle       = &huart1,
-        .pin_rts      = H_ITF_IO_UART_0_RTS,
-        .timeout_msec = 1000,
-        .init_ll      = MX_USART1_UART_Init,
-    },
-    {
+    {   // H_ITF_UART_DEBUG
         .handle       = &huart2,
         .pin_rts      = H_ITF_IO_NONE,
         .timeout_msec = 2000,
         .init_ll      = MX_USART2_UART_Init,
+    },
+    {   // H_ITF_UART_0
+        .handle       = &huart1,
+        .pin_rts      = H_ITF_IO_UART_0_RTS,
+        .timeout_msec = 1000,
+        .init_ll      = MX_USART1_UART_Init,
     },
 };
 

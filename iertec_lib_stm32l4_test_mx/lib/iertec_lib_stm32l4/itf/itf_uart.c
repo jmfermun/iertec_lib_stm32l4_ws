@@ -73,6 +73,17 @@ extern const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT];
 static itf_uart_instance_t itf_uart_instance[H_ITF_UART_COUNT];
 
 /****************************************************************************//*
+ * Private code prototypes
+ ******************************************************************************/
+
+/**
+ * @brief Clean the reception buffer and error flags.
+ *
+ * @param[in] instance UART instance to be cleaned.
+ */
+static void itf_uart_clean_rx(itf_uart_instance_t * instance);
+
+/****************************************************************************//*
  * Public code
  ******************************************************************************/
 
@@ -198,7 +209,10 @@ itf_uart_write (h_itf_uart_t h_itf_uart, const char * data)
     size_t bytes_to_write = strlen(data);
 
 #ifdef ITF_UART_PRINTF
-    debug_printf("TX >> %s", data);
+    if (H_ITF_UART_DEBUG != h_itf_uart)
+    {
+        debug_printf("TX >> %s", data);
+    }
 #endif // ITF_UART_PRINTF
 
     ret = itf_uart_write_bin(h_itf_uart, data, bytes_to_write);
@@ -239,25 +253,12 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 {
     itf_uart_instance_t *instance = &itf_uart_instance[h_itf_uart];
 
-    // Clean the FIFO buffer
-    for (size_t i = 0; i < ITF_UART_BUFFER_RX_SIZE; i++)
-    {
-        size_t len;
-        uint8_t data;
-
-        len = xStreamBufferReceive(instance->buffer_rx, &data, sizeof(data), 0);
-
-        taskENTER_CRITICAL();
-        instance->len_rx -= len;
-        taskEXIT_CRITICAL();
-    }
+    itf_uart_clean_rx(instance);
 
     taskENTER_CRITICAL();
 
     // Computation of UART mask to apply to RDR register.
     UART_MASK_COMPUTATION(instance->handle);
-
-    instance->handle->ErrorCode = HAL_UART_ERROR_NONE;
 
     // Enable the UART error interrupt: frame error, noise error, overrun error
     ATOMIC_SET_BIT(instance->handle->Instance->CR3, USART_CR3_EIE);
@@ -330,7 +331,14 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
                                             sizeof(read_byte),
                                             instance->timeout_ticks);
 
-        if (s_len == sizeof(read_byte))
+        if (HAL_UART_ERROR_NONE != instance->handle->ErrorCode)
+        {
+            itf_uart_clean_rx(instance);
+
+            i = 0;
+            break;
+        }
+        else if (s_len == sizeof(read_byte))
         {
              taskENTER_CRITICAL();
 
@@ -369,7 +377,10 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
         data[i++] = '\0';
 
 #ifdef ITF_UART_PRINTF
-        debug_printf("RX << %s", data);
+        if (H_ITF_UART_DEBUG != h_itf_uart)
+        {
+            debug_printf("RX << %s", data);
+        }
 #endif // ITF_UART_PRINTF
 
         return i;
@@ -396,7 +407,14 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char *data, size_t max_len)
                                             sizeof(read_byte),
                                             instance->timeout_ticks);
 
-        if (s_len == sizeof(read_byte))
+        if (HAL_UART_ERROR_NONE != instance->handle->ErrorCode)
+        {
+            itf_uart_clean_rx(instance);
+
+            i = 0;
+            break;
+        }
+        else if (s_len == sizeof(read_byte))
         {
             taskENTER_CRITICAL();
 
@@ -516,6 +534,16 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         __HAL_UART_SEND_REQ(instance->handle, UART_RXDATA_FLUSH_REQUEST);
     }
 
+    if (b_rx_error)
+    {
+        uint8_t data = 0xFF;
+
+        // Send one byte to notify the reception error
+        instance->len_rx += xStreamBufferSendFromISR(instance->buffer_rx,
+                                                     &data, sizeof(data),
+                                                     &b_yield);
+    }
+
     // Transmit data register empty
     if ((isr_flags & USART_ISR_TXE) && (cr1_its & USART_CR1_TXEIE))
     {
@@ -547,6 +575,24 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
     }
 
     portYIELD_FROM_ISR(b_yield);
+}
+
+/****************************************************************************//*
+ * Private code
+ ******************************************************************************/
+
+static void
+itf_uart_clean_rx (itf_uart_instance_t * instance)
+{
+    taskENTER_CRITICAL();
+
+    if (xStreamBufferReset(instance->buffer_rx))
+    {
+        instance->len_rx = 0;
+        instance->handle->ErrorCode = HAL_UART_ERROR_NONE;
+    }
+
+    taskEXIT_CRITICAL();
 }
 
 /** @} */

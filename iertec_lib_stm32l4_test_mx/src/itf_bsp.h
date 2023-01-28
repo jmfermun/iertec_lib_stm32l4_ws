@@ -40,6 +40,7 @@ typedef enum
 {
     H_ITF_SPI_0 = 0,
     H_ITF_SPI_COUNT,
+    H_ITF_SPI_NONE = 0xFF,
 } h_itf_spi_t;
 
 /** @brief I2C interface handlers. */
@@ -47,14 +48,16 @@ typedef enum
 {
     H_ITF_I2C_0 = 0,
     H_ITF_I2C_COUNT,
+    H_ITF_I2C_NONE = 0xFF,
 } h_itf_i2c_t;
 
 /** @brief UART interface handlers. */
 typedef enum
 {
-    H_ITF_UART_0 = 0,
-    H_ITF_UART_DEBUG,
+    H_ITF_UART_DEBUG = 0,
+    H_ITF_UART_0,
     H_ITF_UART_COUNT,
+    H_ITF_UART_NONE = 0xFF,
 } h_itf_uart_t;
 
 /**

@@ -74,9 +74,11 @@ TEST_FILE("itf_clk.c")
 TEST_FILE("itf_io.c")
 TEST_FILE("itf_pwr.c")
 TEST_FILE("itf_bsp.c")
+TEST_FILE("itf_uart.c")
+TEST_FILE("itf_debug.c")
+TEST_FILE("debug_util.c")
 
 // Test dependencies
-#include "mock_itf_uart.h"
 
 /****************************************************************************//*
  * Private data

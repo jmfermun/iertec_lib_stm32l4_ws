@@ -92,6 +92,9 @@ itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
         sec = itf_rtc_seconds;
     } while (counter != lptim->CNT);
 
+    // The timeout interrupt is generated one tick before the reload operation
+    counter += 1;
+
     *seconds = sec;
 
     if (counter >= ITF_RTC_CLK_FREQ)

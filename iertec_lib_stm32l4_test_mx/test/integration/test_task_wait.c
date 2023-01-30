@@ -74,10 +74,11 @@ TEST_FILE("itf_clk.c")
 TEST_FILE("itf_io.c")
 TEST_FILE("itf_pwr.c")
 TEST_FILE("itf_bsp.c")
+TEST_FILE("itf_uart.c")
+TEST_FILE("itf_debug.c")
+TEST_FILE("debug_util.c")
 
 // Test dependencies
-#include "mock_itf_uart.h"
-
 TEST_FILE("itf_rtc.c")
 TEST_FILE("sys_util.c")
 
@@ -132,10 +133,10 @@ void test_task_wait_init(void)
 
     task_wait_init();
 
-    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T0", 128, TASK_ID_0, 2, NULL) == pdPASS);
-    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T1", 128, TASK_ID_1, 2, NULL) == pdPASS);
-    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T2", 128, TASK_ID_2, 3, NULL) == pdPASS);
-    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T3", 128, TASK_ID_3, 4, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T0", 256, TASK_ID_0, 2, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T1", 256, TASK_ID_1, 2, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T2", 256, TASK_ID_2, 3, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T3", 256, TASK_ID_3, 4, NULL) == pdPASS);
 }
 
 void test_task_wait_inactive(void)
@@ -153,18 +154,22 @@ void test_task_wait_active(void)
 {
     task_wait_unlock(TASK_ID_1);
     exp_task_active[TASK_ID_1] = TASK_STATE_ACTIVE;
+    sys_sleep_msec(10);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
     task_wait_unlock(TASK_ID_0);
     exp_task_active[TASK_ID_0] = TASK_STATE_ACTIVE;
+    sys_sleep_msec(10);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
     task_wait_unlock(TASK_ID_2);
     exp_task_active[TASK_ID_2] = TASK_STATE_ACTIVE;
+    sys_sleep_msec(10);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
     task_wait_unlock(TASK_ID_3);
     exp_task_active[TASK_ID_3] = TASK_STATE_ACTIVE;
+    sys_sleep_msec(10);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 }
 

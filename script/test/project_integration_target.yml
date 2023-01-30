@@ -36,6 +36,7 @@
   :common: &common_defines
     - STM32L452xx
     - USE_HAL_DRIVER
+    - ITF_UART_PRINTF
     - UNITY_INCLUDE_CONFIG_H
     - CMOCK_MEM_DYNAMIC
     - CMOCK_MEM_SIZE=1024

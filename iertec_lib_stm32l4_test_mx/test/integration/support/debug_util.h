@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @file debug_util.h
  * @author juanmanuel.fernandez@iertec.com
- * @date 26 Oct 2022
+ * @date 30 Jan 2023
  * @brief Debug utilities test double.
  ******************************************************************************/
 
@@ -14,8 +14,6 @@
 #include <stdbool.h>
 
 #define debug_info(X,...)   UnityPrintF(__LINE__, (X), ##__VA_ARGS__)
-
-#define debug_printf(X,...) do {} while (0)
 
 #define DEBUG_ERROR_TRAP()  TEST_FAIL()
 
@@ -31,6 +29,22 @@
             Throw(0);                                                    \
         }                                                                \
     } while (0)
+
+void debug_printf(const char *format, ...);
+
+bool debug_init(void);
+
+bool debug_deinit(void);
+
+bool debug_is_attached(void);
+
+void debug_write(const char *data, size_t len);
+
+void debug_put_char(char ch);
+
+int debug_get_char(void);
+
+bool debug_ready(void);
 
 #endif // DEBUG_UTIL_H
 

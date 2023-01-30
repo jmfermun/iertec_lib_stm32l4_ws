@@ -6,6 +6,7 @@
  ******************************************************************************/
 
 #include "itf_bsp.h"
+#include "debug_util.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -25,7 +26,7 @@ extern const char test_file_name[];
 #define TEST_MAIN_TASK_PRIORITY         (1)
 
 /** Test task stack size in words (4 bytes). */
-#define TEST_MAIN_TASK_STACK_SIZE       (256)
+#define TEST_MAIN_TASK_STACK_SIZE       (512)
 
 /*******************************************************************************
  * Private code
@@ -56,11 +57,18 @@ static void test_main_task_fn(void *parameters)
 
 int main(void)
 {
+    bool ret;
+
     // Semihosting initialization
     initialise_monitor_handles();
 
-    // Call driver init functions
-    itf_bsp_ll_init();
+    ret = itf_bsp_ll_init();
+    ret = debug_init() && ret;
+
+    if (!ret)
+    {
+        exit(0);
+    }
 
     // Initialize the test main task
     xTaskCreate(test_main_task_fn, "Test main", TEST_MAIN_TASK_STACK_SIZE, NULL,

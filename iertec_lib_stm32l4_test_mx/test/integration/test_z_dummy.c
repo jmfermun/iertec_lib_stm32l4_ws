@@ -30,6 +30,7 @@ TEST_FILE("port.c")
 TEST_FILE("heap_4.c")
 TEST_FILE("cmsis_os.c")
 TEST_FILE("lptimTick.c")
+TEST_FILE("rtos_util.c")
 
 // HAL dependencies
 TEST_FILE("stm32l4xx_hal.c")

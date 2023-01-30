@@ -240,8 +240,8 @@
  * TEST - PASS (10 ms)
  */
 #define UNITY_INCLUDE_EXEC_TIME
-#include "FreeRTOS.h"
-#include "task.h"
-#define UNITY_CLOCK_MS() (xTaskGetTickCount() * (1000 / configTICK_RATE_HZ))
+#include <stdint.h>
+extern uint32_t xTaskGetTickCount(void);
+#define UNITY_CLOCK_MS() xTaskGetTickCount()
 
 #endif /* UNITY_CONFIG_H */

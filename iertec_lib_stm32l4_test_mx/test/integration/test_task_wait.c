@@ -1,27 +1,20 @@
 /*******************************************************************************
- * @file test_itf_spi.c
+ * @file test_task_wait.c
  * @author juanmanuel.fernandez@iertec.com
- * @date 28 Dec 2022
- * @brief Test for the SPI interface driver.
- *
- * The test connects a SPI interface in a loop-back configuration, so the data
- * sent by the SPI interface is received by the same interface.
- *
- * Needed connections:
- * - PA7 -> PA6
+ * @date 28 Jan 2023
+ * @brief Test for the task locking mechanism.
  ******************************************************************************/
 
-#include "itf_spi.h"
+#include "task_wait.h"
+
+#include <FreeRTOS.h>
+#include <task.h>
 
 #include "unity.h"
-
-#include <string.h>
 
 /****************************************************************************//*
  * Dependencies
  ******************************************************************************/
-
-const char test_file_name[] = __FILE_NAME__;
 
 // System dependencies
 TEST_FILE("system_stm32l4xx.c")
@@ -85,92 +78,94 @@ TEST_FILE("itf_bsp.c")
 // Test dependencies
 #include "mock_itf_uart.h"
 
+TEST_FILE("itf_rtc.c")
+TEST_FILE("sys_util.c")
+
 /****************************************************************************//*
  * Constants and macros
  ******************************************************************************/
 
-#define DATA_SIZE   (256)
+#define TASK_STATE_UNKNOWN  (0)
+#define TASK_STATE_ACTIVE   (1)
+#define TASK_STATE_INACTIVE (2)
 
 /****************************************************************************//*
  * Private data
  ******************************************************************************/
 
-static uint8_t tx_data[DATA_SIZE];
-static uint8_t rx_data[DATA_SIZE];
+const char test_file_name[] = __FILE_NAME__;
+
+static uint8_t task_active[TASK_ID_COUNT];
+static uint8_t exp_task_active[TASK_ID_COUNT];
+
+/****************************************************************************//*
+ * Private code
+ ******************************************************************************/
+
+static void test_task_fn(void *parameters)
+{
+    task_id_t my_task_id = (task_id_t)parameters;
+
+    task_active[my_task_id] = TASK_STATE_INACTIVE;
+
+    task_wait_lock(my_task_id);
+
+    task_active[my_task_id] = TASK_STATE_ACTIVE;
+
+    // Lock the task permanently for the rest of the test
+    for (;;)
+    {
+        sys_sleep_msec(60000);
+    }
+}
 
 /****************************************************************************//*
  * Tests
  ******************************************************************************/
 
-void setUp(void)
+void test_task_wait_init(void)
 {
-    memset(rx_data, 0, DATA_SIZE);
-}
-
-void test_itf_spi_init(void)
-{
-    TEST_ASSERT_FALSE(itf_spi_init(H_ITF_SPI_COUNT));
-    TEST_ASSERT_TRUE(itf_spi_init(H_ITF_SPI_0));
-    itf_spi_flush(H_ITF_SPI_0);
-}
-
-void test_itf_spi_write(void)
-{
-    for (int i = 0; i < DATA_SIZE; i++)
+    for (size_t i = 0; i < TASK_ID_COUNT; i++)
     {
-        tx_data[i] = i;
+        task_active[i] = TASK_STATE_UNKNOWN;
     }
 
-    itf_spi_lock(H_ITF_SPI_0);
-    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, NULL,
-                     DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
+    task_wait_init();
+
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T0", 128, TASK_ID_0, 2, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T1", 128, TASK_ID_1, 2, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T2", 128, TASK_ID_2, 3, NULL) == pdPASS);
+    TEST_ASSERT_TRUE(xTaskCreate(test_task_fn, "T3", 128, TASK_ID_3, 4, NULL) == pdPASS);
 }
 
-void test_itf_spi_read(void)
+void test_task_wait_inactive(void)
 {
-    for (int i = 0; i < DATA_SIZE; i++)
+    for (size_t i = 0; i < TASK_ID_COUNT; i++)
     {
-        tx_data[i] = 0;
-        rx_data[i] = i;
+        exp_task_active[i] = TASK_STATE_INACTIVE;
     }
 
-    itf_spi_lock(H_ITF_SPI_0);
-    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, NULL, rx_data,
-                                         DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
-
-    TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 }
 
-void test_itf_spi_error(void)
+
+void test_task_wait_active(void)
 {
-    itf_spi_lock(H_ITF_SPI_0);
-    TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, NULL, NULL, DATA_SIZE));
-    TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, 0));
-    itf_spi_unlock(H_ITF_SPI_0);
-}
+    task_wait_unlock(TASK_ID_1);
+    exp_task_active[TASK_ID_1] = TASK_STATE_ACTIVE;
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
-void test_itf_spi_write_and_read(void)
-{
-    for (int i = 0; i < DATA_SIZE; i++)
-    {
-        tx_data[i] = DATA_SIZE - 1 - i;
-    }
+    task_wait_unlock(TASK_ID_0);
+    exp_task_active[TASK_ID_0] = TASK_STATE_ACTIVE;
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
-    itf_spi_lock(H_ITF_SPI_0);
-    TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data,
-                                         DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
+    task_wait_unlock(TASK_ID_2);
+    exp_task_active[TASK_ID_2] = TASK_STATE_ACTIVE;
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 
-    TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
-}
-
-void test_itf_spi_deinit(void)
-{
-    TEST_ASSERT_FALSE(itf_spi_deinit(H_ITF_SPI_COUNT));
-    TEST_ASSERT_TRUE(itf_spi_deinit(H_ITF_SPI_0));
-    TEST_ASSERT_FALSE(itf_spi_deinit(H_ITF_SPI_0));
+    task_wait_unlock(TASK_ID_3);
+    exp_task_active[TASK_ID_3] = TASK_STATE_ACTIVE;
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_task_active, task_active, TASK_ID_COUNT);
 }
 
 /******************************** End of file *********************************/

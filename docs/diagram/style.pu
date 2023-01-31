@@ -1,0 +1,26 @@
+@startuml
+
+skinparam Monochrome true
+skinparam Shadowing false
+skinparam RoundCorner 0
+skinparam Activity {
+    BackgroundColor White
+    DiamondBackgroundColor White
+}
+skinparam Note {
+    BackgroundColor White
+}
+skinparam Class {
+    BackgroundColor White
+}
+skinparam Usecase {
+    BackgroundColor White
+}
+skinparam Actor {
+    BackgroundColor White
+}
+skinparam State {
+    BackgroundColor White
+}
+
+@enduml

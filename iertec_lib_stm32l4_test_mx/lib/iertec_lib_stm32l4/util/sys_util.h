@@ -35,8 +35,8 @@
 /**
  * @brief Get the reset cause.
  *
- * @param code Code number identifying the reset cause.
- * @param str Pointer to a constant string describing the reset cause.
+ * @param[out] code Code number identifying the reset cause.
+ * @param[out] str Pointer to a constant string describing the reset cause.
  */
 void sys_get_reset_source(uint32_t * code, const char ** str);
 
@@ -50,8 +50,8 @@ uint32_t sys_get_timestamp(void);
 /**
  * @brief Compute the time difference between calls done to this function.
  *
- * @param ticks Variable used to store the clock tick mark of the previous call.
- * @param max_diff Maximum difference in us of the calls done.
+ * @param[in,out] ticks Variable used to store the clock tick mark of the previous call.
+ * @param[in,out] max_diff Maximum difference in us of the calls done.
  *
  * @return Time difference in us.
  */
@@ -60,14 +60,14 @@ uint32_t sys_time_diff(uint32_t * ticks, uint32_t * max_diff);
 /**
  * @brief Do a delay in microseconds blocking the CPU.
  *
- * @param usec Duration of the delay in microseconds.
+ * @param[in] usec Duration of the delay in microseconds.
  */
 void sys_delay_usec(uint32_t usec);
 
 /**
  * @brief Do a sleep in milliseconds blocking the current task.
  *
- * @param msec Duration of the sleep in milliseconds.
+ * @param[in] msec Duration of the sleep in milliseconds.
  */
 void sys_sleep_msec(uint32_t msec);
 
@@ -75,10 +75,10 @@ void sys_sleep_msec(uint32_t msec);
  * @brief Delay a task until a specified time. This function can be used by
  * periodic tasks to ensure a constant execution frequency.
  *
- * @param prev_ticks Pointer to a variable that holds the time at which the task
+ * @param[in,out] prev_ticks Pointer to a variable that holds the time at which the task
  * was last unblocked. The variable must be initialized with the current tick
  * prior to its first use. TO do it, call this function with inc_msec equl to 0.
- * @param inc_msec The cycle time period in milliseconds.
+ * @param[in] inc_msec The cycle time period in milliseconds.
  *
  * @note Function based on FreeRTOS function vTaskDelayUntil.
  */

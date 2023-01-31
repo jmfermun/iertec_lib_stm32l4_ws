@@ -49,7 +49,7 @@ static itf_spi_instance_t itf_spi_instance[H_ITF_SPI_COUNT];
 /**
  * @brief Function to be called from the completion callbacks.
  *
- * @param hspi Pointer to a SPI_HandleTypeDef structure that contains the
+ * @param[in] hspi Pointer to a SPI_HandleTypeDef structure that contains the
  * configuration information for SPI module.
  */
 static inline void itf_spi_give_semaphore(SPI_HandleTypeDef * h_spi);

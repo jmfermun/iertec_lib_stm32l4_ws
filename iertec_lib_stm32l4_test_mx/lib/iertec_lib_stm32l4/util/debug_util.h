@@ -74,7 +74,7 @@
  * @brief Performs a compile time assert. Code obtained from
  * https://www.pixelbeat.org/programming/gcc/static_assert.html.
  *
- * @param e Condition to check, for example "sizeof(int) == 4".
+ * @param[in] e Condition to check, for example "sizeof(int) == 4".
  */
 #define DEBUG_ASSERT_STATIC(e) \
     ;enum { DEBUG_ASSERT_CONCAT(assert_line_, __LINE__) = 1/(int)(!!(e)) }
@@ -107,9 +107,9 @@ bool debug_is_attached(void);
  * @brief Writes the C string pointed by format through the debug interface. The
  * function is thread safe.
  *
- * @param format Format string with the same meaning as in the standard printf
+ * @param[in] format Format string with the same meaning as in the standard printf
  * function.
- * @param ... Additional arguments with the same meaning as in the standard
+ * @param[in] ... Additional arguments with the same meaning as in the standard
  * printf function.
  */
 void debug_printf_impl(const char * format, ...);
@@ -117,15 +117,15 @@ void debug_printf_impl(const char * format, ...);
 /**
  * @brief Send binary data through the debug interface.
  *
- * @param data Binary data to be sent.
- * @param len Number of bytes to send.
+ * @param[in] data Binary data to be sent.
+ * @param[in] len Number of bytes to send.
  */
 void debug_write(const char * data, size_t len);
 
 /**
  * @brief Send a char through the debug interface.
  *
- * @param ch Character to be sent.
+ * @param[in] ch Character to be sent.
  */
 void debug_put_char(char ch);
 

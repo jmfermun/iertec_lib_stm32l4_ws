@@ -32,7 +32,7 @@ typedef struct
 /**
  * @brief Initialization of the SPI interface.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
  *
  * @retval true If the interface is initialized correctly.
  * @retval false If an error occurs.
@@ -42,7 +42,7 @@ bool itf_spi_init(h_itf_spi_t h_itf_spi);
 /**
  * @brief Close the SPI interface and release its resources.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
  *
  * @retval true If the interface is deinitialized correctly.
  * @retval false If an error occurs.
@@ -52,10 +52,10 @@ bool itf_spi_deinit(h_itf_spi_t h_itf_spi);
 /**
  * @brief Do a write/read transaction with the SPI interface.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
- * @param tx_data Data to write.
- * @param rx_data Where the read data will be stored.
- * @param count Number of bytes to write/read.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
+ * @param[in] tx_data Data to write.
+ * @param[out] rx_data Where the read data will be stored.
+ * @param[in] count Number of bytes to write/read.
  *
  * @retval true If transaction is done correctly.
  * @retval false If an error occurs.
@@ -66,21 +66,21 @@ bool itf_spi_transaction(h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
 /**
  * @brief Clear data from SPI interface.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
  */
 void itf_spi_flush(h_itf_spi_t h_itf_spi);
 
 /**
  * @brief Lock the SPI interface to be used only by the current task.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
  */
 void itf_spi_lock(h_itf_spi_t h_itf_spi);
 
 /**
  * @brief Unlock the SPI interface to be used by any task.
  *
- * @param h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
  */
 void itf_spi_unlock(h_itf_spi_t h_itf_spi);
 

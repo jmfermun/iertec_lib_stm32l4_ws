@@ -54,23 +54,23 @@ bool itf_io_init(void);
 /**
  * @brief Set an interrupt callback.
  *
- * @param h_itf_io Interrupt pin to configure.
- * @param cb Callback that will handle the pin interrupts.
+ * @param[in] h_itf_io Interrupt pin to configure.
+ * @param[in] cb Callback that will handle the pin interrupts.
  */
 void itf_io_set_int_cb(h_itf_io_t h_itf_io, itf_io_int_cb_t cb);
 
 /**
  * @brief Set the output value of the indicated pin.
  *
- * @param h_itf_io Pin to set.
- * @param value Can be ITF_IO_LOW or ITF_IO_HIGH.
+ * @param[in] h_itf_io Pin to set.
+ * @param[in] value Can be ITF_IO_LOW or ITF_IO_HIGH.
  */
 void itf_io_set_value(h_itf_io_t h_itf_io, uint8_t value);
 
 /**
  * @brief Get the input value of the indicated pin.
  *
- * @param h_itf_io Pin to get.
+ * @param[in] h_itf_io Pin to get.
  *
  * @return Value can be ITF_IO_LOW or ITF_IO_HIGH.
  */
@@ -79,7 +79,7 @@ uint8_t itf_io_get_value(h_itf_io_t h_itf_io);
 /**
  * @brief Toggle the value of the indicated pin.
  *
- * @param h_itf_io Pin to toggle.
+ * @param[in] h_itf_io Pin to toggle.
  */
 void itf_io_toggle_value(h_itf_io_t h_itf_io);
 

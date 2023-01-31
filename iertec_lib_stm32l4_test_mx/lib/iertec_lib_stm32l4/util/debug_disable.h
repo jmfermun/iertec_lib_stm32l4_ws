@@ -7,8 +7,7 @@
  ******************************************************************************/
 
 /**
- * @defgroup debug_util debug_util
- * @brief Debug utility to disable debug_printf in the current module.
+ * @addtogroup debug_util
  * @{
  */
 

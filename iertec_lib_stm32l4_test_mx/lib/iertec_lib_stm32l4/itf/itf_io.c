@@ -34,7 +34,7 @@ static itf_io_int_cb_t itf_io_int_cb[H_ITF_IO_INT_COUNT];
  * @brief General interrupt service routine. The registered callbacks will be
  * called from it.
  *
- * @param pin_id Pin that caused the interrupt.
+ * @param[in] pin_id Pin that caused the interrupt.
  */
 void HAL_GPIO_EXTI_Callback(uint16_t pin_id);
 
@@ -148,7 +148,7 @@ itf_io_toggle_value (h_itf_io_t h_itf_io)
  * @brief General interrupt service routine. The registered callbacks will be
  * called from it.
  *
- * @param pin_id Pin that caused the interrupt.
+ * @param[in] pin_id Pin that caused the interrupt.
  */
 void
 HAL_GPIO_EXTI_Callback (uint16_t pin_id)

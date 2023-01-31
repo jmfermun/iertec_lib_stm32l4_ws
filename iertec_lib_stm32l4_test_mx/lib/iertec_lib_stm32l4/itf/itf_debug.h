@@ -55,7 +55,7 @@ bool itf_debug_deinit(void);
 /**
  * @brief Send a char through the debug interface.
  *
- * @param ch Character to be sent.
+ * @param[in] ch Character to be sent.
  */
 void itf_debug_put_char(char ch);
 
@@ -71,8 +71,8 @@ int itf_debug_get_char(void);
 /**
  * @brief Send binary data through the debug interface.
  *
- * @param data Binary data to be sent.
- * @param len Number of bytes to send.
+ * @param[in] data Binary data to be sent.
+ * @param[in] len Number of bytes to send.
  */
 void itf_debug_write(const char * data, size_t len);
 

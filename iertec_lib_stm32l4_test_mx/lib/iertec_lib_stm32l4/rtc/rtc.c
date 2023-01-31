@@ -112,7 +112,7 @@ static int8_t rtc_delta_hour = 0;
 /**
  * @brief Convert the year format from internal to 2 digit calendar.
  *
- * @param year Year in system format, i.e., 0 equals to YEAR_BASE.
+ * @param[in] year Year in system format, i.e., 0 equals to YEAR_BASE.
  *
  * @return Calendar year in 2 digit format from AGNO_BASE to (YEAR_BASE +
  * YEAR_MAX - 1).
@@ -122,7 +122,7 @@ static uint8_t rtc_system_to_calendar_year(uint8_t year);
 /**
  * @brief Convert the year format from calendar to internal.
  *
- * @param year Year in calendar format from AGNO_BASE to (YEAR_BASE +
+ * @param[in] year Year in calendar format from AGNO_BASE to (YEAR_BASE +
  * YEAR_MAX - 1).
  *
  * @return Year in system format, i.e., 0 equals to YEAR_BASE.
@@ -134,8 +134,8 @@ static uint8_t rtc_calendar_to_system_year(uint8_t year);
  * 00:00:00 of 1st January of YEAR_BASE to datetime_t format with the year in
  * system format.
  *
- * @param datetime Pointer to the converted date time.
- * @param timestamp Timestamp to convert.
+ * @param[out] datetime Pointer to the converted date time.
+ * @param[in] timestamp Timestamp to convert.
  */
 static void rtc_timestamp_to_datetime(datetime_t * datetime,
                                       uint32_t timestamp);
@@ -145,10 +145,10 @@ static void rtc_timestamp_to_datetime(datetime_t * datetime,
  * timestamp that consists in the number of seconds from 00:00:00 of 1st January
  * of YEAR_BASE.
  *
- * @param timestamp Pointer to converted timestamp.
- * @param datetime Pointer to the date time to be converted.
- * @param fmt_local true: input format is local time plus time zone;
- *                  false: input format is UTC time plus time zone.
+ * @param[out] timestamp Pointer to converted timestamp.
+ * @param[in] datetime Pointer to the date time to be converted.
+ * @param[in] fmt_local true: input format is local time plus time zone;
+ *                      false: input format is UTC time plus time zone.
  */
 static void rtc_datetime_to_timestamp(uint32_t * timestamp,
                                       const datetime_t * datetime,
@@ -157,7 +157,7 @@ static void rtc_datetime_to_timestamp(uint32_t * timestamp,
 /**
  * @brief Check if the date values are correct.
  *
- * @param datetime Date/time with the year in system format.
+ * @param[in] datetime Date/time with the year in system format.
  *
  * @retval true If values are correct.
  * @retval false If values are not correct.
@@ -167,7 +167,7 @@ static bool rtc_is_date_ok(const datetime_t * datetime);
 /**
  * @brief Check if the time values are correct.
  *
- * @param datetime Date/time with the year in system format.
+ * @param[in] datetime Date/time with the year in system format.
  *
  * @retval true If values are correct.
  * @retval false If values are not correct.
@@ -177,8 +177,8 @@ static bool rtc_is_time_ok(const datetime_t * datetime);
 /**
  * @brief Convert the date/time format from calendar to internal.
  *
- * @param datetime_out Converted date/time.
- * @param datetime_in Input date/time.
+ * @param[out] datetime_out Converted date/time.
+ * @param[in] datetime_in Input date/time.
  */
 static void rtc_convert_datetime(datetime_t * datetime_out,
                                  const datetime_t * datetime_in);

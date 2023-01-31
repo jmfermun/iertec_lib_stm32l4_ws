@@ -47,7 +47,7 @@ static itf_i2c_instance_t itf_i2c_instance[H_ITF_I2C_COUNT];
 /**
  * @brief Function to be called from the completion callbacks.
  *
- * @param hi2c Pointer to a I2C_HandleTypeDef structure that contains the
+ * @param[in] hi2c Pointer to a I2C_HandleTypeDef structure that contains the
  * configuration information for I2C module.
  */
 static inline void itf_i2c_give_semaphore(I2C_HandleTypeDef * h_i2c);

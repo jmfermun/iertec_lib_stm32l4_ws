@@ -56,6 +56,9 @@ static size_t rtos_util_free_heap_size;
  * configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.
  *
  * This hook function is called if a stack overflow is detected.
+ *
+ * @param[in] pxTask Handle of the overflowed task.
+ * @param[in] pcTaskName Task name.
  */
 void
 vApplicationStackOverflowHook (TaskHandle_t pxTask, char * pcTaskName)

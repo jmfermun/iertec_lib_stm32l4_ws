@@ -1,10 +1,11 @@
 /*******************************************************************************
- * @file test_task_wait.c
+ * @file test_task_wdgt.c
  * @author juanmanuel.fernandez@iertec.com
- * @date 28 Jan 2023
- * @brief Test for the task locking mechanism.
+ * @date 08 Dec 2022
+ * @brief Test for the task watchdog mechanism.
  ******************************************************************************/
 
+#include "task_wdgt.h"
 #include "task_wait.h"
 #include "sys_util.h"
 
@@ -83,6 +84,9 @@ TEST_FILE("debug_util.c")
 TEST_FILE("itf_uart.c")
 TEST_FILE("itf_rtc.c")
 TEST_FILE("sys_util.c")
+TEST_FILE("task_wait.c")
+
+#include "mock_itf_wdgt.h"
 
 /****************************************************************************//*
  * Constants and macros
@@ -115,6 +119,7 @@ static void task_test_thread(void * parameters)
     {
         task_wait_lock(task_id);
         task_test_count[task_id]++;
+        task_wdgt_feed(task_id);
     }
 }
 
@@ -122,8 +127,14 @@ static void task_test_thread(void * parameters)
  * Tests
  ******************************************************************************/
 
-void test_task_wait_init(void)
+void setUp(void)
 {
+    itf_wdgt_feed_StopIgnore();
+}
+
+void test_task_wdgt_init(void)
+{
+    task_wdgt_init();
     task_wait_init();
 
     // Construct the test tasks
@@ -141,36 +152,54 @@ void test_task_wait_init(void)
                                    TASK_ID_COUNT);
 }
 
-void test_task_wait_unlock_sequential(void)
+void test_task_wdgt_register(void)
 {
     for (size_t i = 0; i < TASK_ID_COUNT; i++)
     {
-        task_wait_unlock(i);
-        task_test_count_exp[i]++;
+        task_wdgt_register(i);
 
-        sys_sleep_msec(10);
+        for (size_t j = 0; j < TASK_ID_COUNT; j++)
+        {
+            if (j == i)
+            {
+                itf_wdgt_feed_Expect();
+            }
 
-        TEST_ASSERT_EQUAL_UINT32_ARRAY(task_test_count_exp, task_test_count,
-                                       TASK_ID_COUNT);
+            task_wait_unlock(j);
+            task_test_count_exp[j]++;
+
+            sys_sleep_msec(10);
+
+            TEST_ASSERT_EQUAL_UINT32_ARRAY(task_test_count_exp, task_test_count,
+                                           TASK_ID_COUNT);
+        }
     }
 }
 
-void test_task_wait_assert(void)
+void test_task_wdgt_assert(void)
 {
-    TEST_ASSERT_FAIL_ASSERT(task_wait_lock(TASK_ID_NONE));
-    TEST_ASSERT_FAIL_ASSERT(task_wait_lock(TASK_ID_COUNT));
-    TEST_ASSERT_FAIL_ASSERT(task_wait_unlock(TASK_ID_NONE));
-    TEST_ASSERT_FAIL_ASSERT(task_wait_unlock(TASK_ID_COUNT));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_register(TASK_ID_NONE));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_register(TASK_ID_COUNT));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_unregister(TASK_ID_NONE));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_unregister(TASK_ID_COUNT));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_feed(TASK_ID_NONE));
+    TEST_ASSERT_FAIL_ASSERT(task_wdgt_feed(TASK_ID_COUNT));
 }
 
-void test_task_wait_unlock_repeat(void)
+void test_task_wdgt_unregister(void)
 {
-    for (size_t i = 0; i < TASK_ID_COUNT; i++)
+    for (int i = TASK_ID_COUNT - 1; i >= 0; i--)
     {
-        for (size_t j = 0; j < 10; j++)
+        for (size_t j = 0; j < TASK_ID_COUNT; j++)
         {
-            task_wait_unlock(i);
-            task_test_count_exp[i]++;
+            if (j == i)
+            {
+                itf_wdgt_feed_Expect();
+                task_wdgt_unregister(i);
+            }
+
+            task_wait_unlock(j);
+            task_test_count_exp[j]++;
 
             sys_sleep_msec(10);
 

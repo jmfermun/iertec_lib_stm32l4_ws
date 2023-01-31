@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @file itf_debug_none.c
  * @author juanmanuel.fernandez@iertec.com
- * @date 19 Oct 2022
+ * @date 23 Dec 2022
  * @brief Dummy debug interface driver.
  * @ingroup itf_debug
  ******************************************************************************/

@@ -345,5 +345,11 @@ void LPTIM2_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+/**
+ * @brief Weak definition of the UART interrupt handler needed by the tests.
+ */
+__weak void itf_uart_isr(h_itf_uart_t h_itf_uart)
+{
+  (void)h_itf_uart;
+}
 /* USER CODE END 1 */

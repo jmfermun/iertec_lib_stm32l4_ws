@@ -24,7 +24,7 @@
 
 /** Convert time from system ticks to milliseconds. */
 #define SYS_TICKS_TO_MSEC(X) \
-    ((TickType_t)(X) * ((TickType_t)1000u / (TickType_t)configTICK_RATE_HZ))
+        ((TickType_t)(X) * ((TickType_t)1000u / (TickType_t)configTICK_RATE_HZ))
 
 /** Enter into a critical section. */
 #define SYS_ENTER_CRITICAL   taskENTER_CRITICAL
@@ -50,7 +50,8 @@ uint32_t sys_get_timestamp(void);
 /**
  * @brief Compute the time difference between calls done to this function.
  *
- * @param[in,out] ticks Variable used to store the clock tick mark of the previous call.
+ * @param[in,out] ticks Variable used to store the clock tick mark of the
+ * previous call.
  * @param[in,out] max_diff Maximum difference in us of the calls done.
  *
  * @return Time difference in us.
@@ -75,9 +76,10 @@ void sys_sleep_msec(uint32_t msec);
  * @brief Delay a task until a specified time. This function can be used by
  * periodic tasks to ensure a constant execution frequency.
  *
- * @param[in,out] prev_ticks Pointer to a variable that holds the time at which the task
- * was last unblocked. The variable must be initialized with the current tick
- * prior to its first use. TO do it, call this function with inc_msec equl to 0.
+ * @param[in,out] prev_ticks Pointer to a variable that holds the time at which
+ * the task was last unblocked. The variable must be initialized with the
+ * current tick prior to its first use. TO do it, call this function with
+ * inc_msec equl to 0.
  * @param[in] inc_msec The cycle time period in milliseconds.
  *
  * @note Function based on FreeRTOS function vTaskDelayUntil.

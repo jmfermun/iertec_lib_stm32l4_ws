@@ -18,6 +18,8 @@ uncrustify --replace --no-backup -l C -c uncrustify.cfg ^
 ../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/rtc/*.c ^
 ../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/rtos/*.h ^
 ../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/rtos/*.c ^
+../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/task/*.h ^
+../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/task/*.c ^
 ../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/util/*.h ^
 ../../%PROJECT_NAME%/lib/iertec_lib_stm32l4/util/*.c ^
 ../../%PROJECT_NAME%/src/*.h ^

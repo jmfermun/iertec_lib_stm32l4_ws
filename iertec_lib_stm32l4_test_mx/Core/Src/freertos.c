@@ -133,7 +133,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -350,11 +350,13 @@ void StartDefaultTask(void const * argument)
     time_2 = sys_get_timestamp();
     time_diff = time_2 - time_1;
 
-    debug_printf("TDR %u\r\n\r\n", time_diff);
+    debug_printf("TDR %u\r\n", time_diff);
 
     // Default action
 //    osDelay(4000);
     itf_wdgt_feed();
+
+    vApplicationPrintRtosInfo();
   }
   /* USER CODE END StartDefaultTask */
 }

@@ -10,6 +10,13 @@
 
 #if configUSE_TICKLESS_IDLE == 2
 
+// Ensure definitions are only used by the compiler, and not by the assembler.
+#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
+extern void itf_pwr_pre_sleep(void);
+extern void itf_pwr_post_sleep(void);
+extern void vApplicationTraceTicksDropped(uint32_t ticks);
+#endif // defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
+
 // Preprocessor code in lptimTick.c requires that configTICK_RATE_HZ be a preprocessor-friendly numeric
 // literal.  As a result, the application *ignores* the CubeMX configuration of the FreeRTOS tick rate.
 #undef  configTICK_RATE_HZ
@@ -23,11 +30,6 @@
 // Without pre- and post-sleep processing, lptimTick.c uses only basic sleep mode during tickless idle.
 // To utilize the stop modes and their dramatic reduction in power consumption, we employ an ultra-low-power
 // driver to handle the pre- and post-sleep hooks.
-#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
-extern void itf_pwr_pre_sleep(void);
-extern void itf_pwr_post_sleep(void);
-#endif // defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
-
 #define configPRE_SLEEP_PROCESSING(X)  itf_pwr_pre_sleep()
 #define configPOST_SLEEP_PROCESSING(X) itf_pwr_post_sleep()
 
@@ -43,6 +45,9 @@ extern void itf_pwr_post_sleep(void);
 // don't enable the work around.  (The shortest possible run time between deep sleeps occurs with a very
 // short ISR that interrupts STOP mode but doesn't interact with FreeRTOS at all. See lptimTick.c.)
 #define configMIN_RUN_BETWEEN_DEEP_SLEEPS  ( ( 2U * configCPU_CLOCK_HZ ) / 1000000 )
+
+// Keep track of ticks dropped
+#define traceTICKS_DROPPED(X) vApplicationTraceTicksDropped(X)
 
 #endif // configUSE_TICKLESS_IDLE == 2
 

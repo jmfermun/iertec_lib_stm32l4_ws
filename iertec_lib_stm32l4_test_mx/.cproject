@@ -48,14 +48,15 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32L4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/fsm"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
-									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtc"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtos"/>
-									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/task"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1869774083" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -136,14 +137,15 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32L4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/fsm"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
-									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtc"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtos"/>
-									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/task"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/util"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1771393433" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>

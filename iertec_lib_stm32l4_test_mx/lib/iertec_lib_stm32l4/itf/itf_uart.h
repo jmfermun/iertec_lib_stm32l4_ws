@@ -22,13 +22,21 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/** @brief Type used for checking lines that do not expect a trailing \r\n. */
+typedef struct
+{
+    const char * line;
+    size_t       len;
+} itf_uart_line_no_crlf_t;
+
 /** @brief UART interface hardware configuration type. */
 typedef struct
 {
-    UART_HandleTypeDef * handle;
-    h_itf_io_t           pin_rts;
-    uint32_t             timeout_msec;
-    itf_bsp_init_ll_t    init_ll;
+    UART_HandleTypeDef *            handle;
+    h_itf_io_t                      pin_rts;
+    uint32_t                        timeout_msec;
+    itf_bsp_init_ll_t               init_ll;
+    const itf_uart_line_no_crlf_t * line_no_crlf;
 } itf_uart_config_t;
 
 /**

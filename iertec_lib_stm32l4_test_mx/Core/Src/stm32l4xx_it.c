@@ -274,7 +274,7 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
   itf_uart_isr(H_ITF_UART_0);
 
-    // Disable the use of the default UART handler
+  // Disable the use of the default UART handler
 #if 0
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);

@@ -49,17 +49,18 @@ typedef enum
 /** @brief UART instance data needed during transactions. */
 typedef struct
 {
-    UART_HandleTypeDef * handle;
-    uint32_t             timeout_ticks;
-    SemaphoreHandle_t    sem_tx;
-    uint8_t *            buffer_tx;
-    size_t               len_tx;
-    StreamBufferHandle_t buffer_rx;
-    size_t               len_rx;
-    h_itf_io_t           pin_rts;
-    itf_uart_xts_state   rts_state;
-    uint8_t              h_itf_pwr_tx;
-    uint8_t              h_itf_pwr_rx;
+    UART_HandleTypeDef *            handle;
+    uint32_t                        timeout_ticks;
+    SemaphoreHandle_t               sem_tx;
+    uint8_t *                       buffer_tx;
+    size_t                          len_tx;
+    StreamBufferHandle_t            buffer_rx;
+    size_t                          len_rx;
+    h_itf_io_t                      pin_rts;
+    itf_uart_xts_state              rts_state;
+    uint8_t                         h_itf_pwr_tx;
+    uint8_t                         h_itf_pwr_rx;
+    const itf_uart_line_no_crlf_t * line_no_crlf;
 } itf_uart_instance_t;
 
 /****************************************************************************//*
@@ -82,6 +83,21 @@ static itf_uart_instance_t itf_uart_instance[H_ITF_UART_COUNT];
  * @param[in] instance UART instance to be cleaned.
  */
 static void itf_uart_clean_rx(itf_uart_instance_t * instance);
+
+/**
+ * @brief Check if the received data is part of a complete line with no expected
+ * \r\n.
+ *
+ * @param[in] line_no_crlf Array with lines that conform the above rule.
+ * @param[in] data Currently received data.
+ * @param[in] len Number of bytes of the currently received data.
+ *
+ * @retval true If a line match has been detected.
+ * @retval false Otherwise.
+ */
+static bool itf_uart_check_line_no_crlf(
+    const itf_uart_line_no_crlf_t * line_no_crlf, const char * data,
+    size_t len);
 
 /****************************************************************************//*
  * Public code
@@ -110,10 +126,11 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     }
 
     // Save the UART instance to be used
-    instance->handle    = config->handle;
-    instance->buffer_tx = NULL;
-    instance->len_tx    = 0;
-    instance->len_rx    = 0;
+    instance->handle       = config->handle;
+    instance->buffer_tx    = NULL;
+    instance->len_tx       = 0;
+    instance->len_rx       = 0;
+    instance->line_no_crlf = config->line_no_crlf;
 
     // Create the transmission semaphore
     instance->sem_tx = xSemaphoreCreateBinary();
@@ -333,6 +350,13 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
         if (HAL_UART_ERROR_NONE != instance->handle->ErrorCode)
         {
+#ifdef ITF_UART_PRINTF
+            if (H_ITF_UART_DEBUG != h_itf_uart)
+            {
+                debug_printf("ERROR << %u\r\n", instance->handle->ErrorCode);
+            }
+#endif // ITF_UART_PRINTF
+
             itf_uart_clean_rx(instance);
 
             i = 0;
@@ -356,8 +380,8 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
             data[i++] = read_byte;
 
-            // Special case for the start of
-            if (i == 2 && data[0] == '>' && data[1] == ' ')
+            // Special line cases without trailing \r\n
+            if (itf_uart_check_line_no_crlf(instance->line_no_crlf, data, i))
             {
                 break;
             }
@@ -409,6 +433,13 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
         if (HAL_UART_ERROR_NONE != instance->handle->ErrorCode)
         {
+#ifdef ITF_UART_PRINTF
+            if (H_ITF_UART_DEBUG != h_itf_uart)
+            {
+                debug_printf("ERROR << %u\r\n", instance->handle->ErrorCode);
+            }
+#endif // ITF_UART_PRINTF
+
             itf_uart_clean_rx(instance);
 
             i = 0;
@@ -592,6 +623,24 @@ itf_uart_clean_rx (itf_uart_instance_t * instance)
     }
 
     taskEXIT_CRITICAL();
+}
+
+static bool
+itf_uart_check_line_no_crlf (const itf_uart_line_no_crlf_t * line_no_crlf,
+                             const char * data, size_t len)
+{
+    while (line_no_crlf->len > 0)
+    {
+        if ((line_no_crlf->len == len)
+            && (memcmp(line_no_crlf->line, data, len) == 0))
+        {
+            return true;
+        }
+
+        line_no_crlf++;
+    }
+
+    return false;
 }
 
 /** @} */

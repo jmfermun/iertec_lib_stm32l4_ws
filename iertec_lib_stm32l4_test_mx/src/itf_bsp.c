@@ -136,6 +136,15 @@ const itf_i2c_config_t itf_i2c_config[H_ITF_I2C_COUNT] =
  * itf_uart board configuration
  ******************************************************************************/
 
+/** Empty configuration for special line cases. */
+static const itf_uart_line_no_crlf_t line_no_crlf_none[] =
+{
+    {
+        .line = NULL,
+        .len  = 0,
+    },
+};
+
 /** Hardware configuration of the available UART interfaces. */
 const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
 {
@@ -144,12 +153,14 @@ const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
         .pin_rts      = H_ITF_IO_NONE,
         .timeout_msec = 2000,
         .init_ll      = MX_USART2_UART_Init,
+        .line_no_crlf = line_no_crlf_none,
     },
     {   // H_ITF_UART_0
         .handle       = &huart1,
         .pin_rts      = H_ITF_IO_UART_0_RTS,
         .timeout_msec = 1000,
         .init_ll      = MX_USART1_UART_Init,
+        .line_no_crlf = line_no_crlf_none,
     },
 };
 

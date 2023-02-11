@@ -43,6 +43,17 @@ typedef enum
     H_ITF_SPI_NONE = 0xFF,
 } h_itf_spi_t;
 
+/** @brief SPI chip interface handlers. */
+typedef enum
+{
+    H_ITF_SPI_CHIP_MODE_0 = 0,
+    H_ITF_SPI_CHIP_MODE_1,
+    H_ITF_SPI_CHIP_MODE_2,
+    H_ITF_SPI_CHIP_MODE_3,
+    H_ITF_SPI_CHIP_COUNT,
+    H_ITF_SPI_CHIP_NONE = 0xFF,
+} h_itf_spi_chip_t;
+
 /** @brief I2C interface handlers. */
 typedef enum
 {

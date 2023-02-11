@@ -9,9 +9,11 @@
  *
  * Needed connections:
  * - PA7 -> PA6
+ * - PB1 --> PA8
  ******************************************************************************/
 
 #include "itf_spi.h"
+#include "itf_io.h"
 
 #include "unity.h"
 
@@ -113,6 +115,7 @@ void test_itf_spi_init(void)
     TEST_ASSERT_FALSE(itf_spi_init(H_ITF_SPI_COUNT));
     TEST_ASSERT_TRUE(itf_spi_init(H_ITF_SPI_0));
     itf_spi_flush(H_ITF_SPI_0);
+    itf_io_set_value(H_ITF_IO_OUT_1, ITF_IO_HIGH);
 }
 
 void test_itf_spi_write(void)
@@ -122,10 +125,19 @@ void test_itf_spi_write(void)
         tx_data[i] = i;
     }
 
-    itf_spi_lock(H_ITF_SPI_0);
+    // Chip select
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+    itf_spi_select(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+
+    // Transaction
     TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, NULL,
                      DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
+
+    // Chip deselect
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+    itf_spi_deselect(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
 }
 
 void test_itf_spi_read(void)
@@ -136,20 +148,38 @@ void test_itf_spi_read(void)
         rx_data[i] = i;
     }
 
-    itf_spi_lock(H_ITF_SPI_0);
+    // Chip select
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+    itf_spi_select(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+
+    // Transaction
     TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, NULL, rx_data,
                                          DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
+
+    // Chip deselect
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+    itf_spi_deselect(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
 }
 
 void test_itf_spi_error(void)
 {
-    itf_spi_lock(H_ITF_SPI_0);
+    // Chip select
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+    itf_spi_select(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+
+    // Transaction
     TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, NULL, NULL, DATA_SIZE));
     TEST_ASSERT_FALSE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data, 0));
-    itf_spi_unlock(H_ITF_SPI_0);
+
+    // Chip deselect
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+    itf_spi_deselect(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
 }
 
 void test_itf_spi_write_and_read(void)
@@ -159,12 +189,49 @@ void test_itf_spi_write_and_read(void)
         tx_data[i] = DATA_SIZE - 1 - i;
     }
 
-    itf_spi_lock(H_ITF_SPI_0);
+    // Chip select
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+    itf_spi_select(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+
+    // Transaction
     TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data,
                                          DATA_SIZE));
-    itf_spi_unlock(H_ITF_SPI_0);
+
+    // Chip deselect
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+    itf_spi_deselect(H_ITF_SPI_CHIP_MODE_0);
+    TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
+}
+
+void test_itf_spi_mode_change(void)
+{
+    for (h_itf_spi_chip_t chip = H_ITF_SPI_CHIP_MODE_0;
+         chip < H_ITF_SPI_CHIP_COUNT; chip++)
+    {
+        for (int i = 0; i < DATA_SIZE; i++)
+        {
+            tx_data[i] = DATA_SIZE - 1 - i;
+        }
+
+        // Chip select
+        TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+        itf_spi_select(chip);
+        TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+
+        // Transaction
+        TEST_ASSERT_TRUE(itf_spi_transaction(H_ITF_SPI_0, tx_data, rx_data,
+                                             DATA_SIZE));
+
+        // Chip deselect
+        TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_LOW);
+        itf_spi_deselect(chip);
+        TEST_ASSERT_TRUE(itf_io_get_value(H_ITF_IO_IN_1) == ITF_IO_HIGH);
+
+        TEST_ASSERT_EQUAL_UINT8_ARRAY(tx_data, rx_data, DATA_SIZE);
+    }
 }
 
 void test_itf_spi_deinit(void)

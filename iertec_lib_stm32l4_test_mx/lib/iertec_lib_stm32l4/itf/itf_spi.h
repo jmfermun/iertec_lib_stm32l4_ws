@@ -22,12 +22,29 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/** @brief SPI data frame formats. */
+typedef enum
+{
+    ITF_SPI_MODE_POL0_PHA0 = 0,
+    ITF_SPI_MODE_POL0_PHA1,
+    ITF_SPI_MODE_POL1_PHA0,
+    ITF_SPI_MODE_POL1_PHA1,
+} itf_spi_mode_t;
+
 /** @brief SPI interface hardware configuration type. */
 typedef struct
 {
     SPI_HandleTypeDef * handle;
     itf_bsp_init_ll_t   init_ll;
 } itf_spi_config_t;
+
+/** @brief SPI chip interface hardware configuration type. */
+typedef struct
+{
+    h_itf_spi_t    h_itf_spi;
+    h_itf_io_t     pin_cs;
+    itf_spi_mode_t mode;
+} itf_spi_chip_config_t;
 
 /**
  * @brief Initialization of the SPI interface.
@@ -71,18 +88,20 @@ bool itf_spi_transaction(h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
 void itf_spi_flush(h_itf_spi_t h_itf_spi);
 
 /**
- * @brief Lock the SPI interface to be used only by the current task.
+ * @brief Activate the chip select signal and lock the SPI interface associated
+ * with it to be used only by the current task.
  *
- * @param[in] h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi_chip Handler of the SPI chip interface to use.
  */
-void itf_spi_lock(h_itf_spi_t h_itf_spi);
+void itf_spi_select(h_itf_spi_chip_t h_itf_spi_chip);
 
 /**
- * @brief Unlock the SPI interface to be used by any task.
+ * @brief Deactivate the chip select signal and unlock the SPI interface
+ * associated with it to be used by any task.
  *
- * @param[in] h_itf_spi Handler of the SPI interface to use.
+ * @param[in] h_itf_spi_chip Handler of the SPI chip interface to use.
  */
-void itf_spi_unlock(h_itf_spi_t h_itf_spi);
+void itf_spi_deselect(h_itf_spi_chip_t h_itf_spi_chip);
 
 #endif // ITF_SPI_H
 

@@ -119,6 +119,31 @@ const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT] =
     },
 };
 
+/** Board configuration of the available SPI chip interfaces. */
+const itf_spi_chip_config_t itf_spi_chip_config[H_ITF_SPI_CHIP_COUNT] =
+{
+    {   // H_ITF_SPI_CHIP_MODE_0
+        .h_itf_spi = H_ITF_SPI_0,
+        .pin_cs    = H_ITF_IO_OUT_1,
+        .mode      = ITF_SPI_MODE_POL0_PHA0,
+    },
+    {   // H_ITF_SPI_CHIP_MODE_1
+        .h_itf_spi = H_ITF_SPI_0,
+        .pin_cs    = H_ITF_IO_OUT_1,
+        .mode      = ITF_SPI_MODE_POL0_PHA1,
+    },
+    {   // H_ITF_SPI_CHIP_MODE_2
+        .h_itf_spi = H_ITF_SPI_0,
+        .pin_cs    = H_ITF_IO_OUT_1,
+        .mode      = ITF_SPI_MODE_POL1_PHA0,
+    },
+    {   // H_ITF_SPI_CHIP_MODE_3
+        .h_itf_spi = H_ITF_SPI_0,
+        .pin_cs    = H_ITF_IO_OUT_1,
+        .mode      = ITF_SPI_MODE_POL1_PHA1,
+    },
+};
+
 /****************************************************************************//*
  * itf_i2c board configuration
  ******************************************************************************/

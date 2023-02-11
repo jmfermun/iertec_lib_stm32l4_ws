@@ -22,16 +22,10 @@
 #include <stdbool.h>
 
 /** Low logic value. */
-#define ITF_IO_LOW    (0)
+#define ITF_IO_LOW  (0)
 
 /** High logic value. */
-#define ITF_IO_HIGH   (1)
-
-/** Chip Select on logic value. */
-#define ITF_IO_CS_ON  (ITF_IO_LOW)
-
-/** Chip Select off logic value. */
-#define ITF_IO_CS_OFF (ITF_IO_HIGH)
+#define ITF_IO_HIGH (1)
 
 /** @brief Type of the callbacks used as ISR. */
 typedef void (* itf_io_int_cb_t)(void);

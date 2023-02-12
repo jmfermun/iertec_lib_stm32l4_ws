@@ -65,7 +65,7 @@ static itf_spi_instance_t itf_spi_instance[H_ITF_SPI_COUNT];
  * @param[in] hspi Pointer to a SPI_HandleTypeDef structure that contains the
  * configuration information for SPI module.
  */
-static inline void itf_spi_give_semaphore(SPI_HandleTypeDef * h_spi);
+static inline void itf_spi_give_semaphore(const SPI_HandleTypeDef * h_spi);
 
 /****************************************************************************//*
  * Public code
@@ -331,7 +331,7 @@ HAL_SPI_ErrorCallback (SPI_HandleTypeDef * h_spi)
 }
 
 static inline void
-itf_spi_give_semaphore (SPI_HandleTypeDef * h_spi)
+itf_spi_give_semaphore (const SPI_HandleTypeDef * h_spi)
 {
     BaseType_t           b_yield  = pdFALSE;
     itf_spi_instance_t * instance = NULL;

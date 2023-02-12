@@ -1,0 +1,40 @@
+/****************/
+/* User options */
+/****************/
+
+// Use the integer model for enums
++fie
+
+// Sizeof is long incorrectly determined by pclp_config
+-fzl
+
+// Use parallel analysis
+-max_threads=8
+
+/*************/
+/* Libraries */
+/*************/
+
++libdir(*/Core/*)
++libdir(*/Drivers/*)
++libdir(*/Middlewares/*)
+
+/****************/
+/* Suppressions */
+/****************/
+
+// Header file 'string' repeatedly included but has no header guard
+-estring(451, stdint.h, stddef.h)
+
+// Ignoring return value of function symbol
+-emacro(534, debug_info, debug_printf)
+-esym(534, memcpy)
+
+// Repeated include file 'file'
+-e537
+
+// Monocarpic do-while used to group statements
+-e717
+
+// Enum constant symbol not used within default switch
+-e788

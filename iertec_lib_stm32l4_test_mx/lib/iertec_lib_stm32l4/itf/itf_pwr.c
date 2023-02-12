@@ -105,7 +105,7 @@ itf_pwr_register (itf_pwr_level_t level)
 {
     uint8_t handle;
 
-    if ((h_itf_pwr_index > H_ITF_PWR_MAX) || (level >= ITF_PWR_LEVEL_COUNT))
+    if ((h_itf_pwr_index >= H_ITF_PWR_MAX) || (level >= ITF_PWR_LEVEL_COUNT))
     {
         handle = H_ITF_PWR_NONE;
     }

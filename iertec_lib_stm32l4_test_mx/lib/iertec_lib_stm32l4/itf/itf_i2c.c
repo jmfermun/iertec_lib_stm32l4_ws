@@ -50,7 +50,7 @@ static itf_i2c_instance_t itf_i2c_instance[H_ITF_I2C_COUNT];
  * @param[in] hi2c Pointer to a I2C_HandleTypeDef structure that contains the
  * configuration information for I2C module.
  */
-static inline void itf_i2c_give_semaphore(I2C_HandleTypeDef * h_i2c);
+static inline void itf_i2c_give_semaphore(const I2C_HandleTypeDef * h_i2c);
 
 /****************************************************************************//*
  * Public code
@@ -136,7 +136,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
 
     itf_pwr_set_active(instance->h_itf_pwr);
 
-    if ((NULL != tx_data) && (HAL_OK == status))
+    if (NULL != tx_data)
     {
         status = HAL_I2C_Master_Transmit_DMA(instance->handle, slave_address,
                                              (uint8_t *)tx_data, tx_count);
@@ -209,7 +209,7 @@ HAL_I2C_ErrorCallback (I2C_HandleTypeDef * h_i2c)
 }
 
 static inline void
-itf_i2c_give_semaphore (I2C_HandleTypeDef * h_i2c)
+itf_i2c_give_semaphore (const I2C_HandleTypeDef * h_i2c)
 {
     BaseType_t           b_yield  = pdFALSE;
     itf_i2c_instance_t * instance = NULL;

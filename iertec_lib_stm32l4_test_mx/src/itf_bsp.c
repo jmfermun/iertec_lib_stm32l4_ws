@@ -199,7 +199,7 @@ itf_bsp_ll_init (void)
     bool ret = true;
 
     // Reset of all peripherals, Initializes the Flash interface and the Systick
-    HAL_Init();
+    ret = (HAL_Init() == HAL_OK) && true;
 
     // Initialize the low level interfaces
     ret = itf_clk_init() && ret;

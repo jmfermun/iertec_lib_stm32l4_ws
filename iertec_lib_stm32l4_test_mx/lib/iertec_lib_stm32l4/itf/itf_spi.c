@@ -49,7 +49,7 @@ typedef struct
  ******************************************************************************/
 
 // Board configuration
-extern const itf_spi_config_t itf_spi_config[H_ITF_SPI_COUNT];
+extern const itf_spi_config_t      itf_spi_config[H_ITF_SPI_COUNT];
 extern const itf_spi_chip_config_t itf_spi_chip_config[H_ITF_SPI_CHIP_COUNT];
 
 /** Instances of the available SPI interfaces. */
@@ -232,8 +232,10 @@ itf_spi_flush (h_itf_spi_t h_itf_spi)
 void
 itf_spi_select (h_itf_spi_chip_t h_itf_spi_chip)
 {
-    const itf_spi_chip_config_t * config = &itf_spi_chip_config[h_itf_spi_chip];
-    itf_spi_instance_t * instance = &itf_spi_instance[config->h_itf_spi];
+    const itf_spi_chip_config_t * config =
+        &itf_spi_chip_config[h_itf_spi_chip];
+    itf_spi_instance_t * instance        =
+        &itf_spi_instance[config->h_itf_spi];
 
     (void)xSemaphoreTake(instance->mutex, portMAX_DELAY);
 
@@ -246,23 +248,23 @@ itf_spi_select (h_itf_spi_chip_t h_itf_spi_chip)
         {
             case ITF_SPI_MODE_POL0_PHA0:
                 instance->handle->Init.CLKPolarity = SPI_POLARITY_LOW;
-                instance->handle->Init.CLKPhase = SPI_PHASE_1EDGE;
+                instance->handle->Init.CLKPhase    = SPI_PHASE_1EDGE;
             break;
 
             case ITF_SPI_MODE_POL0_PHA1:
                 instance->handle->Init.CLKPolarity = SPI_POLARITY_LOW;
-                instance->handle->Init.CLKPhase = SPI_PHASE_2EDGE;
+                instance->handle->Init.CLKPhase    = SPI_PHASE_2EDGE;
             break;
 
             case ITF_SPI_MODE_POL1_PHA0:
                 instance->handle->Init.CLKPolarity = SPI_POLARITY_HIGH;
-                instance->handle->Init.CLKPhase = SPI_PHASE_1EDGE;
+                instance->handle->Init.CLKPhase    = SPI_PHASE_1EDGE;
             break;
 
             case ITF_SPI_MODE_POL1_PHA1:
             default:
                 instance->handle->Init.CLKPolarity = SPI_POLARITY_HIGH;
-                instance->handle->Init.CLKPhase = SPI_PHASE_2EDGE;
+                instance->handle->Init.CLKPhase    = SPI_PHASE_2EDGE;
             break;
         }
 
@@ -270,9 +272,10 @@ itf_spi_select (h_itf_spi_chip_t h_itf_spi_chip)
         __HAL_SPI_DISABLE(instance->handle);
 
         // Modify SPI mode
-        uint32_t mode_mask = SPI_CR1_CPOL_Msk | SPI_CR1_CPHA_Msk;
+        uint32_t mode_mask  = SPI_CR1_CPOL_Msk | SPI_CR1_CPHA_Msk;
         uint32_t mode_value = instance->handle->Init.CLKPolarity
                               | instance->handle->Init.CLKPhase;
+
         MODIFY_REG(instance->handle->Instance->CR1, mode_mask, mode_value);
     }
 
@@ -291,8 +294,10 @@ itf_spi_select (h_itf_spi_chip_t h_itf_spi_chip)
 void
 itf_spi_deselect (h_itf_spi_chip_t h_itf_spi_chip)
 {
-    const itf_spi_chip_config_t * config = &itf_spi_chip_config[h_itf_spi_chip];
-    itf_spi_instance_t * instance = &itf_spi_instance[config->h_itf_spi];
+    const itf_spi_chip_config_t * config =
+        &itf_spi_chip_config[h_itf_spi_chip];
+    itf_spi_instance_t * instance        =
+        &itf_spi_instance[config->h_itf_spi];
 
     if (H_ITF_IO_NONE != config->pin_cs)
     {

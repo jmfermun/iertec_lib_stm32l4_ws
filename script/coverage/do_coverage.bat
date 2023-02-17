@@ -6,7 +6,6 @@ cd /d %~dp0
 call ..\global.bat
 
 set PATH=%PATH_MSYS%;%PATH%
-set PATH=%PATH_TARGET_COMPILER%;%PATH%
 set PATH_OUT=%~dp0..\output\coverage
 set FILES_IN=
 

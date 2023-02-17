@@ -11,6 +11,8 @@ cd ..\..\%PROJECT_NAME%
 
 call ceedling.bat clobber logging test:all
 
+call %~dp0..\coverage\gcov_host.bat
+
 cd %~dp0
 
 pause

@@ -179,6 +179,7 @@ const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
         .timeout_msec = 2000,
         .init_ll      = MX_USART2_UART_Init,
         .line_no_crlf = line_no_crlf_none,
+        .break_time   = 0,
     },
     {   // H_ITF_UART_0
         .handle       = &huart1,
@@ -186,6 +187,7 @@ const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT] =
         .timeout_msec = 1000,
         .init_ll      = MX_USART1_UART_Init,
         .line_no_crlf = line_no_crlf_none,
+        .break_time   = 10,
     },
 };
 

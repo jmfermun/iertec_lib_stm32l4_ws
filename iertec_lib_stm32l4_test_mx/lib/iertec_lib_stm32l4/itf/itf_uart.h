@@ -37,6 +37,7 @@ typedef struct
     uint32_t                        timeout_msec;
     itf_bsp_init_ll_t               init_ll;
     const itf_uart_line_no_crlf_t * line_no_crlf;
+    uint32_t                        break_time;
 } itf_uart_config_t;
 
 /**
@@ -110,8 +111,8 @@ size_t itf_uart_read(h_itf_uart_t h_itf_uart, char * data, size_t max_len);
 
 /**
  * @brief Read binary data from the UART. It reads the number of bytes indicated
- * by max_rsp_len. If a time greater than @ref ITF_UART_READ_BIN_TIMEOUT occurs,
- * the read is aborted.
+ * by max_rsp_len. If a time greater than the configured timeout elapses the
+ * read is aborted.
  *
  * @param[in] h_itf_uart Handler of the UART interface to use.
  * @param[out] data Data in binary format.
@@ -129,6 +130,16 @@ size_t itf_uart_read_bin(h_itf_uart_t h_itf_uart, char * data, size_t len);
  * @return Number of bytes available.
  */
 size_t itf_uart_read_count(h_itf_uart_t h_itf_uart);
+
+/**
+ * @brief Send a break.
+ *
+ * @param[in] h_itf_uart Handler of the UART interface to use.
+ *
+ * @retval true Break sent correctly.
+ * @retval false An error occurred sending the break.
+ */
+bool itf_uart_send_break(h_itf_uart_t h_itf_uart);
 
 /**
  * @brief UART interrupt service routine handler for transmission and reception.

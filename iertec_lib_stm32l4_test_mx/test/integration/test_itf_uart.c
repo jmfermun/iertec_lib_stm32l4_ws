@@ -18,6 +18,7 @@
 
 #include "itf_uart.h"
 #include "itf_rtc.h"
+#include "itf_io.h"
 #include "sys_util.h"
 
 #include <FreeRTOS.h>
@@ -116,6 +117,8 @@ TEST_FILE("sys_util.c")
  * Private data
  ******************************************************************************/
 
+extern const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT];
+
 static uint8_t tx_data[DATA_SIZE];
 static uint8_t rx_data[DATA_SIZE];
 
@@ -200,6 +203,43 @@ void test_itf_uart_init(void)
                                     TASK_SENDER_STACK_SIZE, NULL,
                                     TASK_SENDER_PRIORITY, NULL);
     TEST_ASSERT_TRUE(pdPASS == h_task);
+}
+
+void test_itf_uart_break(void)
+{
+    uint32_t time;
+
+    // Disable reads (breaks available only in this mode)
+    itf_uart_read_disable(H_ITF_UART_0);
+
+    // Hack the RTS line state to allow the sending of the break
+    itf_io_set_value(itf_uart_config[H_ITF_UART_0].pin_rts, ITF_IO_LOW);
+
+    // Check a valid sending of a break
+    time = sys_get_timestamp();
+
+    TEST_ASSERT_TRUE(itf_uart_send_break(H_ITF_UART_0));
+
+    time = sys_get_timestamp() - time;
+
+    // An idle frame will be sent before the break and the stop bit of the break
+    // frame must be taked into account
+    TEST_ASSERT_UINT32_WITHIN(500, 22222, time);
+
+    // Restore the RTS line state
+    itf_io_set_value(itf_uart_config[H_ITF_UART_0].pin_rts, ITF_IO_HIGH);
+
+    // Enable reads (breaks not available in this mode)
+    itf_uart_read_enable(H_ITF_UART_0);
+
+    // Check an invalid sending of a break
+    time = sys_get_timestamp();
+
+    TEST_ASSERT_FALSE(itf_uart_send_break(H_ITF_UART_0));
+
+    time = sys_get_timestamp() - time;
+
+    TEST_ASSERT_UINT32_WITHIN(500, time, 0);
 }
 
 void test_itf_uart_flow_control_none(void)

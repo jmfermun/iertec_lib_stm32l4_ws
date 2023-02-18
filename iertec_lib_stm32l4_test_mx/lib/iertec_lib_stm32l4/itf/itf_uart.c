@@ -61,6 +61,7 @@ typedef struct
     uint8_t                         h_itf_pwr_tx;
     uint8_t                         h_itf_pwr_rx;
     const itf_uart_line_no_crlf_t * line_no_crlf;
+    uint32_t                        break_brr;
 } itf_uart_instance_t;
 
 /****************************************************************************//*
@@ -98,6 +99,15 @@ static void itf_uart_clean_rx(itf_uart_instance_t * instance);
 static bool itf_uart_check_line_no_crlf(
     const itf_uart_line_no_crlf_t * line_no_crlf, const char * data,
     size_t len);
+
+/**
+ * @brief Compute the needed baudrate to generate a break of the desired time.
+ *
+ * @param[in] instance UART instance properly initialized.
+ * @param[in] break_time Time in milliseconds of the break.
+ */
+static void itf_uart_generate_break_baudrate(itf_uart_instance_t * instance,
+                                             uint32_t break_time);
 
 /****************************************************************************//*
  * Public code
@@ -191,6 +201,9 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
         return false;
     }
 
+    // Compute the baudrate needed to generate a break of the desired time
+    itf_uart_generate_break_baudrate(instance, config->break_time);
+
     return true;
 }
 
@@ -277,6 +290,13 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
     // Computation of UART mask to apply to RDR register.
     UART_MASK_COMPUTATION(instance->handle);
 
+    // Clear reception error interrupt flags
+    __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_PEF);
+    __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_FEF);
+    __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_NEF);
+    __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_OREF);
+    __HAL_UART_CLEAR_FLAG(instance->handle, UART_CLEAR_RTOF);
+
     // Enable the UART error interrupt: frame error, noise error, overrun error
     ATOMIC_SET_BIT(instance->handle->Instance->CR3, USART_CR3_EIE);
 
@@ -359,10 +379,29 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
             itf_uart_clean_rx(instance);
 
-            i = 0;
+            // Set the maximum size to detect the error outside the loop
+            i = SIZE_MAX;
+
             break;
         }
-        else if (s_len == sizeof(read_byte))
+        else if (0 == s_len)
+        {
+            // Timeout. If an incomplete line is received, mark it has an error
+            if (i > 0)
+            {
+#ifdef ITF_UART_PRINTF
+                if (H_ITF_UART_DEBUG != h_itf_uart)
+                {
+                    debug_printf("ERROR << incomplete line\r\n");
+                }
+#endif // ITF_UART_PRINTF
+
+                i = SIZE_MAX;
+            }
+
+            break;
+        }
+        else
         {
             taskENTER_CRITICAL();
 
@@ -386,34 +425,33 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
                 break;
             }
         }
-        else
-        {
-            i = 0;
-            break;
-        }
     } while ((read_byte != '\n') && (i < max_len));
 
-    // If the response is correct and the line is not empty, NULL terminate it
-    // and increment the size by 1 to take into account the NULL character
-    if ((i > 0) && (i < (max_len - 1))
-        && !((i == 2) && (data[0] == '\r') && (data[1] == '\n')))
+    // If the response is incorrect, return an empty string
+    if (i >= max_len - 1)
     {
-        data[i++] = '\0';
+        data[0] = '\0';
 
-#ifdef ITF_UART_PRINTF
-        if (H_ITF_UART_DEBUG != h_itf_uart)
-        {
-            debug_printf("RX << %s", data);
-        }
-#endif // ITF_UART_PRINTF
-
-        return i;
+        return 0;
     }
 
-    // If the response is incorrect, return an empty string
-    data[0] = '\0';
+    // Ignore an empty line
+    if ((i == 2) && (data[0] == '\r') && (data[1] == '\n'))
+    {
+        i = 0;
+    }
 
-    return 0;
+    // Null terminate the string and increment the size by 1
+    data[i++] = '\0';
+
+#ifdef ITF_UART_PRINTF
+    if (H_ITF_UART_DEBUG != h_itf_uart)
+    {
+        debug_printf("RX << %s", data);
+    }
+#endif // ITF_UART_PRINTF
+
+    return i;
 }
 
 size_t
@@ -485,6 +523,43 @@ itf_uart_read_count (h_itf_uart_t h_itf_uart)
     taskEXIT_CRITICAL();
 
     return count;
+}
+
+bool
+itf_uart_send_break (h_itf_uart_t h_itf_uart)
+{
+    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
+    bool ret;
+    char data = 0;
+
+    // This function can not be used when the reads are active
+    if ((instance->break_brr == 0) ||
+        READ_BIT(instance->handle->Instance->CR1, USART_CR1_RXNEIE))
+    {
+        return false;
+    }
+
+    // We will emulate a break sending value 0 with a lower baudrate
+    __HAL_UART_DISABLE(instance->handle);
+
+    // Store the current baudrate
+    uint32_t brr = READ_REG(instance->handle->Instance->BRR);
+
+    // Break duration = 1 / baudrate * (1 + data bits).
+    WRITE_REG(instance->handle->Instance->BRR, instance->break_brr);
+
+    __HAL_UART_ENABLE(instance->handle);
+
+    ret = itf_uart_write_bin(h_itf_uart, &data, sizeof(data));
+
+    __HAL_UART_DISABLE(instance->handle);
+
+    // Restore the original baudrate
+    WRITE_REG(instance->handle->Instance->BRR, brr);
+
+    __HAL_UART_ENABLE(instance->handle);
+
+    return ret;
 }
 
 void
@@ -641,6 +716,45 @@ itf_uart_check_line_no_crlf (const itf_uart_line_no_crlf_t * line_no_crlf,
     }
 
     return false;
+}
+
+static void
+itf_uart_generate_break_baudrate (itf_uart_instance_t * instance,
+                                  uint32_t break_time)
+{
+    if (0 == break_time)
+    {
+        instance->break_brr = 0;
+    }
+    else
+    {
+        uint32_t break_bits;
+        uint32_t break_baudrate;
+
+        if (UART_WORDLENGTH_7B == instance->handle->Init.WordLength)
+        {
+            break_bits = 8;
+        }
+        else if (UART_WORDLENGTH_8B == instance->handle->Init.WordLength)
+        {
+            break_bits = 9;
+        }
+        else // if (UART_WORDLENGTH_9B == instance->handle->Init.WordLength)
+        {
+            break_bits = 10;
+        }
+
+        // break_time * 1s / 1000 ms = (data_bits + 1) / baudrate
+        // baudrate = (data_bits + 1) * 1000 / break_time_ms
+        break_baudrate = break_bits * 1000 / break_time;
+
+        // fck * X = baudrate * uartdiv
+        // baudrate_1 * uartdiv_1 = baudrate_2 * uartdiv_2
+        // uartdiv_2 = uartdiv_1 * baudrate_1 / baudrate_2
+        instance->break_brr = instance->handle->Instance->BRR
+                              * instance->handle->Init.BaudRate
+                              / break_baudrate;
+    }
 }
 
 /** @} */

@@ -21,7 +21,7 @@ Generic library to be used with STM32L4 microcontrollers.
 
 ## Project Configuration
 
-### Project creation
+### Project Creation
 
 - Open STM32CubeIDE.
 - File → New → STM32 Project.
@@ -47,7 +47,7 @@ Generic library to be used with STM32L4 microcontrollers.
         - src
         - lib
 
-#### STM32CubeMX configuration
+### STM32CubeMX Configuration
 
 - Open file "iertec_lib_stm32l4_test_mx.ioc".
 - Project options:
@@ -141,3 +141,30 @@ Generic library to be used with STM32L4 microcontrollers.
     - Clock Configuration → I2C1 Clock Mux. Select "HSI".
 - Save the file.
 - Click on "Yes" for the dialog "Do you want to generate Code?".
+
+### Debug Configuration
+
+Debug application in the target:
+- Run → Debug Configurations... → STM32 C/C++ Application → Right click → New Configuration.
+- Main → C/C++ Application -> Search Project.... Select the Debug binary.
+- Click on "Debug" button.
+
+Debug test in the target:
+- Run → Debug Configurations... → STM32 C/C++ Application → Right click → New Configuration.
+- Name. Set it to "test_target_debug".
+- Main → C/C++ Application. Set it with the path to the test binary to be debugged. For example, "C:\Desarrollo\Proyectos\iertec_lib_stm32l4_ws\script\output\test\integration_target_build\test\out\test_itf_uart.elf".
+- Main → Build (if required) before launching. Select "Disable auto build".
+- Debugger → Debug Probe. Select "ST-LINK (OpenOCD)".
+- Startup → Initialization commands. Fill it with "monitor arm semihosting enable".
+- Click on "Debug" button.
+
+Debug test in the host:
+- Run → Debug Configurations... → C/C++ Application → Right click → New Configuration.
+- Name. Set it to "test_host_debug".
+- Main → C/C++ Application. Set it with the path to the test binary to be debugged. For example, "C:\Desarrollo\Proyectos\iertec_lib_stm32l4_ws\script\output\test\unit_host_build\test\out\test_z_dummy.exe".
+- Main → Build (if required) before launching. Select "Disable auto build".
+- Debugger → Main → GDB Debugger. Set it with the path to the debugger. For example, "C:\Desarrollo\Programas\msys64\mingw64\bin\gdb.exe".
+- Click on "Debug" button.
+- Close Eclipse.
+- Move file "test_host_debug.launch" from ".metadata\.plugins\org.eclipse.debug.core\.launches" to the project folder.
+- Open Eclipse.

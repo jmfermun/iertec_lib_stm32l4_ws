@@ -12,7 +12,7 @@ cd ..\..\
 
 if not exist %PATH_OUT% mkdir %PATH_OUT%
 
-stm32cubeidec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data %cd% -cleanBuild %PROJECT_NAME%/Debug | tee %PATH_OUT%\compile_debug_log.txt
+stm32cubeidec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data %cd% -cleanBuild %PROJECT_NAME%/Debug 2>&1 | tee %PATH_OUT%\compile_debug_log.txt
 
 cd %PROJECT_NAME%\Debug
 

@@ -1,7 +1,7 @@
 ---
 
 :project:
-  :build_root: ../script/output/test/unit_target_build
+  :build_root: ../script/output/test/build_unit_target
   :use_exceptions: TRUE
   :use_mocks: TRUE
   :test_file_prefix: test_

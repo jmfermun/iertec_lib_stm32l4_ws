@@ -12,7 +12,7 @@ set CEEDLING_MAIN_PROJECT_FILE=%~dp0\project_integration_target.yml
 
 cd ..\..\%PROJECT_NAME%
 
-call ceedling.bat clobber logging test:all
+call ceedling.bat clobber logging test:all 2>&1 | tee ..\script\output\test\log_integration_target.txt
 
 cd %~dp0
 

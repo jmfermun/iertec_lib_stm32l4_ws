@@ -18,5 +18,6 @@ for %%f in (%PATH_OUT%\*.json) do (
 )
 
 gcovr %FILES_IN% --html-details -o %PATH_OUT%\report_coverage\report_coverage.html --decisions
+gcovr %FILES_IN% --xml -o %PATH_OUT%\report_coverage\report_coverage.xml --decisions
 
 pause

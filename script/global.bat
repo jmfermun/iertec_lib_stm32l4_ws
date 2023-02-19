@@ -6,4 +6,5 @@ set PATH_OPENOCD_S="C:/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32c
 set PATH_PLANTUML=C:\Desarrollo\Programas\PlantUML
 set PATH_PCLINT=C:\Desarrollo\Programas\pclp-1.3.5\windows
 set PATH_PCLINT_CONFIG=C:\Desarrollo\Programas\pclp-2.0\config
+set PATH_CPPCHECK_SHARE=C:\Desarrollo\Programas\msys64\mingw64\share\cppcheck
 set PROJECT_NAME=iertec_lib_stm32l4_test_mx

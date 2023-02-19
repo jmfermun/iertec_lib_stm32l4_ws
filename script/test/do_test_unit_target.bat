@@ -9,10 +9,15 @@ set PATH=%PATH_MSYS%;%PATH%
 set PATH=%PATH_TARGET_COMPILER%;%PATH%
 set PATH=%PATH_OPENOCD%;%PATH%
 set CEEDLING_MAIN_PROJECT_FILE=%~dp0\project_unit_target.yml
+set LOG_DIR=..\script\output\test
+set LOG_FILE=%LOG_DIR%\log_unit_target.txt
 
 cd ..\..\%PROJECT_NAME%
 
-call ceedling.bat clobber logging test:all 2>&1 | tee ..\script\output\test\log_unit_target.txt
+if not exist %LOG_DIR% mkdir %LOG_DIR%
+if not exist %LOG_FILE% type nul > %LOG_FILE%
+
+ceedling.bat clobber logging test:all 2>&1 | tee %LOG_FILE%
 
 cd %~dp0
 

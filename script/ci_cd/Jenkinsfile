@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout()
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                bat ''' script\\compile\\do_import_project.bat '''
+                bat ''' script\\compile\\do_compile_debug.bat '''
+                bat ''' script\\compile\\do_compile_release.bat '''
+            }
+        }
+        stage('Unit Tests') {
+            steps {
+                bat ''' script\\test\\do_test_unit_host.bat '''
+                bat ''' script\\coverage\\do_coverage.bat '''
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                bat ''' script\\test\\do_test_integration_target.bat '''
+                bat ''' script\\coverage\\do_coverage.bat '''
+            }
+        }
+        stage('Static analysis') {
+            steps {
+                bat ''' script\\static_analysis\\do_generate_pclint_config.bat '''
+                bat ''' script\\static_analysis\\do_analysis_clang_tidy.bat '''
+                bat ''' script\\static_analysis\\do_analysis_cppcheck.bat '''
+                bat ''' script\\static_analysis\\do_analysis_pclint.bat '''
+            }
+        }
+        stage('Documentation') {
+            steps {
+                bat ''' script\\doc\\do_plantuml.bat '''
+                bat ''' script\\doc\\do_doxygen.bat '''
+            }
+        }
+        stage('Post') {
+            steps {
+                echo ' Generate test results, coverage results and artifacts '
+            }
+        }
+    }
+    post {
+        always {
+            xunit tools: [Custom(customXSL: 'script/test/unity.xsl', pattern: 'script/output/test/build_unit_host/artifacts/test/report.xml', skipNoTestFiles: false, stopProcessingIfError: true)]
+            cobertura coberturaReportFile: 'script/output/coverage/report_coverage/report_coverage.xml'
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Debug/iertec_lib_stm32l4_test_mx.elf', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Debug/iertec_lib_stm32l4_test_mx.map', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Release/iertec_lib_stm32l4_test_mx.elf', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Release/iertec_lib_stm32l4_test_mx.map', onlyIfSuccessful: true
+        }
+    }
+}

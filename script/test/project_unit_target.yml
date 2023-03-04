@@ -138,9 +138,10 @@
       - -fprofile-arcs
 
   :test_fixture:
-    :executable: gdb_loader.bat
+    :executable: bash
     :name: 'GDB/OpenOCD Loader'
     :arguments:
+      - gdb_loader.sh
       - "${1}"
       - unit_target
 

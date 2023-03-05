@@ -103,6 +103,20 @@ void itf_spi_select(h_itf_spi_chip_t h_itf_spi_chip);
  */
 void itf_spi_deselect(h_itf_spi_chip_t h_itf_spi_chip);
 
+/**
+ * @brief Set a low SPI clock speed.
+ *
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
+ */
+void itf_spi_set_low_speed(h_itf_spi_t h_itf_spi);
+
+/**
+ * @brief Set a high SPI clock speed.
+ *
+ * @param[in] h_itf_spi Handler of the SPI interface to use.
+ */
+void itf_spi_set_high_speed(h_itf_spi_t h_itf_spi);
+
 #endif // ITF_SPI_H
 
 /** @} */

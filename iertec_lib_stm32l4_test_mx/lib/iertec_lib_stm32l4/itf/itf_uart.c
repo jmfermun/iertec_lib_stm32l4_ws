@@ -283,8 +283,6 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 {
     itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
-    itf_uart_clean_rx(instance);
-
     taskENTER_CRITICAL();
 
     // Computation of UART mask to apply to RDR register.
@@ -322,6 +320,8 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
     HAL_UARTEx_EnableStopMode(instance->handle);
 
     taskEXIT_CRITICAL();
+
+    itf_uart_clean_rx(instance);
 
     itf_pwr_set_active(instance->h_itf_pwr_rx);
 }

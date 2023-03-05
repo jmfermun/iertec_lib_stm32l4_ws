@@ -136,7 +136,44 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
 
     itf_pwr_set_active(instance->h_itf_pwr);
 
-    if (NULL != tx_data)
+    if ((NULL != tx_data) && (NULL != rx_data))
+    {
+        status = HAL_I2C_Master_Seq_Transmit_DMA(instance->handle,
+                                                 slave_address,
+                                                 (uint8_t *)tx_data, tx_count,
+                                                 I2C_FIRST_FRAME);
+
+        if (HAL_OK == status)
+        {
+            // Block until transaction completes
+            xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+
+            if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
+            {
+                status = HAL_ERROR;
+            }
+        }
+
+        if (HAL_OK == status)
+        {
+            status = HAL_I2C_Master_Seq_Receive_DMA(instance->handle,
+                                                    slave_address,
+                                                    (uint8_t *)rx_data,
+                                                    rx_count, I2C_LAST_FRAME);
+
+            if (HAL_OK == status)
+            {
+                // Block until transaction completes
+                xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+
+                if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
+                {
+                    status = HAL_ERROR;
+                }
+            }
+        }
+    }
+    else if (NULL != tx_data)
     {
         status = HAL_I2C_Master_Transmit_DMA(instance->handle, slave_address,
                                              (uint8_t *)tx_data, tx_count);
@@ -152,8 +189,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
             }
         }
     }
-
-    if ((NULL != rx_data) && (HAL_OK == status))
+    else if (NULL != rx_data)
     {
         status = HAL_I2C_Master_Receive_DMA(instance->handle, slave_address,
                                             (uint8_t *)rx_data, rx_count);
@@ -168,6 +204,10 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
                 status = HAL_ERROR;
             }
         }
+    }
+    else
+    {
+        status = HAL_ERROR;
     }
 
     itf_pwr_set_inactive(instance->h_itf_pwr);

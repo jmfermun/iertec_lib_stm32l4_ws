@@ -307,6 +307,39 @@ itf_spi_deselect (h_itf_spi_chip_t h_itf_spi_chip)
     (void)xSemaphoreGive(instance->mutex);
 }
 
+void
+itf_spi_set_low_speed (h_itf_spi_t h_itf_spi)
+{
+    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+
+    // Disable SPI peripheral
+    __HAL_SPI_DISABLE(instance->handle);
+
+    // Set the clock baud rate to 48 MHz / 256 = 187.5 kHz
+    // The clock signal must be configured between 100 and 400 kHz
+    MODIFY_REG(instance->handle->Instance->CR1, SPI_BAUDRATEPRESCALER_256,
+               SPI_BAUDRATEPRESCALER_256);
+
+    // Enable SPI peripheral
+    __HAL_SPI_ENABLE(instance->handle);
+}
+
+void
+itf_spi_set_high_speed (h_itf_spi_t h_itf_spi)
+{
+    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+
+    // Disable SPI peripheral
+    __HAL_SPI_DISABLE(instance->handle);
+
+    // Restore the original clock baudrate
+    MODIFY_REG(instance->handle->Instance->CR1, SPI_BAUDRATEPRESCALER_256,
+               instance->handle->Init.BaudRatePrescaler);
+
+    // Enable SPI peripheral
+    __HAL_SPI_ENABLE(instance->handle);
+}
+
 /****************************************************************************//*
  * Private code
  ******************************************************************************/

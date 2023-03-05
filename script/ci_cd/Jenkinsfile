@@ -17,7 +17,7 @@ pipeline {
                 bat ''' script\\compile\\do_compile_release.bat '''
             }
         }
-        stage('Static analysis') {
+        stage('Static Analysis') {
             steps {
                 bat ''' script\\static_analysis\\do_generate_pclint_config.bat '''
                 bat ''' script\\static_analysis\\do_analysis_clang_tidy.bat '''
@@ -53,10 +53,10 @@ pipeline {
         always {
             xunit tools: [Custom(customXSL: 'script/test/unity.xsl', pattern: 'script/output/test/build_unit_host/artifacts/test/report.xml', skipNoTestFiles: false, stopProcessingIfError: true)]
             cobertura coberturaReportFile: 'script/output/coverage/report_coverage/report_coverage.xml'
-            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Debug/iertec_lib_stm32l4_test_mx.elf', onlyIfSuccessful: true
-            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Debug/iertec_lib_stm32l4_test_mx.map', onlyIfSuccessful: true
-            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Release/iertec_lib_stm32l4_test_mx.elf', onlyIfSuccessful: true
-            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test_mx/Release/iertec_lib_stm32l4_test_mx.map', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Debug/iertec_lib_stm32l4_test.elf', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Debug/iertec_lib_stm32l4_test.map', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Release/iertec_lib_stm32l4_test.elf', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Release/iertec_lib_stm32l4_test.map', onlyIfSuccessful: true
         }
     }
 }

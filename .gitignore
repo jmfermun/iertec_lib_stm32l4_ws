@@ -1,6 +1,6 @@
-/iertec_lib_stm32l4_test_mx/Debug
-/iertec_lib_stm32l4_test_mx/Release
+/iertec_lib_stm32l4_test/Debug
+/iertec_lib_stm32l4_test/Release
 /.metadata
 /script/output
-/iertec_lib_stm32l4_test_mx/test/integration/mocks
-/iertec_lib_stm32l4_test_mx/test/unit/mocks
+/iertec_lib_stm32l4_test/test/integration/mocks
+/iertec_lib_stm32l4_test/test/unit/mocks

@@ -1,4 +1,4 @@
-PROJECT_NAME=iertec_lib_stm32l4_test_mx
+PROJECT_NAME=iertec_lib_stm32l4_test
 ARTIFACT_NAME=VXXX_JMFM_IERTEC_LIB_STM32L4
 PATH_JAVA="/c/Program Files/Java/jdk-11.0.5/bin"
 PATH_PLANTUML=/c/Desarrollo/Programas/PlantUML

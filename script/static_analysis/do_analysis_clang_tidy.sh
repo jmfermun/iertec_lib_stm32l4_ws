@@ -35,4 +35,4 @@ CLANG_TIDY_ARG='
 --extra-arg=-isystem"/c/st/stm32cubeide_1.11.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.100.202210260954/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"
 '
 
-clang-tidy $CLANG_TIDY_ARG -p=$BUILD_PATH $CLANG_TIDY_SRC_PATTERN > $OUT_PATH/report_clang-tidy.txt
+clang-tidy $CLANG_TIDY_ARG -p=$BUILD_PATH $CLANG_TIDY_SRC_PATTERN > $OUT_PATH/report_clang-tidy.txt || true

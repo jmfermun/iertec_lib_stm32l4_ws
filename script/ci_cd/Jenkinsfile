@@ -17,6 +17,14 @@ pipeline {
                 bat ''' script\\compile\\do_compile_release.bat '''
             }
         }
+        stage('Static analysis') {
+            steps {
+                bat ''' script\\static_analysis\\do_generate_pclint_config.bat '''
+                bat ''' script\\static_analysis\\do_analysis_clang_tidy.bat '''
+                bat ''' script\\static_analysis\\do_analysis_cppcheck.bat '''
+                bat ''' script\\static_analysis\\do_analysis_pclint.bat '''
+            }
+        }
         stage('Unit Tests') {
             steps {
                 bat ''' script\\test\\do_test_unit_host.bat '''
@@ -27,14 +35,6 @@ pipeline {
             steps {
                 bat ''' script\\test\\do_test_integration_target.bat '''
                 bat ''' script\\coverage\\do_coverage.bat '''
-            }
-        }
-        stage('Static analysis') {
-            steps {
-                bat ''' script\\static_analysis\\do_generate_pclint_config.bat '''
-                bat ''' script\\static_analysis\\do_analysis_clang_tidy.bat '''
-                bat ''' script\\static_analysis\\do_analysis_cppcheck.bat '''
-                bat ''' script\\static_analysis\\do_analysis_pclint.bat '''
             }
         }
         stage('Documentation') {

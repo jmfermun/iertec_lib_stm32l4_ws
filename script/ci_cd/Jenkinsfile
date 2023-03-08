@@ -51,7 +51,7 @@ pipeline {
     }
     post {
         always {
-            xunit tools: [Custom(customXSL: 'script/test/unity.xsl', pattern: 'script/output/test/build_unit_host/artifacts/test/report.xml', skipNoTestFiles: false, stopProcessingIfError: true)]
+            xunit tools: [Custom(customXSL: 'script/test/unity_to_jenkins.xsl', pattern: 'script/output/test/build_unit_host/artifacts/test/report.xml', skipNoTestFiles: false, stopProcessingIfError: true)]
             cobertura coberturaReportFile: 'script/output/coverage/report_coverage/report_coverage.xml'
             archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Debug/iertec_lib_stm32l4_test.elf', onlyIfSuccessful: true
             archiveArtifacts artifacts: 'iertec_lib_stm32l4_test/Debug/iertec_lib_stm32l4_test.map', onlyIfSuccessful: true

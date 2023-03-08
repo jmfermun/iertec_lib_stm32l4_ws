@@ -28,7 +28,7 @@
 
 // Ignoring return value of function symbol
 -emacro(534, debug_info, debug_printf)
--esym(534, memcpy)
+-esym(534, memcpy, memset)
 
 // Repeated include file 'file'
 -e537

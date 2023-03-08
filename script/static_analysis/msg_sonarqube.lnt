@@ -1,0 +1,9 @@
+// XML options for cxx plugin.
+-v // Turn off verbosity
+-width(0,0) // Don't break long lines
++xml(?xml version="1.0" ?) // add version information
++xml(results) // Turn on XML escapes
+-"format=<issue file =\q%f\q line = \q%l\q number = \q%n\q type=\q%t\q desc = \q%m\q/>"
+-"format_specific= "
+-hFs1 // The height of a message should be 1 i.e. don't output the line in error
+-e900 // 'Successful completion message'

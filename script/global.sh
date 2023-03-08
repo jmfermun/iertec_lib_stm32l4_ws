@@ -1,6 +1,6 @@
 PROJECT_NAME=iertec_lib_stm32l4_test
 ARTIFACT_NAME=VXXX_JMFM_IERTEC_LIB_STM32L4
-PATH_JAVA="/c/Program Files/Java/jdk-11.0.5/bin"
+PATH_JAVA="/c/Program Files/Eclipse Adoptium/jdk-17.0.6.10-hotspot/bin"
 PATH_PLANTUML=/c/Desarrollo/Programas/PlantUML
 PATH_IDE=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE
 PATH_TARGET_COMPILER=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.100.202210260954/tools/bin

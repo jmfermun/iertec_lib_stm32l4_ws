@@ -9,3 +9,5 @@ PATH_PCLINT_CONFIG=/c/Desarrollo/Programas/pclp-2.0/config
 PATH_CPPCHECK_SHARE=/c/Desarrollo/Programas/msys64/mingw64/share/cppcheck
 PATH_OPENOCD=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.2.200.202210200901/tools/bin
 PATH_OPENOCD_S=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.0.400.202211031408/resources/openocd/st_scripts
+PATH_SONAR_SCANNER=/c/Desarrollo/Programas/sonar-scanner-4.8.0.2856/bin
+SONARQUBE_TOKEN=squ_553041b040e200cedad8028821938626c6467443

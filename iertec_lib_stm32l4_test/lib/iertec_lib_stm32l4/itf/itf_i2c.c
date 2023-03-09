@@ -146,7 +146,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
         if (HAL_OK == status)
         {
             // Block until transaction completes
-            xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+            (void)xSemaphoreTake(instance->semaphore, portMAX_DELAY);
 
             if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
             {
@@ -164,7 +164,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
             if (HAL_OK == status)
             {
                 // Block until transaction completes
-                xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+                (void)xSemaphoreTake(instance->semaphore, portMAX_DELAY);
 
                 if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
                 {
@@ -181,7 +181,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
         if (HAL_OK == status)
         {
             // Block until transaction completes
-            xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+            (void)xSemaphoreTake(instance->semaphore, portMAX_DELAY);
 
             if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
             {
@@ -197,7 +197,7 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
         if (HAL_OK == status)
         {
             // Block until transaction completes
-            xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+            (void)xSemaphoreTake(instance->semaphore, portMAX_DELAY);
 
             if (HAL_I2C_ERROR_NONE != instance->handle->ErrorCode)
             {
@@ -266,7 +266,7 @@ itf_i2c_give_semaphore (const I2C_HandleTypeDef * h_i2c)
     if (NULL != instance)
     {
         // Notify to task the end of the UART transaction
-        xSemaphoreGiveFromISR(instance->semaphore, &b_yield);
+        (void)xSemaphoreGiveFromISR(instance->semaphore, &b_yield);
     }
 
     portYIELD_FROM_ISR(b_yield);

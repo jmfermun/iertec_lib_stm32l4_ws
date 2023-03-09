@@ -133,6 +133,9 @@ vApplicationPrintRtosInfo (void)
 
     debug_printf("System:\r\n\tHeap: %u\r\n\tTicks: %u\r\n",
                  rtos_util_free_heap_size, rtos_util_ticks_dropped);
+#else
+    // Avoid unused warning in Release build configuration
+    (void)rtos_util_ticks_dropped;
 #endif // NDEBUG
 }
 

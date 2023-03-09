@@ -32,7 +32,7 @@
  ******************************************************************************/
 
 /** Mutex to access to the debug interface. */
-SemaphoreHandle_t h_debug_mutex;
+static SemaphoreHandle_t h_debug_mutex;
 
 /** Debug buffer. */
 static char debug_buffer[DEBUG_BUFFER_SIZE];
@@ -109,15 +109,18 @@ debug_printf_impl (const char * format, ...)
         if (xSemaphoreTake(h_debug_mutex, portMAX_DELAY))
         {
             va_list args;
-            size_t  len;
+            int     len;
 
             va_start(args, format);
             len = vsnprintf(debug_buffer, DEBUG_BUFFER_SIZE, format, args);
             va_end(args);
 
-            itf_debug_write(debug_buffer, len);
+            if (len > 0)
+            {
+                itf_debug_write(debug_buffer, (size_t)len);
+            }
 
-            xSemaphoreGive(h_debug_mutex);
+            (void)xSemaphoreGive(h_debug_mutex);
         }
     }
 }
@@ -131,7 +134,7 @@ debug_write (const char * data, size_t len)
         {
             itf_debug_write(data, len);
 
-            xSemaphoreGive(h_debug_mutex);
+            (void)xSemaphoreGive(h_debug_mutex);
         }
     }
 }

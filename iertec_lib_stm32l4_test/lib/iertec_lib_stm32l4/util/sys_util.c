@@ -22,10 +22,10 @@
  ******************************************************************************/
 
 /** Convert time from system ticks to microseconds. */
-#define SYS_TICKS_TO_USEC(X) ((uint64_t)(X) * 1000000u / ITF_RTC_CLK_FREQ)
+#define SYS_TICKS_TO_USEC(X) ((uint32_t)((uint64_t)(X) * 1000000u / ITF_RTC_CLK_FREQ))
 
 /** Convert time from microseconds to system ticks. */
-#define SYS_USEC_TO_TICKS(X) ((uint64_t)(X) * ITF_RTC_CLK_FREQ / 1000000u)
+#define SYS_USEC_TO_TICKS(X) ((uint32_t)((uint64_t)(X) * ITF_RTC_CLK_FREQ / 1000000u))
 
 /****************************************************************************//*
  * Public code

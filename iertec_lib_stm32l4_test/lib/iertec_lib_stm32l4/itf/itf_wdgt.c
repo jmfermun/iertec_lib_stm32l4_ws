@@ -22,10 +22,10 @@
 
 /** Compute the maximum timeout that can be configured with the indicated
  * prescaler. */
-#define ITF_WDGT_TIMEOUT_MAX(PR)      (4095u * 1000u * PR / ITF_WDGT_LSI_FREQ)
+#define ITF_WDGT_TIMEOUT_MAX(PR)      (((4095u * 1000u) * (PR)) / ITF_WDGT_LSI_FREQ)
 
 /** Compute reload value for the indicated prescaler and timeout (ms). */
-#define ITF_WDGT_RELOAD_VAL(PR, TIME) (TIME * ITF_WDGT_LSI_FREQ / 1000u / PR)
+#define ITF_WDGT_RELOAD_VAL(PR, TIME) ((((TIME) * ITF_WDGT_LSI_FREQ) / 1000u) / (PR))
 
 /****************************************************************************//*
  * Private data

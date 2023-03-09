@@ -270,7 +270,7 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
         taskEXIT_CRITICAL();
 
         // Block until transmission completes
-        xSemaphoreTake(instance->sem_tx, portMAX_DELAY);
+        (void)xSemaphoreTake(instance->sem_tx, portMAX_DELAY);
 
         itf_pwr_set_inactive(instance->h_itf_pwr_tx);
     }
@@ -317,7 +317,7 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
         itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
     }
 
-    HAL_UARTEx_EnableStopMode(instance->handle);
+    (void)HAL_UARTEx_EnableStopMode(instance->handle);
 
     taskEXIT_CRITICAL();
 
@@ -347,7 +347,7 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
         itf_io_set_value(instance->pin_rts, ITF_IO_HIGH);
     }
 
-    HAL_UARTEx_DisableStopMode(instance->handle);
+    (void)HAL_UARTEx_DisableStopMode(instance->handle);
 
     taskEXIT_CRITICAL();
 
@@ -384,7 +384,8 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
             break;
         }
-        else if (0 == s_len)
+
+        if (0 == s_len)
         {
             // Timeout. If an incomplete line is received, mark it has an error
             if (i > 0)
@@ -401,29 +402,27 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 
             break;
         }
-        else
+
+        taskENTER_CRITICAL();
+
+        instance->len_rx--;
+
+        // Check to clear RTS
+        if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
+            && (instance->len_rx < ITF_UART_RTS_OFF_THR))
         {
-            taskENTER_CRITICAL();
+            instance->rts_state = ITF_UART_XTS_STATE_OFF;
+            itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+        }
 
-            instance->len_rx--;
+        taskEXIT_CRITICAL();
 
-            // Check to clear RTS
-            if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
-                && (instance->len_rx < ITF_UART_RTS_OFF_THR))
-            {
-                instance->rts_state = ITF_UART_XTS_STATE_OFF;
-                itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
-            }
+        data[i++] = read_byte;
 
-            taskEXIT_CRITICAL();
-
-            data[i++] = read_byte;
-
-            // Special line cases without trailing \r\n
-            if (itf_uart_check_line_no_crlf(instance->line_no_crlf, data, i))
-            {
-                break;
-            }
+        // Special line cases without trailing \r\n
+        if (itf_uart_check_line_no_crlf(instance->line_no_crlf, data, i))
+        {
+            break;
         }
     } while ((read_byte != '\n') && (i < max_len));
 
@@ -483,28 +482,28 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
             i = 0;
             break;
         }
-        else if (s_len == sizeof(read_byte))
+
+        if (s_len != sizeof(read_byte))
         {
-            taskENTER_CRITICAL();
-
-            instance->len_rx--;
-
-            // Check to clear RTS
-            if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
-                && (instance->len_rx < ITF_UART_RTS_OFF_THR))
-            {
-                instance->rts_state = ITF_UART_XTS_STATE_OFF;
-                itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
-            }
-
-            taskEXIT_CRITICAL();
-
-            data[i++] = read_byte;
-        }
-        else
-        {
+            // Timeout
             break;
         }
+
+        taskENTER_CRITICAL();
+
+        instance->len_rx--;
+
+        // Check to clear RTS
+        if ((instance->rts_state == ITF_UART_XTS_STATE_ON)
+            && (instance->len_rx < ITF_UART_RTS_OFF_THR))
+        {
+            instance->rts_state = ITF_UART_XTS_STATE_OFF;
+            itf_io_set_value(instance->pin_rts, ITF_IO_LOW);
+        }
+
+        taskEXIT_CRITICAL();
+
+        data[i++] = read_byte;
     } while (i < max_len);
 
     return i;
@@ -676,7 +675,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         ATOMIC_CLEAR_BIT(instance->handle->Instance->CR1, USART_CR1_TCIE);
 
         // Notify to task the end of the UART transaction
-        xSemaphoreGiveFromISR(instance->sem_tx, &b_yield);
+        (void)xSemaphoreGiveFromISR(instance->sem_tx, &b_yield);
     }
 
     portYIELD_FROM_ISR(b_yield);
@@ -748,12 +747,19 @@ itf_uart_generate_break_baudrate (itf_uart_instance_t * instance,
         // baudrate = (data_bits + 1) * 1000 / break_time_ms
         break_baudrate = break_bits * 1000 / break_time;
 
-        // fck * X = baudrate * uartdiv
-        // baudrate_1 * uartdiv_1 = baudrate_2 * uartdiv_2
-        // uartdiv_2 = uartdiv_1 * baudrate_1 / baudrate_2
-        instance->break_brr = instance->handle->Instance->BRR
-                              * instance->handle->Init.BaudRate
-                              / break_baudrate;
+        if (break_baudrate > 0)
+        {
+            // fck * X = baudrate * uartdiv
+            // baudrate_1 * uartdiv_1 = baudrate_2 * uartdiv_2
+            // uartdiv_2 = uartdiv_1 * baudrate_1 / baudrate_2
+            instance->break_brr = instance->handle->Instance->BRR
+                                  * instance->handle->Init.BaudRate
+                                  / break_baudrate;
+        }
+        else
+        {
+            instance->break_brr = 0;
+        }
     }
 }
 

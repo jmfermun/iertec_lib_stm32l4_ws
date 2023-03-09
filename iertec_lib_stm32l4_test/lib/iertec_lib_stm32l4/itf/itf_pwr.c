@@ -56,7 +56,8 @@ static uint8_t h_itf_pwr_min_run;
 bool
 itf_pwr_init (void)
 {
-    h_itf_pwr_index = 0;
+    h_itf_pwr_index     = 0;
+    itf_pwr_active_flag = 0;
 
     // The level masks are negated to optimize the comparison
     for (size_t i = 0; i < ITF_PWR_LEVEL_COUNT; i++)

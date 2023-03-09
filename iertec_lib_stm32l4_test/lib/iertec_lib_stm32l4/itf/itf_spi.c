@@ -206,7 +206,7 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
     }
 
     // Block until transmission completes
-    xSemaphoreTake(instance->semaphore, portMAX_DELAY);
+    (void)xSemaphoreTake(instance->semaphore, portMAX_DELAY);
 
     itf_pwr_set_inactive(instance->h_itf_pwr);
 
@@ -386,7 +386,7 @@ itf_spi_give_semaphore (const SPI_HandleTypeDef * h_spi)
     if (NULL != instance)
     {
         // Notify to task the end of the UART transaction
-        xSemaphoreGiveFromISR(instance->semaphore, &b_yield);
+        (void)xSemaphoreGiveFromISR(instance->semaphore, &b_yield);
     }
 
     portYIELD_FROM_ISR(b_yield);

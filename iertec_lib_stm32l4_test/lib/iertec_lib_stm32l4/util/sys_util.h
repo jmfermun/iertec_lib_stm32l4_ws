@@ -15,7 +15,12 @@
 #ifndef SYS_UTIL_H
 #define SYS_UTIL_H
 
+#ifndef INC_FREERTOS_H
+
 #include "FreeRTOS.h"
+#include "task.h"
+
+#endif // INC_FREERTOS_H
 
 #include <stdint.h>
 

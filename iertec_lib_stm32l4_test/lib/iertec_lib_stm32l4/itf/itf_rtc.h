@@ -22,7 +22,7 @@
 #include <stdint.h>
 
 /** Frequency of the clock used by the RTC (Hz). */
-#define ITF_RTC_CLK_FREQ (32678u)
+#define ITF_RTC_CLK_FREQ (32768u)
 
 /** @brief I2C interface hardware configuration type. */
 typedef struct

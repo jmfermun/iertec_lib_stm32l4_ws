@@ -64,6 +64,11 @@ itf_wdgt_set_timeout (uint32_t timeout_msec)
     uint32_t prescaler;
     uint32_t reload;
 
+    if (timeout_msec == 0)
+    {
+        timeout_msec = itf_wdgt_config.timeout_msec;
+    }
+
     compute_load_value(&prescaler, &reload, timeout_msec);
 
     if (0 == reload)

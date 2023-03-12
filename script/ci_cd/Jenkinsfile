@@ -37,6 +37,17 @@ pipeline {
                 bat ''' script\\coverage\\do_coverage.bat '''
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    try {
+                        bat ''' script\\ci_cd\\do_sonar_scanner.bat '''
+                    } catch (Exception e) {
+                        echo "Build failed but we will continue"
+                    }
+                }
+            }
+        }
         stage('Documentation') {
             steps {
                 bat ''' script\\doc\\do_plantuml.bat '''

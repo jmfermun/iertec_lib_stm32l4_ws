@@ -58,7 +58,7 @@ task_wait_lock (task_id_t task_id)
 
     while (loop_continue)
     {
-        if (xSemaphoreTake(h_task_wait_sem_lock, portMAX_DELAY))
+        if (xSemaphoreTake(h_task_wait_sem_lock, portMAX_DELAY) == pdPASS)
         {
             if (task_id == task_wait_id_fired)
             {

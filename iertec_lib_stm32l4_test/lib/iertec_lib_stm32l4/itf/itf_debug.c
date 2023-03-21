@@ -73,12 +73,12 @@ itf_debug_get_char (void)
     char ch;
 
     // Return -2 if no character is available
-    if (itf_uart_read_count(itf_debug_config.handle) == 0)
+    if (itf_uart_read_count(itf_debug_config.handle) == 0u)
     {
         return -2;
     }
 
-    if (itf_uart_read_bin(itf_debug_config.handle, &ch, 1) == 1)
+    if (itf_uart_read_bin(itf_debug_config.handle, &ch, 1) == 1u)
     {
         return ch;
     }

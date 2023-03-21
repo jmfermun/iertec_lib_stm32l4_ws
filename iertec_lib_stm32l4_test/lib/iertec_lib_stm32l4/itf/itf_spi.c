@@ -189,7 +189,7 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
     {
         // HAL library uses the contents of rx_data buffer as tx_data, so clean
         // the buffer
-        memset(rx_data, 0, count);
+        (void)memset(rx_data, 0, count);
 
         status = HAL_SPI_Receive_DMA(instance->handle, rx_data, count);
     }
@@ -374,7 +374,7 @@ itf_spi_give_semaphore (const SPI_HandleTypeDef * h_spi)
     BaseType_t           b_yield  = pdFALSE;
     itf_spi_instance_t * instance = NULL;
 
-    for (size_t i = 0; i < H_ITF_SPI_COUNT; i++)
+    for (size_t i = 0u; i < H_ITF_SPI_COUNT; i++)
     {
         if (itf_spi_instance[i].handle == h_spi)
         {

@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 /** Maximum number of tasks that can be registered. */
-#define TASK_WDGT_ID_MAX (32)
+#define TASK_WDGT_ID_MAX (32u)
 
 /****************************************************************************//*
  * Private data
@@ -71,7 +71,7 @@ task_wdgt_register (task_id_t task_id)
     DEBUG_ASSERT(task_id < TASK_ID_COUNT);
     DEBUG_ASSERT(task_id > TASK_ID_NONE);
 
-    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY))
+    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY) == pdPASS)
     {
         registered_tasks |= (1u << task_id);
 
@@ -85,7 +85,7 @@ task_wdgt_unregister (task_id_t task_id)
     DEBUG_ASSERT(task_id < TASK_ID_COUNT);
     DEBUG_ASSERT(task_id > TASK_ID_NONE);
 
-    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY))
+    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY) == pdPASS)
     {
         registered_tasks &= ~(1u << task_id);
         fed_tasks        &= ~(1u << task_id);
@@ -103,9 +103,9 @@ task_wdgt_feed (task_id_t task_id)
 
     uint32_t task_mask = 1u << task_id;
 
-    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY))
+    if (xSemaphoreTake(h_task_wdgt_mutex, portMAX_DELAY) == pdPASS)
     {
-        if (registered_tasks & task_mask)
+        if ((registered_tasks & task_mask) != 0u)
         {
             fed_tasks |= task_mask;
             task_wdgt_check();

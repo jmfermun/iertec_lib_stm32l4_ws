@@ -29,10 +29,10 @@
 #define ITF_UART_BUFFER_RX_SIZE (32)
 
 /** UART reception buffer threshold to disable RTS */
-#define ITF_UART_RTS_OFF_THR    (8)
+#define ITF_UART_RTS_OFF_THR    (8u)
 
 /** UART reception buffer threshold to enable RTS */
-#define ITF_UART_RTS_ON_THR     (24)
+#define ITF_UART_RTS_ON_THR     (24u)
 
 /****************************************************************************//*
  * Type definitions
@@ -52,7 +52,7 @@ typedef struct
     UART_HandleTypeDef *            handle;
     uint32_t                        timeout_ticks;
     SemaphoreHandle_t               sem_tx;
-    uint8_t *                       buffer_tx;
+    const uint8_t *                 buffer_tx;
     size_t                          len_tx;
     StreamBufferHandle_t            buffer_rx;
     size_t                          len_rx;
@@ -160,7 +160,7 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
     }
 
     // Configure the reception timeout
-    if (0 == config->timeout_msec)
+    if (0u == config->timeout_msec)
     {
         instance->timeout_ticks = portMAX_DELAY;
     }
@@ -253,7 +253,7 @@ itf_uart_write (h_itf_uart_t h_itf_uart, const char * data)
 bool
 itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 {
-    if (len > 0)
+    if (len > 0u)
     {
         itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
@@ -261,7 +261,7 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 
         taskENTER_CRITICAL();
 
-        instance->buffer_tx = (uint8_t *)data;
+        instance->buffer_tx = (const uint8_t *)data;
         instance->len_tx    = len;
 
         // Enable the transmit data register empty interrupt
@@ -385,10 +385,10 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
             break;
         }
 
-        if (0 == s_len)
+        if (0u == s_len)
         {
             // Timeout. If an incomplete line is received, mark it has an error
-            if (i > 0)
+            if (i > 0u)
             {
 #ifdef ITF_UART_PRINTF
                 if (H_ITF_UART_DEBUG != h_itf_uart)
@@ -427,17 +427,17 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
     } while ((read_byte != '\n') && (i < max_len));
 
     // If the response is incorrect, return an empty string
-    if (i >= max_len - 1)
+    if (i >= (max_len - 1u))
     {
         data[0] = '\0';
 
-        return 0;
+        return 0u;
     }
 
     // Ignore an empty line
-    if ((i == 2) && (data[0] == '\r') && (data[1] == '\n'))
+    if ((i == 2u) && (data[0] == '\r') && (data[1] == '\n'))
     {
-        i = 0;
+        i = 0u;
     }
 
     // Null terminate the string and increment the size by 1
@@ -532,7 +532,7 @@ itf_uart_send_break (h_itf_uart_t h_itf_uart)
     char data = 0;
 
     // This function can not be used when the reads are active
-    if ((instance->break_brr == 0) ||
+    if ((instance->break_brr == 0u) ||
         READ_BIT(instance->handle->Instance->CR1, USART_CR1_RXNEIE))
     {
         return false;
@@ -641,7 +641,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
 
     if (b_rx_error)
     {
-        uint8_t data = 0xFF;
+        uint8_t data = 0xFFu;
 
         // Send one byte to notify the reception error
         instance->len_rx += xStreamBufferSendFromISR(instance->buffer_rx, &data,
@@ -656,7 +656,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
         instance->handle->Instance->TDR = data;
         instance->len_tx--;
 
-        if (instance->len_tx == 0)
+        if (instance->len_tx == 0u)
         {
             instance->buffer_tx = NULL;
 
@@ -690,7 +690,7 @@ itf_uart_clean_rx (itf_uart_instance_t * instance)
 {
     taskENTER_CRITICAL();
 
-    if (xStreamBufferReset(instance->buffer_rx))
+    if (xStreamBufferReset(instance->buffer_rx) == pdPASS)
     {
         instance->len_rx            = 0;
         instance->handle->ErrorCode = HAL_UART_ERROR_NONE;
@@ -703,7 +703,7 @@ static bool
 itf_uart_check_line_no_crlf (const itf_uart_line_no_crlf_t * line_no_crlf,
                              const char * data, size_t len)
 {
-    while (line_no_crlf->len > 0)
+    while (line_no_crlf->len > 0u)
     {
         if ((line_no_crlf->len == len)
             && (memcmp(line_no_crlf->line, data, len) == 0))
@@ -721,7 +721,7 @@ static void
 itf_uart_generate_break_baudrate (itf_uart_instance_t * instance,
                                   uint32_t break_time)
 {
-    if (0 == break_time)
+    if (0u == break_time)
     {
         instance->break_brr = 0;
     }
@@ -732,28 +732,28 @@ itf_uart_generate_break_baudrate (itf_uart_instance_t * instance,
 
         if (UART_WORDLENGTH_7B == instance->handle->Init.WordLength)
         {
-            break_bits = 8;
+            break_bits = 8u;
         }
         else if (UART_WORDLENGTH_8B == instance->handle->Init.WordLength)
         {
-            break_bits = 9;
+            break_bits = 9u;
         }
         else // if (UART_WORDLENGTH_9B == instance->handle->Init.WordLength)
         {
-            break_bits = 10;
+            break_bits = 10u;
         }
 
         // break_time * 1s / 1000 ms = (data_bits + 1) / baudrate
         // baudrate = (data_bits + 1) * 1000 / break_time_ms
-        break_baudrate = break_bits * 1000 / break_time;
+        break_baudrate = (break_bits * 1000u) / break_time;
 
-        if (break_baudrate > 0)
+        if (break_baudrate > 0u)
         {
             // fck * X = baudrate * uartdiv
             // baudrate_1 * uartdiv_1 = baudrate_2 * uartdiv_2
             // uartdiv_2 = uartdiv_1 * baudrate_1 / baudrate_2
-            instance->break_brr = instance->handle->Instance->BRR
-                                  * instance->handle->Init.BaudRate
+            instance->break_brr = (instance->handle->Instance->BRR
+                                   * instance->handle->Init.BaudRate)
                                   / break_baudrate;
         }
         else

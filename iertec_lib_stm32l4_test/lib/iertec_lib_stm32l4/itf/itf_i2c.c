@@ -254,7 +254,7 @@ itf_i2c_give_semaphore (const I2C_HandleTypeDef * h_i2c)
     BaseType_t           b_yield  = pdFALSE;
     itf_i2c_instance_t * instance = NULL;
 
-    for (size_t i = 0; i < H_ITF_I2C_COUNT; i++)
+    for (size_t i = 0u; i < H_ITF_I2C_COUNT; i++)
     {
         if (itf_i2c_instance[i].handle == h_i2c)
         {

@@ -22,7 +22,7 @@
 #include <stdbool.h>
 
 /** Invalid handler value. */
-#define H_ITF_PWR_NONE (0xFF)
+#define H_ITF_PWR_NONE (0xFFu)
 
 /** @brief Available power levels.
  * - Level 0: Sleep.

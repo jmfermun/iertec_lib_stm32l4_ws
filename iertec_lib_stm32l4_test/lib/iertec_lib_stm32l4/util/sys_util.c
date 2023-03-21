@@ -94,7 +94,7 @@ sys_time_diff (uint32_t * ticks, uint32_t * max_diff)
     diff     = (*ticks);
     (*ticks) = itf_rtc_get_ticks();
 
-    if (diff != 0)
+    if (diff != 0u)
     {
         diff = SYS_TICKS_TO_USEC((*ticks) - diff);
 
@@ -114,7 +114,7 @@ sys_delay_usec (uint32_t usec)
     uint32_t wait  = SYS_USEC_TO_TICKS(usec);
 
     // Wait one additional tick to ensure at least the indicated time
-    wait += 1;
+    wait += 1u;
 
     while ((itf_rtc_get_ticks() - start) < wait)
     {
@@ -131,7 +131,7 @@ sys_sleep_msec (uint32_t msec)
 void
 sys_sleep_until_msec (uint32_t * prev_ticks, uint32_t inc_msec)
 {
-    if (inc_msec == 0)
+    if (inc_msec == 0u)
     {
         *prev_ticks = xTaskGetTickCount();
     }

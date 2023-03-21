@@ -22,10 +22,10 @@
 #include <stdbool.h>
 
 /** Low logic value. */
-#define ITF_IO_LOW  (0)
+#define ITF_IO_LOW  (0u)
 
 /** High logic value. */
-#define ITF_IO_HIGH (1)
+#define ITF_IO_HIGH (1u)
 
 /** @brief Type of the callbacks used as ISR. */
 typedef void (* itf_io_int_cb_t)(void);

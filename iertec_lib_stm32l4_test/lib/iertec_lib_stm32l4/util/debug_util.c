@@ -106,7 +106,7 @@ debug_printf_impl (const char * format, ...)
 {
     if (b_debug_is_ready)
     {
-        if (xSemaphoreTake(h_debug_mutex, portMAX_DELAY))
+        if (xSemaphoreTake(h_debug_mutex, portMAX_DELAY) == pdPASS)
         {
             va_list args;
             int     len;
@@ -130,7 +130,7 @@ debug_write (const char * data, size_t len)
 {
     if (b_debug_is_ready)
     {
-        if (xSemaphoreTake(h_debug_mutex, portMAX_DELAY))
+        if (xSemaphoreTake(h_debug_mutex, portMAX_DELAY) == pdPASS)
         {
             itf_debug_write(data, len);
 

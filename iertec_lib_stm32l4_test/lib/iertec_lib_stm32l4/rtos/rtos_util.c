@@ -92,9 +92,9 @@ void
 vApplicationTraceTicksDropped (uint32_t ticks)
 {
     // A minimum of one tick should be reported
-    if (0 == ticks)
+    if (0u == ticks)
     {
-        ticks = 1;
+        ticks = 1u;
     }
 
     rtos_util_ticks_dropped += ticks;

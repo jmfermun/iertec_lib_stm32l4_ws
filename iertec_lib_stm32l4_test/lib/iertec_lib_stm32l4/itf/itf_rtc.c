@@ -25,7 +25,7 @@ extern const itf_rtc_config_t itf_rtc_config;
 static itf_rtc_cb_t itf_rtc_cb = NULL;
 
 /** RTC seconds count. */
-static volatile uint32_t itf_rtc_seconds = 0;
+static volatile uint32_t itf_rtc_seconds = 0u;
 
 /****************************************************************************//*
  * Public code
@@ -55,8 +55,8 @@ itf_rtc_init (void)
 
     itf_pwr_set_active(h_itf_pwr);
 
-    if (HAL_LPTIM_TimeOut_Start_IT(itf_rtc_config.handle, ITF_RTC_CLK_FREQ - 1,
-                                   ITF_RTC_CLK_FREQ - 2) != HAL_OK)
+    if (HAL_LPTIM_TimeOut_Start_IT(itf_rtc_config.handle, ITF_RTC_CLK_FREQ - 1u,
+                                   ITF_RTC_CLK_FREQ - 2u) != HAL_OK)
     {
         return false;
     }
@@ -93,13 +93,13 @@ itf_rtc_get_time (uint32_t * seconds, uint8_t * cseconds)
     } while (counter != lptim->CNT);
 
     // The timeout interrupt is generated one tick before the reload operation
-    counter += 1;
+    counter += 1u;
 
     *seconds = sec;
 
     if (counter >= ITF_RTC_CLK_FREQ)
     {
-        *cseconds = 0;
+        *cseconds = 0u;
     }
     else
     {
@@ -126,14 +126,14 @@ itf_rtc_get_ticks (void)
     } while (counter != lptim->CNT);
 
     // The timeout interrupt is generated one tick before the reload operation
-    counter += 1;
+    counter += 1u;
 
     if (counter >= ITF_RTC_CLK_FREQ)
     {
-        counter = 0;
+        counter = 0u;
     }
 
-    return sec * ITF_RTC_CLK_FREQ + counter;
+    return (sec * ITF_RTC_CLK_FREQ) + counter;
 }
 
 void

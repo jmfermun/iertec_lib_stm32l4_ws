@@ -21,7 +21,7 @@
  ******************************************************************************/
 
 /** Maximum number of peripherals supported by the power control system. */
-#define H_ITF_PWR_MAX (32)
+#define H_ITF_PWR_MAX (32u)
 
 /****************************************************************************//*
  * Private data
@@ -60,7 +60,7 @@ itf_pwr_init (void)
     itf_pwr_active_flag = 0;
 
     // The level masks are negated to optimize the comparison
-    for (size_t i = 0; i < ITF_PWR_LEVEL_COUNT; i++)
+    for (size_t i = 0u; i < ITF_PWR_LEVEL_COUNT; i++)
     {
         itf_pwr_level_mask[i] = ~0u;
     }
@@ -140,12 +140,12 @@ itf_pwr_pre_sleep (void)
 {
     itf_pwr_level_t level;
 
-    if ((itf_pwr_active_flag & itf_pwr_level_mask[ITF_PWR_LEVEL_2]) == 0)
+    if ((itf_pwr_active_flag & itf_pwr_level_mask[ITF_PWR_LEVEL_2]) == 0u)
     {
         level = ITF_PWR_LEVEL_2;
         MODIFY_REG(PWR->CR1, PWR_CR1_LPMS, PWR_CR1_LPMS_STOP2);
     }
-    else if ((itf_pwr_active_flag & itf_pwr_level_mask[ITF_PWR_LEVEL_1]) == 0)
+    else if ((itf_pwr_active_flag & itf_pwr_level_mask[ITF_PWR_LEVEL_1]) == 0u)
     {
         level = ITF_PWR_LEVEL_1;
         MODIFY_REG(PWR->CR1, PWR_CR1_LPMS, PWR_CR1_LPMS_STOP1);
@@ -173,7 +173,7 @@ itf_pwr_pre_sleep (void)
 void
 itf_pwr_post_sleep (void)
 {
-    if (SCB->SCR & SCB_SCR_SLEEPDEEP_Msk)
+    if ((SCB->SCR & SCB_SCR_SLEEPDEEP_Msk) != 0u)
     {
 #ifdef configMIN_RUN_BETWEEN_DEEP_SLEEPS
         // Start a new SysTick timer period. We won't attempt to enter STOP mode

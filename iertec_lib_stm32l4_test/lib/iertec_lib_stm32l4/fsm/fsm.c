@@ -48,7 +48,7 @@ fsm_init (fsm_t * const p_fsm, const fsm_state_t * p_state_init)
         {
             p_state_path[index]->handler_entry(p_fsm);
         }
-    } while (index > 0);
+    } while (index > 0u);
 }
 
 bool
@@ -64,7 +64,7 @@ fsm_process (fsm_t * const p_fsm, uint32_t events)
     p_fsm->events = events;
 
     // Check if a new tick has been generated
-    if (FSM_EVENT_TICK & events)
+    if ((FSM_EVENT_TICK & events) != 0u)
     {
         p_fsm->tick_count++;
     }
@@ -78,7 +78,7 @@ fsm_process (fsm_t * const p_fsm, uint32_t events)
 #endif // NDEBUG
 
     // If current state is top level
-    if (0 == p_fsm->p_state->level)
+    if (0u == p_fsm->p_state->level)
     {
         DEBUG_ASSERT(NULL != p_fsm->p_state->handler_state);
 
@@ -106,7 +106,7 @@ fsm_process (fsm_t * const p_fsm, uint32_t events)
         do
         {
             ret = p_state_path[--index]->handler_state(p_fsm);
-        } while (!ret && (index > 0));
+        } while (!ret && (index > 0u));
     }
 
     // Clear events
@@ -209,7 +209,7 @@ fsm_traverse (fsm_t * const p_fsm, const fsm_state_t * p_state_target)
 
             p_state_path[index]->handler_entry(p_fsm);
         }
-    } while (index > 0);
+    } while (index > 0u);
 }
 
 /** @} */

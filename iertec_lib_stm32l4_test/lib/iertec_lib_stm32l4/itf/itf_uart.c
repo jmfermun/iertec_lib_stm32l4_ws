@@ -530,13 +530,13 @@ itf_uart_read_count (h_itf_uart_t h_itf_uart)
 bool
 itf_uart_send_break (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
-    bool ret;
-    char data = 0;
+    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    bool                  ret;
+    char                  data     = 0;
 
     // This function can not be used when the reads are active
-    if ((instance->break_brr == 0u) ||
-        READ_BIT(instance->handle->Instance->CR1, USART_CR1_RXNEIE))
+    if ((instance->break_brr == 0u)
+        || READ_BIT(instance->handle->Instance->CR1, USART_CR1_RXNEIE))
     {
         return false;
     }

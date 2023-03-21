@@ -115,7 +115,7 @@ debug_printf_impl (const char * format, ...)
             len = vsnprintf(debug_buffer, DEBUG_BUFFER_SIZE, format, args);
             va_end(args);
 
-            if (len > 0)
+            if ((len > 0) && (len < DEBUG_BUFFER_SIZE))
             {
                 itf_debug_write(debug_buffer, (size_t)len);
             }

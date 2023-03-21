@@ -446,7 +446,10 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 #ifdef ITF_UART_PRINTF
     if (H_ITF_UART_DEBUG != h_itf_uart)
     {
-        debug_printf("RX << %s", data);
+        if (data[0] != '\0')
+        {
+            debug_printf("RX << %s", data);
+        }
     }
 #endif // ITF_UART_PRINTF
 

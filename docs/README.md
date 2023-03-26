@@ -4,14 +4,9 @@
 
 Generic library to be used with STM32L4 microcontrollers.
 
-## Dependencies
-
-- IDE: [STM32CubeIDE v1.11.0](https://www.st.com/content/ccc/resource/technical/software/sw_development_suite/group0/bf/f7/ee/25/04/54/48/2e/stm32cubeide_win/files/st-stm32cubeide_1.11.0_13638_20221122_1308_x86_64.exe.zip/jcr:content/translations/en.st-stm32cubeide_1.11.0_13638_20221122_1308_x86_64.exe.zip).
-- SDK: STM32CubeL4 Firmware Package v1.17.2. Installed from the IDE.
-- RTOS: FreeRTOS v10.3.1. Available in the SDK.
-
 ## IDE and SDK Configuration
 
+- Install [STM32CubeIDE v1.11.0](https://www.st.com/content/ccc/resource/technical/software/sw_development_suite/group0/bf/f7/ee/25/04/54/48/2e/stm32cubeide_win/files/st-stm32cubeide_1.11.0_13638_20221122_1308_x86_64.exe.zip/jcr:content/translations/en.st-stm32cubeide_1.11.0_13638_20221122_1308_x86_64.exe.zip).
 - Open STM32CubeIDE.
 - Select the workspace "C:\Desarrollo\Proyectos\iertec_lib_stm32l4_ws" and click on launch.
 - Allow firewall access to STM32CubeIDE.
@@ -27,7 +22,7 @@ Generic library to be used with STM32L4 microcontrollers.
 - File → New → STM32 Project.
 - Go to "Board Selector" and select "NUCLEO-L452RE". Click on next.
 - Setup STM32 Project:
-    - Project Name: iertec_lib_stm32l4_test_mx.
+    - Project Name: iertec_lib_stm32l4_test.
     - Targeted Language: C.
     - Targeted Binary Type: Executable.
     - Targeted Project Type: STM32Cube.
@@ -46,13 +41,16 @@ Generic library to be used with STM32L4 microcontrollers.
     - Source Location → Add Folder...:
         - src
         - lib
+- Project → Properties → C/C++ Build → Settings → MCU Settings → Use float with printf from newlib-nano (-u _printf_float). Mark the checkbox.
 
 ### STM32CubeMX Configuration
 
-- Open file "iertec_lib_stm32l4_test_mx.ioc".
+- Open file "iertec_lib_stm32l4_test.ioc".
 - Project options:
     - Project Manager → Project → Project Settings → Do not generate the main(). Mark the checkbox.
     - Project Manager → Code Generator → Generated files → Generate peripheral initialization as a pair of .c/.h files per peripheral. Mark the checkbox.
+    - Project Manager → Project → Thread-safe Settings → Enable multi-threaded support. Mark the checkbox.
+    - Project Manager → Project → Thread-safe locking strategy. Select "FreeRTOS Strategy #5 - Deny lock usage from interrupts".
 - Debug configuration:
     - Pinout & Configuration → System Core → SYS → SYS Mode and Configuration → Mode → Debug. Select "Serial Wire".
 - Main clock configuration:
@@ -101,7 +99,7 @@ Generic library to be used with STM32L4 microcontrollers.
         - Maximum output speed. Select "Very High".
         - User Label. Fill "USART1_RTS".
     - Clock Configuration → USART1 Clock Mux. Select "HSI".
--  SPI configuration:
+- SPI configuration:
     - Pinout & Configuration → Connectivity → SPI1:
         - Mode. Select "Full-Duplex Master".
         - Configuration → Parameter Settings → Basic Parameters → Data Size. Select "8 Bits".
@@ -139,6 +137,15 @@ Generic library to be used with STM32L4 microcontrollers.
         - Configuration → GPIO Settings → I2C1_SDA → GPIO Pull-up/Pull-down. Select "Pull-up".
         - Relocate PB6 to PB8 and PB7 to PB9.
     - Clock Configuration → I2C1 Clock Mux. Select "HSI".
+- FatFS configuration:
+    - Pinout & Configuration → Middleware. Select FATFS.
+    - Pinout & Configuration → FATFS Mode and Configuration → Mode. Check "User-defined".
+	- Pinout & Configuration → FATFS Mode and Configuration → Configuration → Set Defines:
+		- Locale and Namespace Parameters → USE_LFN. Select "Enabled with dynamic worjking buffer on the STACK".
+		- System Parameters → FS_EXFAT. Select "Enabled".
+    - Pinout & Configuration → GPIO → GPIO Mode and COnfiguration → Configuration → SPI:
+        - Select SPI1_MISO from the table.
+        - GPIO Pull-up/Pull-down. Select Pull-up.
 - Save the file.
 - Click on "Yes" for the dialog "Do you want to generate Code?".
 
@@ -146,13 +153,13 @@ Generic library to be used with STM32L4 microcontrollers.
 
 Debug application in the target:
 - Run → Debug Configurations... → STM32 C/C++ Application → Right click → New Configuration.
-- Main → C/C++ Application -> Search Project.... Select the Debug binary.
+- Main → C/C++ Application → Search Project.... Select the Debug binary.
 - Click on "Debug" button.
 
 Debug test in the target:
 - Run → Debug Configurations... → STM32 C/C++ Application → Right click → New Configuration.
 - Name. Set it to "test_target_debug".
-- Main → C/C++ Application. Set it with the path to the test binary to be debugged. For example, "C:\Desarrollo\Proyectos\iertec_lib_stm32l4_ws\script\output\test\integration_target_build\test\out\test_itf_uart.elf".
+- Main → C/C++ Application. Set it with the path to the test binary to be debugged. For example, "C:\Desarrollo\Proyectos\iertec_lib_stm32l4_ws\script\output\test\integration_target_build\test\out\test_z_dummy.elf".
 - Main → Build (if required) before launching. Select "Disable auto build".
 - Debugger → Debug Probe. Select "ST-LINK (OpenOCD)".
 - Startup → Initialization commands. Fill it with "monitor arm semihosting enable".
@@ -168,3 +175,93 @@ Debug test in the host:
 - Close Eclipse.
 - Move file "test_host_debug.launch" from ".metadata\.plugins\org.eclipse.debug.core\.launches" to the project folder.
 - Open Eclipse.
+
+## Jenkins Configuration
+
+- Install [Jenkins v2.375.3](https://get.jenkins.io/windows-stable/2.375.3/jenkins.msi).
+- Open a browser and enter the URL http://localhost:8080/.
+- Install suggested plugins.
+- Create First Admin User.
+    - User: admin
+    - Password: admin
+- Manage Jenkins → Manage Plugins → Availabe plugins. Search "Locale" and install it.
+- Manage Jenkins → Configure System → Locale.
+    - Default Language. Fill it with "en".
+    - Ignore browser preference and force this language to all users. Mark the checkbox.
+    - Click on "Save" button.
+- Manage Jenkins → Manage Plugins → Availabe plugins. Search "Blue Ocean" and install it.
+- Manage Jenkins → Manage Plugins → Availabe plugins. Search "xUnit" and install it.
+- Manage Jenkins → Manage Plugins → Availabe plugins. Search "Cobertura" and install it.
+- Manage Jenkins → Global Tool Configuration → Git → Path to Git executable. Fill it with "C:\Program Files\Git\bin\git.exe".
+- Open "C:\Program Files\Jenkins\jenkins.xml" and add:
+    ```xml
+    <arguments>-Xrs -Xmx256m -
+    Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -
+    Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true -jar ...
+    ```
+- Restart Jenkins (restart PC).
+- + New Item:
+    - Enter an item name. Fill with the name for the pipeline, i.e., "iertec_lib_stm32l4".
+    - Select the option "Pipeline".
+    - Click on "OK".
+    - Pipeline:
+        - Definition. Select "Pipeline script from SCM".
+        - SCM. Select "Git".
+        - Repository URL. Fill with the path to the repository, i.e., "file://C:/Desarrollo/Proyectos/iertec_lib_stm32l4_ws".
+        - Script Path. Fill with with the relative location to the Jenkins file, i.e., "script/ci_cd/Jenkinsfile".
+        - Click on "Save".
+- Open Blue Ocean.
+    - Click on pipeline "iertec_lib_stm32l4".
+    - Click on "Run".
+
+## SonarQube Configuration
+
+- Install [Java 17](https://adoptium.net/en-GB/temurin/releases/?version=17).
+- Install [SonarQube 9.9](https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.0.65466.zip). Extract it in your programs folder.
+- Install [SonarScanner 4.8](https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856.zip). Extract it in your programs folder.
+- Copy [sonar-cxx 2.1.0](https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.0/sonar-cxx-plugin-2.1.0.428.jar) into the folder ${sonarqube}/extensions/plugins/.
+- Install [PostgreSQL 15.2](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
+    - Password: postgres
+    - Port: 5432
+- Open psql and execute the following commands:
+    ```sql
+    CREATE USER sonar;
+	ALTER USER sonar WITH PASSWORD 'sonar';
+	CREATE DATABASE sonardb WITH ENCODING 'UTF8';
+	ALTER DATABASE sonardb OWNER TO sonar;
+	ALTER USER sonar SET search_path TO sonardb;
+    ```
+- Open file ${sonarqube}/conf/sonar.properties and add:
+	```
+    sonar.jdbc.username=sonar
+	sonar.jdbc.password=sonar
+	sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonardb?currentSchema=public
+    ```
+- Execute script/ci_cd/do_sonarqube_server.bat to lauch the server.
+    - Wait until server is ready (SonarQube is operational).
+	- Maintain the command line opened while using SonarQube.
+	- To stop the server pulse ctrl+c.
+- Open a browser and enter the URL http://localhost:9000/.
+- Login.
+    - User: admin
+    - Password: admin
+    - New password: sonar
+- Login with user admin and password admin. Set as new password sonar.
+- Go to "Quality Profiles".
+	- Search CXX.
+	- Pulse the gear and select "Copy".
+	- Give it the name JMFM.
+- Go to "Rules".
+	- In "Quality Profiles" select the created profile and set it in "inactive" mode.
+	- Pulse "Clear all Filters".
+	- In "Language", select CXX. Pulse "Bulk change" → "Activate In..." → Created profile → Apply.
+- Go to "Quality Profiles".
+	- Search the created profile.
+	- Pulse the gear and select "Set as Default".
+- User → My Account → Security → Generate Tokens:
+    - Name: JMFM.
+    - Type: User Token.
+    - Expires in: No expiration.
+    - Click on Generate.
+    - Copy the code an paste it in the sonar-project.properties filed sonar.login.
+- Execute script/ci_cd/do_sonar_scanner.bat to lauch the analysis.

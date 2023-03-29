@@ -42,6 +42,8 @@ void test_z_dummy(void)
     int z = 0;
 
     TEST_ASSERT_EQUAL_INT(0, z);
+
+    TEST_PRINTF("Hello %s!", "world");
 }
 
 /******************************** End of file *********************************/

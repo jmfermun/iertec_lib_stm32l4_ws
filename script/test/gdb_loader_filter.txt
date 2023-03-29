@@ -1,0 +1,11 @@
+Open On-Chip Debugger
+Licensed under GNU GPL v2
+For bug reports
+openocd.org
+debug_level: 0
+halted due to debug-request
+xPSR:
+semihosting is enabled
+shutdown command invoked
+Target disconnected
+Error: Failed to read memory

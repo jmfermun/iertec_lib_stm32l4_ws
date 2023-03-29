@@ -13,8 +13,17 @@ Generic library to be used with STM32L4 microcontrollers.
 - Help → Check for Updates → Install updates.
 - Window → Preferencies → STM32Cube → Firmware Updater → Firmware installation repository. Set it to "C:/ST/STM32Cube/Repository/".
 - Help → Manage Embedded Software Packages → STM32Cube MCU Packages → STM32L4. Install "STM32CubeL4 Firmware Package v1.17.2".
+- Open script/global.sh and update the following variables:
+    - PATH_IDE
+    - PATH_TARGET_COMPILER
+    - PATH_OPENOCD
+    - PATH_OPENOCD_S
 
 ## Project Configuration
+
+- Open script/global.sh and update the following variables:
+    - PROJECT_NAME
+    - ARTIFACT_NAME
 
 ### Project Creation
 
@@ -173,8 +182,88 @@ Debug test in the host:
 - Debugger → Main → GDB Debugger. Set it with the path to the debugger. For example, "C:\Desarrollo\Programas\msys64\mingw64\bin\gdb.exe".
 - Click on "Debug" button.
 - Close Eclipse.
-- Move file "test_host_debug.launch" from ".metadata\.plugins\org.eclipse.debug.core\.launches" to the project folder.
+- Move file "test_host_debug.launch" from ".metadata/.plugins/org.eclipse.debug.core/.launches" to the project folder.
 - Open Eclipse.
+
+## MSYS2 Configuration
+
+Many different packages from MSYS2 are used by the utility scripts.
+
+- Install [MSYS2](https://github.com/msys2/msys2-installer/releases/download/2023-03-18/msys2-x86_64-20230318.exe).
+- Select as installation folder "C:\Desarrollo\Programas\msys64".
+- Launch "MSYS2 MSYS".
+- Execute command "pacman -Syu" and accept the installation of the updates.
+- Accept to close the terminal and relaunch "MSYS2 MSYS".
+- Execute command "pacman -Syu" and accept the installation of the updates.
+- Install the following packages:
+    ```
+    pacman -S mingw-w64-x86_64-toolchain
+    pacman -S mingw-w64-x86_64-llvm
+    pacman -S mingw-w64-x86_64-clang
+    pacman -S mingw-w64-x86_64-clang-analyzer
+    pacman -S mingw-w64-x86_64-clang-tools-extra
+    pacman -S mingw-w64-x86_64-compiler-rt
+    pacman -S mingw-w64-x86_64-libblocksruntime
+    pacman -S mingw-w64-x86_64-cppcheck
+    pacman -S mingw-w64-x86_64-python-pip
+    pacman -S mingw-w64-x86_64-python-wheel
+    pacman -S mingw-w64-x86_64-python-lxml
+    pacman -S mingw-w64-x86_64-python-pyserial
+    pacman -S mingw-w64-x86_64-python-regex
+    pacman -S mingw-w64-x86_64-python-pillow
+    pacman -S mingw-w64-x86_64-ruby
+    pacman -S mingw-w64-x86_64-doxygen
+    pacman -S mingw-w64-x86_64-qt6-base
+    pacman -S mingw-w64-x86_64-graphviz
+    pacman -S mingw-w64-x86_64-srecord
+    pacman -S mingw-w64-x86_64-uncrustify
+    pacman -S mingw-w64-x86_64-7zip
+    ```
+- Launch "MSYS2 MINGW64".
+- Install the following python packages:
+    ```
+    pip install compiledb
+    pip install gcovr
+    pip install pyyaml
+    ```
+- Install the following ruby packages:
+    ```
+    gem install ceedling
+    ```
+- Ceedlin 0.31.1 contains some bugs. Perform the following modifications:
+    - Open the file C:\Desarrollo\Programas\msys64\mingw64\lib\ruby\gems\3.1.0\gems\ceedling-0.31.1\bin\ceedling. Replace "YAML.load_file" with "YAML.unsafe_load_file".
+    - Open the file C:\Desarrollo\Programas\msys64\mingw64\lib\ruby\gems\3.1.0\gems\ceedling-0.31.1\lib\ceedling\yaml_wrapper.rb. Replace "YAML.load" with "YAML.unsafe_load".
+- Open script/launcher.bat and modify the MSYS2 installation path if necessary.
+
+## Static Analysis Configuration
+
+- Download PC-lint Plus and extact it in "C:\Desarrollo\Programas\pclp-X.Y.Z".
+- Open script/static_analysis/do_analysis_clang_tidy.sh and update the following variables:
+    - CLANG_TIDY_SRC_PATTERN
+- Open script/static_analysis/do_analysis_pclint.sh and update the following variables:
+    - PCLINT_SRC_PATTERN
+- Open script/global.sh and update the following variables:
+    - PATH_PCLINT
+    - PATH_PCLINT_CONFIG
+    - PATH_CPPCHECK_SHARE
+
+## Tests Configuration
+
+- Open the following files and modify them according to the project needs:
+    - project_integration_target.yml
+    - project_unit_host.yml
+    - project_unit_target.yml
+
+## Documentation Configuration
+
+- Install [Java 17](https://adoptium.net/en-GB/temurin/releases/?version=17).
+- Download [PlantUML](https://github.com/plantuml/plantuml/releases/download/v1.2023.5/plantuml-1.2023.5.jar).
+- Copy the file in the folder "C:\Desarrollo\Programas\PlantUML" renaming it to "plantuml.jar".
+- Open script/global.sh and update the following variables:
+    - PATH_JAVA
+    - PATH_PLANTUML
+- Open script/doc/doxyfile with the application doxywizard and modify it according to the project needs.
+- The application doxywizard can be found in "C:\Desarrollo\Programas\msys64\mingw64\bin\doxywizard.exe".
 
 ## Jenkins Configuration
 
@@ -216,7 +305,6 @@ Debug test in the host:
 
 ## SonarQube Configuration
 
-- Install [Java 17](https://adoptium.net/en-GB/temurin/releases/?version=17).
 - Install [SonarQube 9.9](https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.0.65466.zip). Extract it in your programs folder.
 - Install [SonarScanner 4.8](https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856.zip). Extract it in your programs folder.
 - Copy [sonar-cxx 2.1.0](https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-2.1.0/sonar-cxx-plugin-2.1.0.428.jar) into the folder ${sonarqube}/extensions/plugins/.

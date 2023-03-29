@@ -2,8 +2,11 @@ cd "$(dirname "$0")"
 
 source ../global.sh
 
-# Use the following command to create a new empty configuration file
-# uncrustify --update-config-with-doc > uncrustify.cfg
+# Use the following command to create a default configuration file
+# uncrustify --update-config-with-doc > uncrustify_new.cfg
+
+# Use the following command to update the configuration file for a new uncrustify version
+# uncrustify --update-config-with-doc -c uncrustify.cfg > uncrustify_new.cfg
 
 uncrustify --replace --no-backup -l C -c uncrustify.cfg \
 ../../$PROJECT_NAME/lib/iertec_lib_stm32l4/fsm/*.h \

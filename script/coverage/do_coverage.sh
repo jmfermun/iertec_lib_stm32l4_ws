@@ -13,5 +13,5 @@ done
 
 mkdir -p $PATH_OUT/report_coverage
 
-gcovr $FILES_IN --html-details -o $PATH_OUT/report_coverage/report_coverage.html --decisions
-gcovr $FILES_IN --xml -o $PATH_OUT/report_coverage/report_coverage.xml --decisions
+gcovr $FILES_IN --filter src/ --filter lib/iertec_lib_stm32l4 --html-details -o $PATH_OUT/report_coverage/report_coverage.html --decisions
+gcovr $FILES_IN --filter src/ --filter lib/iertec_lib_stm32l4 --xml -o $PATH_OUT/report_coverage/report_coverage.xml --decisions

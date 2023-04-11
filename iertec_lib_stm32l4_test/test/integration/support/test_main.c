@@ -26,7 +26,7 @@ extern const char test_file_name[];
 #define TEST_MAIN_TASK_PRIORITY         (1)
 
 /** Test task stack size in words (4 bytes). */
-#define TEST_MAIN_TASK_STACK_SIZE       (512)
+#define TEST_MAIN_TASK_STACK_SIZE       (2048)
 
 /*******************************************************************************
  * Private code

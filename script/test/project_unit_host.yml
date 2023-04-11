@@ -3,6 +3,7 @@
 :project:
   :build_root: ../script/output/test/build_unit_host
   :use_exceptions: TRUE
+  :use_test_preprocessor: TRUE
   :use_mocks: TRUE
   :test_file_prefix: test_
   :which_ceedling: gem
@@ -39,6 +40,10 @@
   :test_preprocess:
     - *common_defines
     - TEST
+    - INC_FREERTOS_H
+    - PRIVILEGED_FUNCTION=
+    - portDONT_DISCARD=
+    - configSUPPORT_DYNAMIC_ALLOCATION=1
 
 :flags:
   :test:
@@ -72,9 +77,11 @@
     bool:     UINT8
   :treat_as_void:
     - xdc_Void
-  :fail_on_unexpected_calls: FALSE
+  :fail_on_unexpected_calls: TRUE
   :callback_include_count: FALSE
   :treat_externs: :include
+  :includes:
+    - FreeRTOS.h
 
 :plugins:
   :load_paths:

@@ -920,6 +920,7 @@ WARN_LOGFILE           =
 INPUT                  = ../../iertec_lib_stm32l4_test/src \
                          ../../iertec_lib_stm32l4_test/lib/iertec_lib_stm32l4 \
                          ../../docs/README.md \
+                         ../../docs/CONFIGURATION.md \
                          ../../docs/LICENSE.md
 
 # This tag can be used to specify the character encoding of the source files

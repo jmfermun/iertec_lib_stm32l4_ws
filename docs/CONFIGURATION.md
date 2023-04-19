@@ -46,7 +46,8 @@
     - Source Location → Add Folder...:
         - src
         - lib
-- Project → Properties → C/C++ Build → Settings → MCU Settings → Use float with printf from newlib-nano (-u _printf_float). Mark the checkbox.
+- Project → Properties → C/C++ Build → Settings → Tools Settings → MCU Settings → Use float with printf from newlib-nano (-u _printf_float). Mark the checkbox.
+- Project → Properties → C/C++ Build → Settings → Tools Settings → MCU Post build outputs → Convert to Intel Hex file (-O ihex). Mark the checkbox.
 
 ### STM32CubeMX Configuration
 
@@ -146,6 +147,7 @@
     - Pinout & Configuration → Middleware. Select FATFS.
     - Pinout & Configuration → FATFS Mode and Configuration → Mode. Check "User-defined".
     - Pinout & Configuration → FATFS Mode and Configuration → Configuration → Set Defines:
+        - Function Parameters → USE_FIND. Select "Enabled".
         - Locale and Namespace Parameters → USE_LFN. Select "Enabled with dynamic worjking buffer on the STACK".
         - System Parameters → FS_EXFAT. Select "Enabled".
     - Pinout & Configuration → GPIO → GPIO Mode and COnfiguration → Configuration → SPI:

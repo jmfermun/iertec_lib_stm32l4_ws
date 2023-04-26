@@ -2,7 +2,7 @@
  * @file test_fsm.c
  * @author juanmanuel.fernandez@iertec.com
  * @date 05 Nov 2022
- * @brief Unit tests for the finite state machine framework.
+ * @brief Unit test for the module fsm.
  ******************************************************************************/
 
 #include "fsm.h"
@@ -308,7 +308,7 @@ static const fsm_state_t complex_state_2_2[] =
 
 void test_fsm_simple_init(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &simple_state[0],
         .events = 0,
@@ -326,7 +326,7 @@ void test_fsm_simple_init(void)
 void test_fsm_simple_event_handled(void)
 {
     const uint32_t exp_events = 0b101;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &simple_state[0],
         .events = 0b101,
@@ -344,7 +344,7 @@ void test_fsm_simple_event_handled(void)
 void test_fsm_simple_event_not_handled(void)
 {
     const uint32_t exp_events = 0b1001;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &simple_state[0],
         .events = 0b1001,
@@ -361,7 +361,7 @@ void test_fsm_simple_event_not_handled(void)
 
 void test_fsm_simple_transition_switch(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &simple_state[1],
         .events = 0,
@@ -379,7 +379,7 @@ void test_fsm_simple_transition_switch(void)
 
 void test_fsm_simple_transition_traverse(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &simple_state[0],
         .events = 0,
@@ -399,7 +399,7 @@ void test_fsm_simple_transition_traverse(void)
 
 void test_fsm_hierarchical_init(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &hierarchical_state_2[0],
         .events = 0,
@@ -419,7 +419,7 @@ void test_fsm_hierarchical_init(void)
 void test_fsm_hierarchical_handled_by_0(void)
 {
     const uint32_t exp_events = 0b101;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &hierarchical_state_2[0],
         .events = 0b101,
@@ -437,7 +437,7 @@ void test_fsm_hierarchical_handled_by_0(void)
 void test_fsm_hierarchical_handled_by_1(void)
 {
     const uint32_t exp_events = 0b1001;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &hierarchical_state_2[0],
         .events = 0b1001,
@@ -456,7 +456,7 @@ void test_fsm_hierarchical_handled_by_1(void)
 void test_fsm_hierarchical_handled_by_2(void)
 {
     const uint32_t exp_events = 0b1000;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &hierarchical_state_2[0],
         .events = 0b1000,
@@ -476,7 +476,7 @@ void test_fsm_hierarchical_handled_by_2(void)
 void test_fsm_hierarchical_not_handled(void)
 {
     const uint32_t exp_events = 0b1100;
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &hierarchical_state_2[0],
         .events = 0b1100,
@@ -495,7 +495,7 @@ void test_fsm_hierarchical_not_handled(void)
 
 void test_fsm_complex_init(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_0[0],
         .events = 0,
@@ -514,7 +514,7 @@ void test_fsm_complex_init(void)
 
 void test_fsm_complex_traverse_2_0_0_to_2_0_1(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_0[1],
         .events = 0,
@@ -532,7 +532,7 @@ void test_fsm_complex_traverse_2_0_0_to_2_0_1(void)
 
 void test_fsm_complex_traverse_2_0_1_to_2_2_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_2[0],
         .events = 0,
@@ -554,7 +554,7 @@ void test_fsm_complex_traverse_2_0_1_to_2_2_0(void)
 
 void test_fsm_complex_traverse_2_2_0_to_2_1_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_1[0],
         .events = 0,
@@ -574,7 +574,7 @@ void test_fsm_complex_traverse_2_2_0_to_2_1_0(void)
 
 void test_fsm_complex_traverse_2_1_0_to_0_2(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_0[2],
         .events = 0,
@@ -594,7 +594,7 @@ void test_fsm_complex_traverse_2_1_0_to_0_2(void)
 
 void test_fsm_complex_traverse_0_2_to_2_0_1(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_0[1],
         .events = 0,
@@ -614,7 +614,7 @@ void test_fsm_complex_traverse_0_2_to_2_0_1(void)
 
 void test_fsm_complex_traverse_2_0_1_to_1_0_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_1_0[0],
         .events = 0,
@@ -633,7 +633,7 @@ void test_fsm_complex_traverse_2_0_1_to_1_0_0(void)
 
 void test_fsm_complex_traverse_1_0_0_to_2_0_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_0[0],
         .events = 0,
@@ -652,7 +652,7 @@ void test_fsm_complex_traverse_1_0_0_to_2_0_0(void)
 
 void test_fsm_complex_traverse_1_0_0_to_2_2_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_2_2[0],
         .events = 0,
@@ -676,7 +676,7 @@ void test_fsm_complex_traverse_1_0_0_to_2_2_0(void)
 
 void test_fsm_complex_traverse_2_2_0_to_1_0_0(void)
 {
-    const fsm_t exp_fsm =
+    fsm_t exp_fsm =
     {
         .p_state = &complex_state_1_0[0],
         .events = 0,

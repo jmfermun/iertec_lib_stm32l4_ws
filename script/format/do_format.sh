@@ -9,6 +9,8 @@ source ../global.sh
 # uncrustify --update-config-with-doc -c uncrustify.cfg > uncrustify_new.cfg
 
 uncrustify --replace --no-backup -l C -c uncrustify.cfg \
+../../$PROJECT_NAME/lib/iertec_lib_stm32l4/crypt/*.h \
+../../$PROJECT_NAME/lib/iertec_lib_stm32l4/crypt/*.c \
 ../../$PROJECT_NAME/lib/iertec_lib_stm32l4/fsm/*.h \
 ../../$PROJECT_NAME/lib/iertec_lib_stm32l4/fsm/*.c \
 ../../$PROJECT_NAME/lib/iertec_lib_stm32l4/itf/*.h \

@@ -2,7 +2,7 @@
  * @file test_rtc_timer.c
  * @author juanmanuel.fernandez@iertec.com
  * @date 19 Apr 2023
- * @brief Test for the Generic timers that can use any tick interrupt source.
+ * @brief Unit test for the module rtc_timer.
  ******************************************************************************/
 
 #include "rtc_timer.h"

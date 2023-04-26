@@ -2,7 +2,7 @@
  * @file test_z_dummy.c
  * @author juanmanuel.fernandez@iertec.com
  * @date 12 Jan 2022
- * @brief Dummy test to be executed the last one in the test regression.
+ * @brief Unit test for the module z_dummy.
  ******************************************************************************/
 
 #include "unity.h"

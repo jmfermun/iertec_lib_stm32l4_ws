@@ -2,7 +2,7 @@
  * @file test_rtc.c
  * @author juanmanuel.fernandez@iertec.com
  * @date 24 Feb 2021
- * @brief Test for RTC module.
+ * @brief Unit test for the module rtc.
  ******************************************************************************/
 
 #include "rtc.h"

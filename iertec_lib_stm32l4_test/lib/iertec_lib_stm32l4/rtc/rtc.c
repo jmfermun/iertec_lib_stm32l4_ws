@@ -12,7 +12,12 @@
  */
 
 #include "rtc.h"
+
+#ifdef RTC_USE_EXT
+#include "ext_rtc.h"
+#else
 #include "itf_rtc.h"
+#endif // RTC_USE_EXT
 
 /****************************************************************************//*
  * Constants and macros
@@ -190,13 +195,21 @@ static void rtc_convert_datetime(datetime_t * datetime_out,
 void
 rtc_get_timestamp (uint32_t * timestamp, uint8_t * centiseconds)
 {
+#ifdef RTC_USE_EXT
+    ext_rtc_get_time(timestamp, centiseconds);
+#else
     itf_rtc_get_time(timestamp, centiseconds);
+#endif // RTC_USE_EXT
 }
 
 void
 rtc_get_epoch_timestamp (uint32_t * timestamp, uint8_t * centiseconds)
 {
+#ifdef RTC_USE_EXT
+    ext_rtc_get_time(timestamp, centiseconds);
+#else
     itf_rtc_get_time(timestamp, centiseconds);
+#endif // RTC_USE_EXT
 
     *timestamp += EPOCH_BASE_TIME;
 }
@@ -204,7 +217,11 @@ rtc_get_epoch_timestamp (uint32_t * timestamp, uint8_t * centiseconds)
 void
 rtc_set_timestamp (uint32_t timestamp)
 {
+#ifdef RTC_USE_EXT
+    ext_rtc_set_time(timestamp, 0);
+#else
     itf_rtc_set_time(timestamp, 0);
+#endif // RTC_USE_EXT
 }
 
 bool
@@ -219,7 +236,12 @@ rtc_set_datetime (const datetime_t * datetime, bool fmt_local)
     {
         rtc_datetime_to_timestamp(&ts, &dt, fmt_local);
         rtc_delta_hour = datetime->delta_hour;
+
+#ifdef RTC_USE_EXT
+        ext_rtc_set_time(ts, datetime->cseconds);
+#else
         itf_rtc_set_time(ts, datetime->cseconds);
+#endif // RTC_USE_EXT
 
         return true;
     }
@@ -240,9 +262,9 @@ rtc_get_datetime (datetime_t * datetime)
     datetime->cseconds   = tcs;
 }
 
-int
-rtc_compare_datetime (const datetime_t * datetime_1,
-                      const datetime_t * datetime_2)
+int64_t
+rtc_compare_datetime (const datetime_t * datetime_1, bool fmt_local_1,
+                      const datetime_t * datetime_2, bool fmt_local_2)
 {
     datetime_t dt_1;
     datetime_t dt_2;
@@ -250,22 +272,12 @@ rtc_compare_datetime (const datetime_t * datetime_1,
     uint32_t   ts_2;
 
     rtc_convert_datetime(&dt_1, datetime_1);
-    rtc_datetime_to_timestamp(&ts_1, &dt_1, true);
+    rtc_datetime_to_timestamp(&ts_1, &dt_1, fmt_local_1);
 
     rtc_convert_datetime(&dt_2, datetime_2);
-    rtc_datetime_to_timestamp(&ts_2, &dt_2, true);
+    rtc_datetime_to_timestamp(&ts_2, &dt_2, fmt_local_2);
 
-    if (ts_1 > ts_2)
-    {
-        return 1;
-    }
-
-    if (ts_1 < ts_2)
-    {
-        return -1;
-    }
-
-    return 0;
+    return (int64_t)ts_1 - (int64_t)ts_2;
 }
 
 /****************************************************************************//*

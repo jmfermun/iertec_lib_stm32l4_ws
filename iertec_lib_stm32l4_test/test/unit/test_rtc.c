@@ -166,7 +166,7 @@ void test_rtc_epoch_time(void)
 
 void test_rtc_compare_datetime(void)
 {
-    int ret;
+    int64_t ret;
 
     // dt 1 == dt 2
     {
@@ -177,7 +177,7 @@ void test_rtc_compare_datetime(void)
                            .hour = 0, .minutes = 59, .seconds = 10,
                            .cseconds = 0, .delta_hour = 1};
 
-        ret = rtc_compare_datetime(&dt_1, &dt_2);
+        ret = rtc_compare_datetime(&dt_1, true, &dt_2, true);
 
         TEST_ASSERT_EQUAL_INT(0, ret);
     }
@@ -191,7 +191,7 @@ void test_rtc_compare_datetime(void)
                            .hour = 0, .minutes = 59, .seconds = 11,
                            .cseconds = 0, .delta_hour = 1};
 
-        ret = rtc_compare_datetime(&dt_1, &dt_2);
+        ret = rtc_compare_datetime(&dt_1, true, &dt_2, true);
 
         TEST_ASSERT_EQUAL_INT(-1, ret);
     }
@@ -205,7 +205,7 @@ void test_rtc_compare_datetime(void)
                            .hour = 0, .minutes = 59, .seconds = 10,
                            .cseconds = 0, .delta_hour = 1};
 
-        ret = rtc_compare_datetime(&dt_1, &dt_2);
+        ret = rtc_compare_datetime(&dt_1, true, &dt_2, true);
 
         TEST_ASSERT_EQUAL_INT(1, ret);
     }

@@ -79,6 +79,8 @@
         - Configuration → Config Parameters → USE_TRACE_FACILITY. Select "Enabled".
         - Configuration → Config Parameters → USE_TIMERS. Select "Enabled".
         - Configuration → Include parameters → vTaskDelayUntil. Select "Enabled".
+        - Configuration → Include parameters → xTimerPendFunctionCall. Select "Enabled".
+        - Configuration → Include parameters → xEventGroupSetBitFromISR. Select "Enabled".
 - RTC timer configuration:
     - Pinout & Configuration → Timers → LPTIM2:
         - Mode → Mode. Select "Counts internal clock events".

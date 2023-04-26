@@ -76,14 +76,16 @@ void rtc_get_datetime(datetime_t * datetime);
  * @brief Compare 2 dates.
  *
  * @param[in] datetime_1 First date to compare.
+ * @param[in] fmt_local_1 true: input format is local time plus time zone;
+ *                        false: input format is UTC time plus time zone.
  * @param[in] datetime_2 Second date to compare.
+ * @param[in] fmt_local_2 true: input format is local time plus time zone;
+ *                        false: input format is UTC time plus time zone.
  *
- * @retval 1 If datetime_1 is greater than datetime_2.
- * @retval 0 If datetime_1 is equal to datetime_2.
- * @retval -1 If datetime_1 is smaller than datetime_2.
+ * @return The time difference in seconds between the first and the second date.
  */
-int rtc_compare_datetime(const datetime_t * datetime_1,
-                         const datetime_t * datetime_2);
+int64_t rtc_compare_datetime(const datetime_t * datetime_1, bool fmt_local_1,
+                             const datetime_t * datetime_2, bool fmt_local_2);
 
 #endif // RTC_H
 

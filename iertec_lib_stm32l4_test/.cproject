@@ -51,6 +51,7 @@
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../src"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/crypt"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/fsm"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtc"/>
@@ -140,6 +141,7 @@
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../src"/>
+									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/crypt"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/fsm"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/itf"/>
 									<listOptionValue builtIn="false" value="../lib/iertec_lib_stm32l4/rtc"/>

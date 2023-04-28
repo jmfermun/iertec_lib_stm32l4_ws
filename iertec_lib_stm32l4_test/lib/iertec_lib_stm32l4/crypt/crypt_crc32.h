@@ -27,7 +27,6 @@
 
 /**
  * @brief Calculate the CRC32 of the packet according to IEEE standards.
- * Algorithm obtained from https://github.com/LacobusVentura/MODBUS-CRC16.
  *
  * @param packet Pointer to the packet.
  * @param len Length of the packet.

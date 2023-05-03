@@ -37,6 +37,7 @@
 - Project → Properties → C/C++ General → Paths and Symbols:
     - Includes → Languages → GNU C → Add:
         - src
+        - lib/iertec_lib_stm32l4/crypt
         - lib/iertec_lib_stm32l4/fsm
         - lib/iertec_lib_stm32l4/itf
         - lib/iertec_lib_stm32l4/rtc

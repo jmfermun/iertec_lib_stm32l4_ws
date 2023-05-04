@@ -7,6 +7,7 @@ PATH_IDE=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE
 PATH_TARGET_COMPILER=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.100.202210260954/tools/bin
 PATH_OPENOCD=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.2.200.202210200901/tools/bin
 PATH_OPENOCD_S=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.0.400.202211031408/resources/openocd/st_scripts
+PATH_TARGET_PROGRAMMER=/c/ST/STM32CubeIDE_1.11.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.0.500.202209151145/tools/bin
 
 # Static Analysis
 PATH_PCLINT=/c/Desarrollo/Programas/pclp-1.3.5/windows

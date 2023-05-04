@@ -28,6 +28,14 @@
  */
 bool itf_clk_init(void);
 
+/**
+ * @brief System clocks deinitialization.
+ *
+ * @return true If the clocks are deinitialized correctly.
+ * @return false If an error occurs.
+ */
+bool itf_clk_deinit(void);
+
 #endif // ITF_CLK_H
 
 /** @} */

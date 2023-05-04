@@ -45,7 +45,7 @@ itf_io_init (void)
     }
 
     // Initialize interrupt handlers
-    for (unsigned int i = 0u; i < H_ITF_IO_INT_COUNT; i++)
+    for (size_t i = 0u; i < H_ITF_IO_INT_COUNT; i++)
     {
         uint32_t exti_line = itf_io_config[i].pin;
 
@@ -55,6 +55,21 @@ itf_io_init (void)
         // Disable interrupt
         EXTI->IMR1 &= ~(exti_line);
         __HAL_GPIO_EXTI_CLEAR_IT(exti_line);
+    }
+
+    return true;
+}
+
+bool
+itf_io_deinit (void)
+{
+    // Deinitialize all the pins
+    for (size_t i = 0u; i < H_ITF_IO_COUNT; i++)
+    {
+        const itf_io_config_t * config = &itf_io_config[i];
+
+        // This function also disables the interrupt associated with the pin
+        HAL_GPIO_DeInit(config->port, config->pin);
     }
 
     return true;
@@ -139,7 +154,7 @@ itf_io_toggle_value (h_itf_io_t h_itf_io)
 void
 HAL_GPIO_EXTI_Callback (uint16_t pin_id)
 {
-    for (unsigned int i = 0u; i < H_ITF_IO_INT_COUNT; i++)
+    for (size_t i = 0u; i < H_ITF_IO_INT_COUNT; i++)
     {
         if (pin_id == itf_io_config[i].pin)
         {

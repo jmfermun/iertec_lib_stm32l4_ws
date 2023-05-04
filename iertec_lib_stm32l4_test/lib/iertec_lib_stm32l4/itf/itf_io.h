@@ -46,6 +46,14 @@ typedef struct
 bool itf_io_init(void);
 
 /**
+ * @brief I/O interface deinitialization.
+ *
+ * @retval true If the interface is deinitialized correctly.
+ * @retval false If an error occurs.
+ */
+bool itf_io_deinit(void);
+
+/**
  * @brief Set an interrupt callback.
  *
  * @param[in] h_itf_io Interrupt pin to configure.

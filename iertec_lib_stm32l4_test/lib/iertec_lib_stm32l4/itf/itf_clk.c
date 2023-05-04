@@ -41,6 +41,16 @@ itf_clk_init (void)
     return true;
 }
 
+bool
+itf_clk_deinit (void)
+{
+    bool ret;
+
+    ret = HAL_RCC_DeInit() == HAL_OK;
+
+    return ret;
+}
+
 /** @} */
 
 /******************************** End of file *********************************/

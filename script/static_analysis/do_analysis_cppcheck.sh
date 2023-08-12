@@ -6,7 +6,7 @@ export PATH_CPPCHECK_SHARE
 
 PATH=$PATH_TARGET_COMPILER:$PATH
 PATH_BUILD=../../$PROJECT_NAME/Release
-PATH_OUT=../output/static_analysis
+PATH_OUT=$PWD/../output/static_analysis
 MISRA_JSON_TEXT='
 {
     "script": "'$(python3 -c "import os; print(os.environ['PATH_CPPCHECK_SHARE'])")'/addons/misra.py",
@@ -16,7 +16,9 @@ MISRA_JSON_TEXT='
 # Create the MISRA configuration file
 echo $MISRA_JSON_TEXT > $PATH_OUT/misra.json
 
+mkdir -p $PATH_OUT
 mkdir -p $PATH_OUT/cppcheck
+mkdir -p $PATH_OUT/report_cppcheck
 
 # CppCheck analysis
 # Note: Update compiler include paths "-I" from "script/output/co-co-arm-none-eabi-gcc.lnt".
@@ -34,6 +36,7 @@ CPPCHECK_ARG='
 -I"c:/st/stm32cubeide_1.11.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.100.202210260954/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed"
 -I"c:/st/stm32cubeide_1.11.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.100.202210260954/tools/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"
 --include='$PATH_OUT'/co-arm-none-eabi-gcc.h
+--suppress=*:*/co-arm-none-eabi-gcc.h
 --suppress=missingIncludeSystem
 --suppress=unusedFunction
 --suppress=*:*/Core/*
@@ -42,3 +45,4 @@ CPPCHECK_ARG='
 '
 
 cppcheck $CPPCHECK_ARG --project=$PATH_BUILD/compile_commands.json
+cppcheck-htmlreport --file=$PATH_OUT/report_cppcheck.xml --report-dir=$PATH_OUT/report_cppcheck

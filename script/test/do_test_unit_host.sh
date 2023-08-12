@@ -3,7 +3,7 @@ cd "$(dirname "$0")"
 source ../global.sh
 
 export CEEDLING_MAIN_PROJECT_FILE=$PWD/project_unit_host.yml
-PATH_LOG=../script/output/test
+PATH_LOG=$PWD/../output/test
 FILE_LOG=$PATH_LOG/log_unit_host.txt
 PATH_COVERAGE=$PWD/../coverage
 

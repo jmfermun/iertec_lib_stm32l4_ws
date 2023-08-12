@@ -69,7 +69,7 @@
     bool:     UINT8
   :treat_as_void:
     - xdc_Void
-  :fail_on_unexpected_calls: FALSE
+  :fail_on_unexpected_calls: TRUE
   :callback_include_count: FALSE
   :treat_externs: :include
 

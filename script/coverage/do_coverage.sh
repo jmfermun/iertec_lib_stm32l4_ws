@@ -2,10 +2,10 @@ cd "$(dirname "$0")"
 
 source ../global.sh
 
-cd ../../$PROJECT_NAME
-
-PATH_OUT=../script/output/coverage
+PATH_OUT=$PWD/../output/coverage
 FILES_IN=""
+
+cd ../../$PROJECT_NAME
 
 for filename in $PATH_OUT/*.json; do
     FILES_IN="$FILES_IN --add-tracefile $filename"

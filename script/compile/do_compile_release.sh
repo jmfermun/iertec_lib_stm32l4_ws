@@ -3,7 +3,7 @@ cd "$(dirname "$0")"
 source ../global.sh
 
 PATH=$PATH_IDE:$PATH
-PATH_OUT=script/output/compile
+PATH_OUT=$PWD/../output/compile
 
 cd ../../
 
@@ -13,4 +13,4 @@ stm32cubeidec --launcher.suppressErrors -nosplash -application org.eclipse.cdt.m
 
 cd $PROJECT_NAME/Release
 
-compiledb --verbose --parse ../../$PATH_OUT/compile_release_log.txt
+compiledb --verbose --parse $PATH_OUT/compile_release_log.txt

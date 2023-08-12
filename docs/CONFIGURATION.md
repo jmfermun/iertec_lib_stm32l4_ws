@@ -214,7 +214,7 @@ Many different packages from MSYS2 are used by the utility scripts.
     pacman -S mingw-w64-x86_64-python-pillow
     pacman -S mingw-w64-x86_64-ruby
     pacman -S mingw-w64-x86_64-doxygen
-    pacman -S mingw-w64-x86_64-qt6-base
+    pacman -S mingw-w64-x86_64-qt6
     pacman -S mingw-w64-x86_64-graphviz
     pacman -S mingw-w64-x86_64-srecord
     pacman -S mingw-w64-x86_64-uncrustify
@@ -226,6 +226,8 @@ Many different packages from MSYS2 are used by the utility scripts.
     pip install compiledb
     pip install gcovr
     pip install pyyaml
+    pip install pygments
+    pip install clang-html
     ```
 - Install the following ruby packages:
     ```

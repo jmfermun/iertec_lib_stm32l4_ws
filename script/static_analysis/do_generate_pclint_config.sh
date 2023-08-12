@@ -3,7 +3,7 @@ cd "$(dirname "$0")"
 source ../global.sh
 
 PATH=$PATH_TARGET_COMPILER:$PATH
-PATH_OUT=../output/static_analysis
+PATH_OUT=$PWD/../output/static_analysis
 
 # Compiler selection
 PCLINT_COMPILER=gcc

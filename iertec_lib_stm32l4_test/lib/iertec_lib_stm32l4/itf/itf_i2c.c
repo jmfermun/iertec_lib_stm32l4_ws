@@ -38,7 +38,7 @@ typedef struct
 extern const itf_i2c_config_t itf_i2c_config[H_ITF_I2C_COUNT];
 
 /** Instances of the available I2C interfaces. */
-static itf_i2c_instance_t itf_i2c_instance[H_ITF_I2C_COUNT];
+static volatile itf_i2c_instance_t itf_i2c_instance[H_ITF_I2C_COUNT];
 
 /****************************************************************************//*
  * Private code prototypes
@@ -64,8 +64,8 @@ itf_i2c_init (h_itf_i2c_t h_itf_i2c)
         return false;
     }
 
-    const itf_i2c_config_t * config   = &itf_i2c_config[h_itf_i2c];
-    itf_i2c_instance_t *     instance = &itf_i2c_instance[h_itf_i2c];
+    const itf_i2c_config_t *      config   = &itf_i2c_config[h_itf_i2c];
+    volatile itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
 
     // Low level initialization
     if (NULL != config->init_ll)
@@ -108,7 +108,7 @@ itf_i2c_deinit (h_itf_i2c_t h_itf_i2c)
         return false;
     }
 
-    itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
+    volatile itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
 
     if (HAL_I2C_DeInit(instance->handle) != HAL_OK)
     {
@@ -125,9 +125,9 @@ itf_i2c_transaction (h_itf_i2c_t h_itf_i2c, uint8_t slave_address,
                      const uint8_t * tx_data, size_t tx_count,
                      uint8_t * rx_data, size_t rx_count)
 {
-    itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
-    HAL_StatusTypeDef    status   = HAL_OK;
-    bool                 ret;
+    volatile itf_i2c_instance_t * instance = &itf_i2c_instance[h_itf_i2c];
+    HAL_StatusTypeDef             status   = HAL_OK;
+    bool                          ret;
 
     // Slave address must be shifted to left
     slave_address <<= 1;
@@ -251,8 +251,8 @@ HAL_I2C_ErrorCallback (I2C_HandleTypeDef * h_i2c)
 static inline void
 itf_i2c_give_semaphore (const I2C_HandleTypeDef * h_i2c)
 {
-    BaseType_t           b_yield  = pdFALSE;
-    itf_i2c_instance_t * instance = NULL;
+    BaseType_t                    b_yield  = pdFALSE;
+    volatile itf_i2c_instance_t * instance = NULL;
 
     for (size_t i = 0u; i < H_ITF_I2C_COUNT; i++)
     {

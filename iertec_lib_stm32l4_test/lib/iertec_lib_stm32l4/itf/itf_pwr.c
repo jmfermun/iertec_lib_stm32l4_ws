@@ -28,24 +28,24 @@
  ******************************************************************************/
 
 /** Current number of peripherals registered. */
-static uint8_t h_itf_pwr_index;
+static volatile uint8_t h_itf_pwr_index;
 
 /** Mask with the currently activated peripherals. */
 static volatile uint32_t itf_pwr_active_flag;
 
 /** Masks with the registered peripherals in each power level. */
-static uint32_t itf_pwr_level_mask[ITF_PWR_LEVEL_COUNT];
+static volatile uint32_t itf_pwr_level_mask[ITF_PWR_LEVEL_COUNT];
 
 /** Backup value of the RCC->CR register stored while in stop mode. */
-static uint32_t itf_pwr_rcc_cr_save;
+static volatile uint32_t itf_pwr_rcc_cr_save;
 
 /** Backup value of the RCC->CFGR register stored while in stop mode. */
-static uint32_t itf_pwr_rcc_cfgr_save;
+static volatile uint32_t itf_pwr_rcc_cfgr_save;
 
 #ifdef configMIN_RUN_BETWEEN_DEEP_SLEEPS
 
 /** Minimum run time peripheral used to avoid erratum 2.3.21. */
-static uint8_t h_itf_pwr_min_run;
+static volatile uint8_t h_itf_pwr_min_run;
 
 #endif // configMIN_RUN_BETWEEN_DEEP_SLEEPS
 

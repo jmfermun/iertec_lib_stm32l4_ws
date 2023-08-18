@@ -22,7 +22,7 @@
  * @brief Encode into an hexadecimal string a binary data buffer and return the
  * encoded data in the same buffer.
  *
- * @param[in, out] buffer Binary data as input. Base64 string as output.
+ * @param[in, out] buffer Binary data as input. Hexadecimal string as output.
  * @param[in] length Binary data length.
  *
  * @return Base64 string length.
@@ -33,8 +33,8 @@ size_t crypt_hex_encode(uint8_t * buffer, size_t length);
  * @brief Decode an hexadecimal string and return the decoded data in the same
  * buffer.
  *
- * @param[in, out] buffer Base64 string as input. Binary data as output.
- * @param[in] length Base64 string length.
+ * @param[in, out] buffer Hexadecimal string as input. Binary data as output.
+ * @param[in] length Hexadecimal string length.
  *
  * @return Binary data length.
  */

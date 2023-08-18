@@ -21,7 +21,7 @@
 extern const ext_rtc_config_t ext_rtc_config;
 
 /** Callback function to be called each second. */
-static ext_rtc_cb_t ext_rtc_cb = NULL;
+static volatile ext_rtc_cb_t ext_rtc_cb = NULL;
 
 /** RTC seconds count. */
 static volatile uint32_t ext_rtc_seconds = 0u;

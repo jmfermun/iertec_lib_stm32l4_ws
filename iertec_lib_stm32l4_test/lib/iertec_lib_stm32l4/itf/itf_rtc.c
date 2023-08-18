@@ -22,7 +22,7 @@
 extern const itf_rtc_config_t itf_rtc_config;
 
 /** Callback function to be called each second. */
-static itf_rtc_cb_t itf_rtc_cb = NULL;
+static volatile itf_rtc_cb_t itf_rtc_cb = NULL;
 
 /** RTC seconds count. */
 static volatile uint32_t itf_rtc_seconds = 0u;

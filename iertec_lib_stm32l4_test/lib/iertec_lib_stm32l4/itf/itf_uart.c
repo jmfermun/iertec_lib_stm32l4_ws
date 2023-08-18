@@ -72,7 +72,7 @@ typedef struct
 extern const itf_uart_config_t itf_uart_config[H_ITF_UART_COUNT];
 
 /** Instances of the available UART interfaces. */
-static itf_uart_instance_t itf_uart_instance[H_ITF_UART_COUNT];
+static volatile itf_uart_instance_t itf_uart_instance[H_ITF_UART_COUNT];
 
 /****************************************************************************//*
  * Private code prototypes
@@ -83,7 +83,7 @@ static itf_uart_instance_t itf_uart_instance[H_ITF_UART_COUNT];
  *
  * @param[in] instance UART instance to be cleaned.
  */
-static void itf_uart_clean_rx(itf_uart_instance_t * instance);
+static void itf_uart_clean_rx(volatile itf_uart_instance_t * instance);
 
 /**
  * @brief Check if the received data is part of a complete line with no expected
@@ -106,7 +106,7 @@ static bool itf_uart_check_line_no_crlf(
  * @param[in] instance UART instance properly initialized.
  * @param[in] break_time Time in milliseconds of the break.
  */
-static void itf_uart_generate_break_baudrate(itf_uart_instance_t * instance,
+static void itf_uart_generate_break_baudrate(volatile itf_uart_instance_t * instance,
                                              uint32_t break_time);
 
 /****************************************************************************//*
@@ -121,8 +121,8 @@ itf_uart_init (h_itf_uart_t h_itf_uart)
         return false;
     }
 
-    const itf_uart_config_t * config   = &itf_uart_config[h_itf_uart];
-    itf_uart_instance_t *     instance = &itf_uart_instance[h_itf_uart];
+    const itf_uart_config_t *      config   = &itf_uart_config[h_itf_uart];
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     // Low level initialization
     if (NULL != config->init_ll)
@@ -215,7 +215,7 @@ itf_uart_deinit (h_itf_uart_t h_itf_uart)
         return false;
     }
 
-    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     if (NULL != instance->handle)
     {
@@ -255,7 +255,7 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 {
     if (len > 0u)
     {
-        itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+        volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
         itf_pwr_set_active(instance->h_itf_pwr_tx);
 
@@ -281,7 +281,7 @@ itf_uart_write_bin (h_itf_uart_t h_itf_uart, const char * data, size_t len)
 void
 itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     taskENTER_CRITICAL();
 
@@ -329,7 +329,7 @@ itf_uart_read_enable (h_itf_uart_t h_itf_uart)
 void
 itf_uart_read_disable (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
 
     taskENTER_CRITICAL();
 
@@ -357,9 +357,9 @@ itf_uart_read_disable (h_itf_uart_t h_itf_uart)
 size_t
 itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 {
-    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
-    char                  read_byte = 0;
-    size_t                i         = 0;
+    volatile itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
+    char                           read_byte = 0;
+    size_t                         i         = 0;
 
     // Read characters until '\n' is received
     do
@@ -459,9 +459,9 @@ itf_uart_read (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 size_t
 itf_uart_read_bin (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 {
-    itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
-    char                  read_byte = 0;
-    size_t                i         = 0;
+    volatile itf_uart_instance_t * instance  = &itf_uart_instance[h_itf_uart];
+    char                           read_byte = 0;
+    size_t                         i         = 0;
 
     // Read bytes until the indicated number of bytes is reached or until a
     // timeout occurs
@@ -515,8 +515,8 @@ itf_uart_read_bin (h_itf_uart_t h_itf_uart, char * data, size_t max_len)
 size_t
 itf_uart_read_count (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
-    size_t                count;
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    size_t                         count;
 
     taskENTER_CRITICAL();
 
@@ -530,9 +530,9 @@ itf_uart_read_count (h_itf_uart_t h_itf_uart)
 bool
 itf_uart_send_break (h_itf_uart_t h_itf_uart)
 {
-    itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
-    bool                  ret;
-    char                  data     = 0;
+    volatile itf_uart_instance_t * instance = &itf_uart_instance[h_itf_uart];
+    bool                           ret;
+    char                           data     = 0;
 
     // This function can not be used when the reads are active
     if ((instance->break_brr == 0u)
@@ -567,9 +567,9 @@ itf_uart_send_break (h_itf_uart_t h_itf_uart)
 void
 itf_uart_isr (h_itf_uart_t h_itf_uart)
 {
-    BaseType_t            b_yield    = pdFALSE;
-    itf_uart_instance_t * instance   = &itf_uart_instance[h_itf_uart];
-    bool                  b_rx_error = false;
+    BaseType_t                     b_yield    = pdFALSE;
+    volatile itf_uart_instance_t * instance   = &itf_uart_instance[h_itf_uart];
+    bool                           b_rx_error = false;
 
     // Read the interrupt flag and interrupt enable bits
     uint32_t isr_flags = READ_REG(instance->handle->Instance->ISR);
@@ -689,7 +689,7 @@ itf_uart_isr (h_itf_uart_t h_itf_uart)
  ******************************************************************************/
 
 static void
-itf_uart_clean_rx (itf_uart_instance_t * instance)
+itf_uart_clean_rx (volatile itf_uart_instance_t * instance)
 {
     taskENTER_CRITICAL();
 
@@ -721,7 +721,7 @@ itf_uart_check_line_no_crlf (const itf_uart_line_no_crlf_t * line_no_crlf,
 }
 
 static void
-itf_uart_generate_break_baudrate (itf_uart_instance_t * instance,
+itf_uart_generate_break_baudrate (volatile itf_uart_instance_t * instance,
                                   uint32_t break_time)
 {
     if (0u == break_time)

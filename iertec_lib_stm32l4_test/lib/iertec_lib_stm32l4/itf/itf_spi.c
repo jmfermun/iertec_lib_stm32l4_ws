@@ -53,7 +53,7 @@ extern const itf_spi_config_t      itf_spi_config[H_ITF_SPI_COUNT];
 extern const itf_spi_chip_config_t itf_spi_chip_config[H_ITF_SPI_CHIP_COUNT];
 
 /** Instances of the available SPI interfaces. */
-static itf_spi_instance_t itf_spi_instance[H_ITF_SPI_COUNT];
+static volatile itf_spi_instance_t itf_spi_instance[H_ITF_SPI_COUNT];
 
 /****************************************************************************//*
  * Private code prototypes
@@ -79,8 +79,8 @@ itf_spi_init (h_itf_spi_t h_itf_spi)
         return false;
     }
 
-    const itf_spi_config_t * config   = &itf_spi_config[h_itf_spi];
-    itf_spi_instance_t *     instance = &itf_spi_instance[h_itf_spi];
+    const itf_spi_config_t *      config   = &itf_spi_config[h_itf_spi];
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
     if (NULL != instance->handle)
     {
@@ -153,7 +153,7 @@ itf_spi_deinit (h_itf_spi_t h_itf_spi)
         return false;
     }
 
-    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
     if (HAL_SPI_DeInit(instance->handle) != HAL_OK)
     {
@@ -169,8 +169,8 @@ bool
 itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
                      uint8_t * rx_data, size_t count)
 {
-    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
-    HAL_StatusTypeDef    status;
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+    HAL_StatusTypeDef             status;
 
     itf_pwr_set_active(instance->h_itf_pwr);
 
@@ -221,7 +221,7 @@ itf_spi_transaction (h_itf_spi_t h_itf_spi, const uint8_t * tx_data,
 void
 itf_spi_flush (h_itf_spi_t h_itf_spi)
 {
-    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
     while (__HAL_SPI_GET_FLAG(instance->handle, SPI_FLAG_BSY))
     {
@@ -234,7 +234,7 @@ itf_spi_select (h_itf_spi_chip_t h_itf_spi_chip)
 {
     const itf_spi_chip_config_t * config =
         &itf_spi_chip_config[h_itf_spi_chip];
-    itf_spi_instance_t * instance        =
+    volatile itf_spi_instance_t * instance =
         &itf_spi_instance[config->h_itf_spi];
 
     (void)xSemaphoreTake(instance->mutex, portMAX_DELAY);
@@ -296,7 +296,7 @@ itf_spi_deselect (h_itf_spi_chip_t h_itf_spi_chip)
 {
     const itf_spi_chip_config_t * config =
         &itf_spi_chip_config[h_itf_spi_chip];
-    itf_spi_instance_t * instance        =
+    volatile itf_spi_instance_t * instance =
         &itf_spi_instance[config->h_itf_spi];
 
     if (H_ITF_IO_NONE != config->pin_cs)
@@ -310,7 +310,7 @@ itf_spi_deselect (h_itf_spi_chip_t h_itf_spi_chip)
 void
 itf_spi_set_low_speed (h_itf_spi_t h_itf_spi)
 {
-    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
     // Disable SPI peripheral
     __HAL_SPI_DISABLE(instance->handle);
@@ -327,7 +327,7 @@ itf_spi_set_low_speed (h_itf_spi_t h_itf_spi)
 void
 itf_spi_set_high_speed (h_itf_spi_t h_itf_spi)
 {
-    itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
+    volatile itf_spi_instance_t * instance = &itf_spi_instance[h_itf_spi];
 
     // Disable SPI peripheral
     __HAL_SPI_DISABLE(instance->handle);
@@ -371,8 +371,8 @@ HAL_SPI_ErrorCallback (SPI_HandleTypeDef * h_spi)
 static inline void
 itf_spi_give_semaphore (const SPI_HandleTypeDef * h_spi)
 {
-    BaseType_t           b_yield  = pdFALSE;
-    itf_spi_instance_t * instance = NULL;
+    BaseType_t                    b_yield  = pdFALSE;
+    volatile itf_spi_instance_t * instance = NULL;
 
     for (size_t i = 0u; i < H_ITF_SPI_COUNT; i++)
     {

@@ -25,7 +25,7 @@
  ******************************************************************************/
 
 /** Debug buffer size. */
-#define DEBUG_BUFFER_SIZE (1024)
+#define DEBUG_BUFFER_SIZE (1280)
 
 /****************************************************************************//*
  * Private data
@@ -50,13 +50,11 @@ static bool b_debug_is_attached = false;
 bool
 debug_init (void)
 {
-#ifndef NDEBUG
-    b_debug_is_attached = true;
-#else
     b_debug_is_attached = itf_debug_is_connected();
-#endif
 
+#ifdef NDEBUG
     if (b_debug_is_attached)
+#endif
     {
         // Construct debug mutex
         h_debug_mutex = xSemaphoreCreateMutex();

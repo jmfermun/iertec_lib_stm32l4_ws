@@ -228,6 +228,7 @@ Many different packages from MSYS2 are used by the utility scripts.
     pip install pyyaml
     pip install pygments
     pip install clang-html
+    pip install lizard
     ```
 - Install the following ruby packages:
     ```

@@ -22,6 +22,14 @@
 #define FSM_EVENT_TICK      (1u)
 #define FSM_EVENT_ERROR     (1u << 1)
 
+// Test state machine constants
+#define TEST_STATE_LEVEL    (0)
+#define TEST_TICK_MSEC      (100)
+#define TEST_EVENT_TICK     (FSM_EVENT_TICK)
+#define TEST_EVENT_ERROR    (FSM_EVENT_ERROR)
+#define TEST_EVENT_CONTINUE (1u << 2)
+#define TEST_EVENT_ALL      (0b111)
+
 #endif // FSM_DEF_H
 
 /** @} */

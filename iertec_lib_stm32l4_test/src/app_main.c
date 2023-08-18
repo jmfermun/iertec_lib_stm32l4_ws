@@ -7,11 +7,10 @@
 
 #include "itf_bsp.h"
 #include "debug_util.h"
+#include "test.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
-
-extern void MX_FREERTOS_Init(void);
 
 /****************************************************************************//*
  * Public code
@@ -38,8 +37,10 @@ main (void)
     DEBUG_ASSERT(ret);
     (void)ret;
 
-    // Call init function for freertos objects (in freertos.c)
-    MX_FREERTOS_Init();
+    // Initialize the test task
+    ret = test_init();
+    DEBUG_ASSERT(ret);
+    (void)ret;
 
     // Start scheduler
     vTaskStartScheduler();
